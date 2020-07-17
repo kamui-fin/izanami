@@ -4,7 +4,7 @@ export interface Command {
   name: string;
   aliases?: string[];
   description: string;
-  params: string[];
+  stringParams: string[];
   correctParams(): boolean;
   run(msg: Message): any;
 }

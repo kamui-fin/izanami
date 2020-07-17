@@ -43,40 +43,60 @@ var utils_1 = require("../utils/utils");
 var anilist_1 = __importDefault(require("../utils/anilist"));
 var AniRecommender = /** @class */ (function () {
     function AniRecommender(prms) {
-        this.name = 'recommend';
+        this.name = 'recommend-anime';
         this.description = 'Recommends anime from anilist based on a title';
-        this.params = prms;
+        this.limit = 1;
+        this.starFilter = 0;
+        this.stringParams = prms;
     }
     AniRecommender.prototype.correctParams = function () {
-        var fromAnime = this.params[0];
-        var limitRecs = this.params[1];
-        if (fromAnime &&
-            limitRecs &&
-            parseInt(limitRecs) !== NaN &&
-            parseInt(limitRecs) < 5 &&
-            parseInt(limitRecs) > 0) {
+        var fromAnime = this.stringParams[0];
+        var limitRecs = this.stringParams[1];
+        var starFilter = this.stringParams[2];
+        if (fromAnime) {
+            if (limitRecs) {
+                if (!Number.isNaN(parseInt(limitRecs)) &&
+                    parseInt(limitRecs) <= 5 &&
+                    parseInt(limitRecs) > 0) {
+                    this.limit = parseInt(limitRecs);
+                }
+            }
+            else {
+                this.limit = 1;
+            }
+            if (starFilter) {
+                var parsed = parseInt(starFilter.replace(/star_/g, ''));
+                if (!Number.isNaN(parsed) && parsed <= 10 && parsed >= 0) {
+                    this.starFilter = parsed;
+                }
+            }
+            else {
+                this.starFilter = 0;
+            }
             return true;
         }
         return false;
     };
     AniRecommender.prototype.run = function (msg) {
         return __awaiter(this, void 0, void 0, function () {
-            var anilist, reccs, _i, reccs_1, recc, onerec, onemediarecc, embed;
+            var anilist, reccs;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        anilist = new anilist_1.default(this.params[0]);
-                        return [4 /*yield*/, anilist.getReccomendations(parseInt(this.params[1]))];
+                        anilist = new anilist_1.default(this.stringParams[0]);
+                        return [4 /*yield*/, anilist.getReccomendations(this.limit)];
                     case 1:
                         reccs = _a.sent();
-                        for (_i = 0, reccs_1 = reccs; _i < reccs_1.length; _i++) {
-                            recc = reccs_1[_i];
-                            onerec = recc;
-                            onemediarecc = onerec.node.mediaRecommendation;
-                            onemediarecc.description = utils_1.fixDesc(onemediarecc.description, 300);
-                            embed = utils_1.getEmbed(onemediarecc);
-                            msg.channel.send({ embed: embed });
-                        }
+                        utils_1.shuffleArray(reccs);
+                        reccs.forEach(function (recc) {
+                            var modifyedRecc = recc.node.mediaRecommendation;
+                            modifyedRecc.description = utils_1.fixDesc(modifyedRecc.description, 300);
+                            var embed = utils_1.getEmbed(modifyedRecc);
+                            if (modifyedRecc.averageScore / 10 >= _this.starFilter) {
+                                msg.channel.send({ embed: embed });
+                            }
+                        });
                         return [2 /*return*/];
                 }
             });

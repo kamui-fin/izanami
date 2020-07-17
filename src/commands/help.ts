@@ -1,34 +1,45 @@
-import { Command } from '../types/command';
-import { Message } from 'discord.js';
-import Discord from 'discord.js';
+import Discord, { Message } from 'discord.js';
+
+import { Command } from '../types/command.d';
 
 class AniHelp implements Command {
-  name: string = 'help';
-  description: string = 'Shows usage info on all anilist commands';
-  params: string[];
+  name = 'help';
+
+  description = 'Shows usage info on all anilist commands';
+
+  stringParams: string[];
+
+  helpEmbed: Discord.MessageEmbed = new Discord.MessageEmbed()
+    .setColor('#3598e8')
+    .setTitle('MaidChan usage instructions')
+    .addFields(
+      {
+        name: '`recommend-anime {title} [limit] [star_#]`',
+        value:
+          'Recommends an anime from a title you liked, with an optional limit and star filter. Be sure to wrap the title around quotes',
+      },
+      {
+        name: '`info-anime {title}`',
+        value:
+          'Shows information about an anime. Be sure to wrap the title around quotes',
+      },
+      {
+        name: '`help`',
+        value: 'Shows this help message',
+      }
+    )
+    .setFooter('{} means mandatory \t[] means optional');
 
   constructor(prms: string[]) {
-    this.params = prms;
+    this.stringParams = prms;
   }
 
   correctParams(): boolean {
-    return true;
+    return this.stringParams.length >= 0;
   }
-  run(msg: Message) {
-    let helpEmbed = new Discord.MessageEmbed()
-      .setColor('#3598e8')
-      .setTitle('Anilist bot usage instructions')
-      .addFields(
-        {
-          name: '`recommend [anime] [limit]`',
-          value: 'Recommends an anime from a title you liked, with a limit',
-        },
-        {
-          name: '`help`',
-          value: 'Shows this help message',
-        }
-      );
-    msg.channel.send(helpEmbed);
+
+  run(msg: Message): void {
+    msg.channel.send(this.helpEmbed);
   }
 }
 

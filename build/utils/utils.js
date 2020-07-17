@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkValidCommand = exports.splitCommand = exports.fixDesc = exports.getEmbed = exports.sendGraphQL = void 0;
+exports.shuffleArray = exports.checkValidCommand = exports.splitCommand = exports.fixDesc = exports.getEmbed = exports.sendGraphQL = void 0;
 var axios_1 = __importDefault(require("axios"));
 exports.sendGraphQL = function (baseUrl, query, variables) { return __awaiter(void 0, void 0, void 0, function () {
     var res;
@@ -63,6 +63,10 @@ exports.sendGraphQL = function (baseUrl, query, variables) { return __awaiter(vo
         }
     });
 }); };
+var fixAvgScore = function (score) {
+    var divided = (score / 10).toLocaleString();
+    return divided + " \u2B50";
+};
 exports.getEmbed = function (media) {
     var embed = {
         title: media.title.native,
@@ -82,7 +86,7 @@ exports.getEmbed = function (media) {
             },
             {
                 name: 'Episodes',
-                value: media.episodes.toLocaleString(),
+                value: media.episodes ? media.episodes.toLocaleString() : 'Unknown',
             },
             {
                 name: 'Favorites',
@@ -91,7 +95,7 @@ exports.getEmbed = function (media) {
             },
             {
                 name: 'Average Score',
-                value: media.averageScore.toLocaleString(),
+                value: fixAvgScore(media.averageScore),
                 inline: true,
             },
             {
@@ -127,9 +131,18 @@ exports.checkValidCommand = function (cmd, prefix, commandType) {
         return false;
     }
     var splittedCommand = exports.splitCommand(cmd);
-    var isAnilistCmd = splittedCommand[0].startsWith(prefix + "anilist");
     var isCorrectCmdType = splittedCommand[1] === commandType.name;
     var validParams = commandType.correctParams();
-    return validParams && isCorrectCmdType && isAnilistCmd;
+    console.log(splittedCommand, isCorrectCmdType, validParams);
+    return validParams && isCorrectCmdType;
+};
+// thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+exports.shuffleArray = function (array) {
+    var _a;
+    var copiedArray = array;
+    for (var i = array.length - 1; i > 0; i -= 1) {
+        var j = Math.floor(Math.random() * (i + 1));
+        _a = [array[j], array[i]], copiedArray[i] = _a[0], copiedArray[j] = _a[1];
+    }
 };
 //# sourceMappingURL=utils.js.map

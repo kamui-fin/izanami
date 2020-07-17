@@ -1,52 +1,71 @@
-import { Message, MessageEmbed } from 'discord.js';
-import { Command } from '../types/command';
-import { MediaRecommendation, Node, TopLevel } from '../types/anime';
+/* eslint-disable radix */
+import { Message } from 'discord.js';
+import { Command } from '../types/command.d';
+import { MediaRecommendation, TopLevel } from '../types/anime.d';
 import { getEmbed, fixDesc, shuffleArray } from '../utils/utils';
 import AniList from '../utils/anilist';
 
 class AniRecommender implements Command {
-  name = 'recommend';
+  name = 'recommend-anime';
 
   aliases?: string[] | undefined;
 
   description = 'Recommends anime from anilist based on a title';
 
-  params: string[];
+  stringParams: string[];
+
+  limit = 1;
+
+  starFilter = 0;
 
   constructor(prms: string[]) {
-    this.params = prms;
+    this.stringParams = prms;
   }
 
   correctParams(): boolean {
-    const fromAnime = this.params[0];
-    const limitRecs = this.params[1];
+    const fromAnime = this.stringParams[0];
+    const limitRecs = this.stringParams[1];
+    const starFilter = this.stringParams[2];
 
-    if (
-      fromAnime &&
-      limitRecs &&
-      parseInt(limitRecs) !== NaN &&
-      parseInt(limitRecs) <= 5 &&
-      parseInt(limitRecs) > 0
-    ) {
+    if (fromAnime) {
+      if (limitRecs) {
+        if (
+          !Number.isNaN(parseInt(limitRecs)) &&
+          parseInt(limitRecs) <= 5 &&
+          parseInt(limitRecs) > 0
+        ) {
+          this.limit = parseInt(limitRecs);
+        }
+      } else {
+        this.limit = 1;
+      }
+
+      if (starFilter) {
+        const parsed = parseInt(starFilter.replace(/star_/g, ''));
+        if (!Number.isNaN(parsed) && parsed <= 10 && parsed >= 0) {
+          this.starFilter = parsed;
+        }
+      } else {
+        this.starFilter = 0;
+      }
       return true;
     }
     return false;
   }
 
-  async run(msg: Message) {
-    const anilist: AniList = new AniList(this.params[0]);
-    const reccs: any = await anilist.getReccomendations(
-      parseInt(this.params[1])
-    );
+  async run(msg: Message): Promise<void> {
+    const anilist: AniList = new AniList(this.stringParams[0]);
+    const reccs = await anilist.getReccomendations(this.limit);
 
     shuffleArray(reccs);
-    for (let recc of reccs) {
-      const onerec: TopLevel = recc;
-      const onemediarecc: MediaRecommendation = onerec.node.mediaRecommendation;
-      onemediarecc.description = fixDesc(onemediarecc.description, 300);
-      const embed = getEmbed(onemediarecc);
-      msg.channel.send({ embed });
-    }
+    reccs.forEach((recc: TopLevel) => {
+      const modifyedRecc: MediaRecommendation = recc.node.mediaRecommendation;
+      modifyedRecc.description = fixDesc(modifyedRecc.description, 300);
+      const embed = getEmbed(modifyedRecc);
+      if (modifyedRecc.averageScore / 10 >= this.starFilter) {
+        msg.channel.send({ embed });
+      }
+    });
   }
 }
 
