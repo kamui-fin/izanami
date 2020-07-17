@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { MediaRecommendation } from '../types/anime';
-import { Command } from '../types/command';
+import { MediaRecommendation } from '../types/anime.d';
+import { Command } from '../types/command.d';
 
 export const sendGraphQL = async (
   baseUrl: string,
   query: string,
-  variables: Object
+  variables: Record<string, unknown>
 ) => {
   const res: any = await axios({
     url: baseUrl,
@@ -23,7 +23,14 @@ export const sendGraphQL = async (
   return res;
 };
 
-export const getEmbed = (media: MediaRecommendation): Object => {
+const fixAvgScore = (score: number): string => {
+  const divided = (score / 10).toLocaleString();
+  return `${divided} ⭐`;
+};
+
+export const getEmbed = (
+  media: MediaRecommendation
+): Record<string, unknown> => {
   const embed = {
     title: media.title.native,
     description: media.description,
@@ -51,7 +58,7 @@ export const getEmbed = (media: MediaRecommendation): Object => {
       },
       {
         name: 'Average Score',
-        value: media.averageScore.toLocaleString(),
+        value: fixAvgScore(media.averageScore),
         inline: true,
       },
       {
@@ -94,16 +101,18 @@ export const checkValidCommand = (
     return false;
   }
   const splittedCommand = splitCommand(cmd);
-  const isAnilistCmd = splittedCommand[0].startsWith(`${prefix}anilist`);
   const isCorrectCmdType = splittedCommand[1] === commandType.name;
   const validParams = commandType.correctParams();
-  return validParams && isCorrectCmdType && isAnilistCmd;
+  console.log(splittedCommand, isCorrectCmdType, validParams);
+
+  return validParams && isCorrectCmdType;
 };
 
-//thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-export function shuffleArray(array: Array<any>) {
-  for (let i = array.length - 1; i > 0; i--) {
+// thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+export const shuffleArray = (array: Array<any>) => {
+  const copiedArray = array;
+  for (let i = array.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    [copiedArray[i], copiedArray[j]] = [array[j], array[i]];
   }
-}
+};

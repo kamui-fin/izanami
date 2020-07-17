@@ -16,6 +16,7 @@ export interface Title {
 }
 
 export interface MediaRecommendation {
+  id?: number;
   coverImage: CoverImage;
   title: Title;
   siteUrl: string;

@@ -40,22 +40,19 @@ var utils_1 = require("./utils");
 var AniList = /** @class */ (function () {
     function AniList(query) {
         this.baseURL = 'https://graphql.anilist.co';
-        this.searchQuery = "\n  query ($txt: String) {\n    Media(search:$txt, type:ANIME){\n      id,\n      title{\n        native\n      }\n    }\n  }\n  ";
+        this.searchQuery = "\n  query ($txt: String) {\n    Media(search:$txt, type:ANIME){\n      id,\n      title{\n        native\n      }\n      coverImage {\n        color\n        extraLarge\n        large\n        medium\n    }\n    title {\n        native\n    }\n    siteUrl\n    description\n    episodes\n    genres\n    averageScore\n    popularity\n    favourites\n    startDate {\n        year\n        month\n        day\n    }\n    }\n  }\n  ";
         this.reccQuery = "\n    query ($id: Int) {\n        Media(id: $id, type: ANIME) {\n        recommendations {\n            edges {\n            node {\n                media {\n                title {\n                    native\n                }\n                }\n                mediaRecommendation {\n                coverImage {\n                    color\n                    extraLarge\n                    large\n                    medium\n                }\n                title {\n                    native\n                }\n                siteUrl\n                description\n                episodes\n                genres\n                averageScore\n                popularity\n                favourites\n                startDate {\n                    year\n                    month\n                    day\n                }\n                }\n            }\n            }\n        }\n        }\n    }\n  \n  \n  ";
         this.query = query;
     }
     AniList.prototype.getReccomendations = function (limit) {
         return __awaiter(this, void 0, void 0, function () {
-            var res, id, basedOfTitle, recommendations, reccs;
+            var res, id, recommendations, reccs;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, utils_1.sendGraphQL(this.baseURL, this.searchQuery, {
-                            txt: this.query.slice(1, this.query.length),
-                        })];
+                    case 0: return [4 /*yield*/, this.getInfoOfAnime()];
                     case 1:
                         res = _a.sent();
-                        id = res.data.data.Media.id;
-                        basedOfTitle = res.data.data.Media.title.native;
+                        id = res.id;
                         return [4 /*yield*/, utils_1.sendGraphQL(this.baseURL, this.reccQuery, {
                                 id: id,
                             })];
@@ -63,6 +60,21 @@ var AniList = /** @class */ (function () {
                         recommendations = _a.sent();
                         reccs = (recommendations.data.data.Media.recommendations.edges);
                         return [2 /*return*/, limit > reccs.length ? reccs : reccs.slice(0, limit)];
+                }
+            });
+        });
+    };
+    AniList.prototype.getInfoOfAnime = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, utils_1.sendGraphQL(this.baseURL, this.searchQuery, {
+                            txt: this.query.slice(1, this.query.length),
+                        })];
+                    case 1:
+                        res = _a.sent();
+                        return [2 /*return*/, res.data.data.Media];
                 }
             });
         });
