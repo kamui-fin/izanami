@@ -70,7 +70,7 @@ exports.getEmbed = function (media) {
         url: media.siteUrl,
         color: media.coverImage.color,
         footer: {
-            text: "Started " + media.startDate.month + " " + media.startDate.day + ", " + media.startDate.year,
+            text: "Started " + media.startDate.month + "/" + media.startDate.day + "/" + media.startDate.year,
         },
         image: {
             url: media.coverImage.large,
@@ -123,6 +123,9 @@ exports.splitCommand = function (text) {
     return splitted;
 };
 exports.checkValidCommand = function (cmd, prefix, commandType) {
+    if (!commandType) {
+        return false;
+    }
     var splittedCommand = exports.splitCommand(cmd);
     var isAnilistCmd = splittedCommand[0].startsWith(prefix + "anilist");
     var isCorrectCmdType = splittedCommand[1] === commandType.name;

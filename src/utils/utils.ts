@@ -30,7 +30,7 @@ export const getEmbed = (media: MediaRecommendation): Object => {
     url: media.siteUrl,
     color: media.coverImage.color,
     footer: {
-      text: `Started ${media.startDate.month} ${media.startDate.day}, ${media.startDate.year}`,
+      text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
     },
     image: {
       url: media.coverImage.large,
@@ -42,7 +42,7 @@ export const getEmbed = (media: MediaRecommendation): Object => {
       },
       {
         name: 'Episodes',
-        value: media.episodes.toLocaleString(),
+        value: media.episodes ? media.episodes.toLocaleString() : 'Unknown',
       },
       {
         name: 'Favorites',
@@ -99,3 +99,11 @@ export const checkValidCommand = (
   const validParams = commandType.correctParams();
   return validParams && isCorrectCmdType && isAnilistCmd;
 };
+
+//thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+export function shuffleArray(array: Array<any>) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}

@@ -50,15 +50,18 @@ var AniRecommender = /** @class */ (function () {
     AniRecommender.prototype.correctParams = function () {
         var fromAnime = this.params[0];
         var limitRecs = this.params[1];
-        console.log(fromAnime, limitRecs, parseInt(limitRecs));
-        if (fromAnime && parseInt(limitRecs) !== NaN) {
+        if (fromAnime &&
+            limitRecs &&
+            parseInt(limitRecs) !== NaN &&
+            parseInt(limitRecs) < 5 &&
+            parseInt(limitRecs) > 0) {
             return true;
         }
         return false;
     };
     AniRecommender.prototype.run = function (msg) {
         return __awaiter(this, void 0, void 0, function () {
-            var anilist, reccs, onerec, onemediarecc, embed;
+            var anilist, reccs, _i, reccs_1, recc, onerec, onemediarecc, embed;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -66,11 +69,14 @@ var AniRecommender = /** @class */ (function () {
                         return [4 /*yield*/, anilist.getReccomendations(parseInt(this.params[1]))];
                     case 1:
                         reccs = _a.sent();
-                        onerec = reccs[0];
-                        onemediarecc = onerec.node.mediaRecommendation;
-                        onemediarecc.description = utils_1.fixDesc(onemediarecc.description, 300);
-                        embed = utils_1.getEmbed(onemediarecc);
-                        msg.channel.send({ embed: embed });
+                        for (_i = 0, reccs_1 = reccs; _i < reccs_1.length; _i++) {
+                            recc = reccs_1[_i];
+                            onerec = recc;
+                            onemediarecc = onerec.node.mediaRecommendation;
+                            onemediarecc.description = utils_1.fixDesc(onemediarecc.description, 300);
+                            embed = utils_1.getEmbed(onemediarecc);
+                            msg.channel.send({ embed: embed });
+                        }
                         return [2 /*return*/];
                 }
             });

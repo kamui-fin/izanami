@@ -1,5 +1,6 @@
 import Discord from 'discord.js';
 import AniRecommender from './commands/recommend';
+import AniHelp from './commands/help';
 import { checkValidCommand, splitCommand } from './utils/utils';
 import { Command } from './types/command';
 
@@ -12,17 +13,23 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg: Discord.Message) => {
-  if (msg.author.bot !== true) {
+  if (msg.author.bot !== true && msg.content.startsWith('!anilist')) {
     const msgText = msg.content;
     const params = splitCommand(msgText);
-    console.log(params);
-
+    const slicedParams = params.slice(2);
     const x: { [key: string]: Command } = {
-      recommend: new AniRecommender(params.slice(2)),
+      recommend: new AniRecommender(slicedParams),
+      help: new AniHelp(slicedParams),
     };
     const chosenCmd = x[params[1]];
     if (!checkValidCommand(msgText, '!', chosenCmd)) {
-      msg.channel.send('Invalid command');
+      let cmdErrorEmbed = new Discord.MessageEmbed()
+        .setColor('#ed1f1f')
+        .setTitle('Invalid command')
+        .setDescription(
+          'Try `!anilist help` for instructions on how to use this bot'
+        );
+      msg.channel.send(cmdErrorEmbed);
       return;
     }
     chosenCmd.run(msg);
