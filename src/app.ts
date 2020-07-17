@@ -15,11 +15,13 @@ client.on('message', (msg: Discord.Message) => {
   if (msg.author.bot !== true) {
     const msgText = msg.content;
     const params = splitCommand(msgText);
+    console.log(params);
+
     const x: { [key: string]: Command } = {
-      recommend: new AniRecommender(params),
+      recommend: new AniRecommender(params.slice(2)),
     };
     const chosenCmd = x[params[1]];
-    if (!chosenCmd.correctParams()) {
+    if (!checkValidCommand(msgText, '!', chosenCmd)) {
       msg.channel.send('Invalid command');
       return;
     }

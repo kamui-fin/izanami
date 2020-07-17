@@ -90,9 +90,12 @@ export const checkValidCommand = (
   prefix: string,
   commandType: Command
 ): boolean => {
+  if (!commandType) {
+    return false;
+  }
   const splittedCommand = splitCommand(cmd);
   const isAnilistCmd = splittedCommand[0].startsWith(`${prefix}anilist`);
   const isCorrectCmdType = splittedCommand[1] === commandType.name;
-  const validParams = commandType.correctParams(splittedCommand.slice(2));
+  const validParams = commandType.correctParams();
   return validParams && isCorrectCmdType && isAnilistCmd;
 };

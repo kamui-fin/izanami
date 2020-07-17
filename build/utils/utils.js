@@ -111,7 +111,7 @@ exports.getEmbed = function (media) {
 exports.fixDesc = function (text, limitChars) {
     var desc = text.replace(/<br>/g, '');
     if (desc.length > limitChars) {
-        desc = desc.slice(0, limitChars) + '...';
+        desc = desc.slice(0, limitChars) + "...";
     }
     return desc;
 };
@@ -126,7 +126,7 @@ exports.checkValidCommand = function (cmd, prefix, commandType) {
     var splittedCommand = exports.splitCommand(cmd);
     var isAnilistCmd = splittedCommand[0].startsWith(prefix + "anilist");
     var isCorrectCmdType = splittedCommand[1] === commandType.name;
-    var validParams = commandType.correctParams(splittedCommand.slice(2));
+    var validParams = commandType.correctParams();
     return validParams && isCorrectCmdType && isAnilistCmd;
 };
 //# sourceMappingURL=utils.js.map

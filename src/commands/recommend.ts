@@ -20,7 +20,8 @@ class AniRecommender implements Command {
   correctParams(): boolean {
     const fromAnime = this.params[0];
     const limitRecs = this.params[1];
-    if (fromAnime && parseInt(limitRecs) !== NaN) {
+
+    if (fromAnime && limitRecs && parseInt(limitRecs) !== NaN) {
       return true;
     }
     return false;

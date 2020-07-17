@@ -50,6 +50,7 @@ var AniRecommender = /** @class */ (function () {
     AniRecommender.prototype.correctParams = function () {
         var fromAnime = this.params[0];
         var limitRecs = this.params[1];
+        console.log(fromAnime, limitRecs, parseInt(limitRecs));
         if (fromAnime && parseInt(limitRecs) !== NaN) {
             return true;
         }
