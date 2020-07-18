@@ -1,13 +1,17 @@
-import axios from 'axios';
+/* eslint-disable radix */
+import { Role } from 'discord.js';
+import axios, { AxiosResponse } from 'axios';
 import { MediaRecommendation } from '../types/anime.d';
 import { Command } from '../types/command.d';
+import { FinishInfo } from '../types/kotoba.d';
+import KotobaListener from '../kotoba/kotobaListener';
 
 export const sendGraphQL = async (
   baseUrl: string,
   query: string,
   variables: Record<string, unknown>
 ) => {
-  const res: any = await axios({
+  const res: AxiosResponse<any> = await axios({
     url: baseUrl,
     method: 'POST',
     headers: {
@@ -101,6 +105,30 @@ export const checkValidCommand = (
   console.log(splittedCommand, isCorrectCmdType, validParams);
 
   return validParams && isCorrectCmdType;
+};
+
+export const decideRoles = (
+  finishInfo: FinishInfo,
+  quizRole: Role | undefined,
+  jlptRoleTheyHad: Role | undefined,
+  kotoListener: KotobaListener
+): void => {
+  const { user } = finishInfo.player;
+  if (jlptRoleTheyHad) {
+    if (
+      Number.parseInt(quizRole.name.charAt(1)) <
+      Number.parseInt(jlptRoleTheyHad.name.charAt(1))
+    ) {
+      // remove old and give them the new role
+      user.roles.remove(jlptRoleTheyHad);
+      user.roles.add(quizRole);
+    }
+  } else {
+    user.roles.add(quizRole);
+    if (finishInfo.player.justJoined) {
+      user.roles.remove(kotoListener.getUnverifiedRole());
+    }
+  }
 };
 
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
