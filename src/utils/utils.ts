@@ -66,11 +66,6 @@ export const getEmbed = (
         value: media.popularity.toLocaleString(),
         inline: true,
       },
-      {
-        name: 'Favorites',
-        value: media.favourites.toLocaleString(),
-        inline: true,
-      },
     ],
   };
   return embed;

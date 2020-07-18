@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 import Discord from 'discord.js';
 import AniRecommender from './commands/recommend';
 import AniHelp from './commands/help';
@@ -54,22 +55,61 @@ client.on('message', async (msg: Discord.Message) => {
         const titleRes = title.match(titlere);
         const descRes = desc.match(descre);
         if (titleRes && descRes) {
-          const flds = msg.embeds[0].fields[1];
+          const flds = msg.embeds[0].fields.find((el) =>
+            el.name.startsWith('Unanswered')
+          );
           let numofunansweredQuestions;
-          if (typeof flds === undefined) {
+          if (!flds) {
             numofunansweredQuestions = 0;
           } else {
             numofunansweredQuestions = flds.value.split('\n').length;
           }
+
           const answeredRight = 10 - numofunansweredQuestions;
-          if (titleRes[1] && descRes[1] && answeredRight >= 7) {
+          if (titleRes[1] && descRes[1]) {
             // give roles here
-            const nrole = await msg.guild?.roles.cache.find(
-              (rl) => rl.name === titleRes[1]
-            );
-            if (nrole) {
-              const userWhoPassed = msg.guild?.members.cache.get(descRes[1]);
-              await userWhoPassed?.roles.add(nrole);
+            const userWhoPassed = msg.guild?.members.cache.get(descRes[1]);
+            const rolesTheyHad = userWhoPassed.roles.cache;
+
+            let userJustJoined = rolesTheyHad
+              .array()
+              .find((e) => e.name === 'Unverified')
+              ? true
+              : false;
+            let needToGetRight = userJustJoined ? 7 : 10;
+
+            if (answeredRight >= needToGetRight) {
+              //means they passed
+              const jlptRoleTheyHad = rolesTheyHad?.find(
+                (e) =>
+                  e.name.charAt(0) === 'N' &&
+                  e.name.length === 2 &&
+                  // eslint-disable-next-line radix
+                  !Number.isNaN(parseInt(e.name.charAt(1)))
+              );
+              const nrole = await msg.guild?.roles.cache.find(
+                (rl) => rl.name === titleRes[1]
+              );
+
+              if (jlptRoleTheyHad) {
+                // choose the role that is better
+                if (
+                  Number.parseInt(nrole.name.charAt(1)) <
+                  Number.parseInt(jlptRoleTheyHad.name.charAt(1))
+                ) {
+                  //remove old and give them the new role
+                  userWhoPassed.roles.remove(jlptRoleTheyHad);
+                  userWhoPassed.roles.add(nrole);
+                }
+              } else {
+                userWhoPassed.roles.add(nrole);
+                if (userJustJoined) {
+                  let unverifiedRole = rolesTheyHad
+                    .array()
+                    .find((e) => e.name === 'Unverified');
+                  userWhoPassed.roles.remove(unverifiedRole);
+                }
+              }
             }
           }
         }
@@ -79,7 +119,7 @@ client.on('message', async (msg: Discord.Message) => {
 });
 
 client.on('guildMemberAdd', (member) => {
-  const txtChannel: any = member.guild.channels.cache.get('733746552119754853');
+  const txtChannel: any = member.guild.channels.cache.get('733500570421297253');
   if (member.user) {
     const welcomeEmbed = new Discord.MessageEmbed()
       .setTitle(
@@ -93,4 +133,4 @@ client.on('guildMemberAdd', (member) => {
   }
 });
 
-client.login(process.env.TOKEN);
+client.login(process.env.BOT_TOKEN);
