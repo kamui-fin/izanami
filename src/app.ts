@@ -1,5 +1,5 @@
 /* eslint-disable radix */
-import Discord from 'discord.js';
+import Discord, { MessageEmbed, TextChannel, Channel } from 'discord.js';
 import AniRecommender from './commands/recommend';
 import AniHelp from './commands/help';
 import AniInfo from './commands/info';
@@ -13,6 +13,24 @@ const client = new Discord.Client();
 
 client.on('ready', () => {
   // console.log(`Logged in !`);
+  const ourServer = client.guilds.cache
+    .array()
+    .find((e) => e.id === '732631790191378453');
+
+  const general: Channel = ourServer.channels.cache
+    .array()
+    .find((e) => e.id === '732631790841495685');
+
+  if (general instanceof TextChannel) {
+    setInterval(() => {
+      const remindEmbed: MessageEmbed = new MessageEmbed()
+        .setTitle('Time to boost!')
+        .setDescription(`Type \`!d bump\` to keep our server up in rankings`)
+        .setColor('#42f572');
+
+      general.send({ embed: remindEmbed });
+    }, 7200000);
+  }
 });
 
 client.on('message', async (msg: Discord.Message) => {
