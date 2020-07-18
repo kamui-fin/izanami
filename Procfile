@@ -1,1 +1,1 @@
-worker: yarn start
+worker: node build/app.js
