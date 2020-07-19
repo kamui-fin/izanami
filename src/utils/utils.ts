@@ -1,5 +1,5 @@
 /* eslint-disable radix */
-import { Role } from 'discord.js';
+import { Role, Channel, Client, MessageEmbed, TextChannel } from 'discord.js';
 import axios, { AxiosResponse } from 'axios';
 import { MediaRecommendation } from '../types/anime.d';
 import { Command } from '../types/command.d';
@@ -130,6 +130,23 @@ export const decideRoles = (
       user.roles.remove(kotoListener.getUnverifiedRole());
       user.roles.add(japaneseRole);
     }
+  }
+};
+
+export const boostReminder = (client: Client): void => {
+  const ourServer = client.guilds.cache.get('732631790191378453');
+
+  const general: Channel = ourServer.channels.cache.get('732631790841495685');
+
+  if (general instanceof TextChannel) {
+    setTimeout(() => {
+      const remindEmbed: MessageEmbed = new MessageEmbed()
+        .setTitle('Time to boost!')
+        .setDescription(`Type \`!d bump\` to keep our server up in rankings`)
+        .setColor('#42f572');
+
+      general.send({ embed: remindEmbed });
+    }, 7200000);
   }
 };
 
