@@ -5,6 +5,7 @@ import { MediaRecommendation } from '../types/anime.d';
 import { Command } from '../types/command.d';
 import { FinishInfo } from '../types/kotoba.d';
 import KotobaListener from '../kotoba/kotobaListener';
+import welcome from './welcome';
 
 export const sendGraphQL = async (
   baseUrl: string,
@@ -129,6 +130,11 @@ export const decideRoles = (
     if (finishInfo.player.justJoined) {
       user.roles.remove(kotoListener.getUnverifiedRole());
       user.roles.add(japaneseRole);
+      welcome(
+        user,
+        '732631790841495685',
+        "We're glad to have you! Make sure to read #welcome-and-rules and assign your role in #role-info"
+      );
     }
   }
 };
