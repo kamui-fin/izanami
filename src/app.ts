@@ -87,6 +87,12 @@ client.on('message', async (msg: Discord.Message) => {
   }
 });
 
-client.on('guildMemberAdd', welcome);
+client.on('guildMemberAdd', (member) => {
+  welcome(
+    member,
+    '733500570421297253',
+    'To join the server, type `k!quiz n5` and get a 7/10 (or better) on the N5 quiz. Good luck!'
+  );
+});
 
 client.login(process.env.BOT_TOKEN);
