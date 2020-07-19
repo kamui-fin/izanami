@@ -111,7 +111,8 @@ export const decideRoles = (
   finishInfo: FinishInfo,
   quizRole: Role | undefined,
   jlptRoleTheyHad: Role | undefined,
-  kotoListener: KotobaListener
+  kotoListener: KotobaListener,
+  japaneseRole: Role | undefined
 ): void => {
   const { user } = finishInfo.player;
   if (jlptRoleTheyHad) {
@@ -127,6 +128,7 @@ export const decideRoles = (
     user.roles.add(quizRole);
     if (finishInfo.player.justJoined) {
       user.roles.remove(kotoListener.getUnverifiedRole());
+      user.roles.add(japaneseRole);
     }
   }
 };

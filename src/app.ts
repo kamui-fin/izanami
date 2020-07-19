@@ -80,8 +80,14 @@ client.on('message', async (msg: Discord.Message) => {
 
         const quizRole = kotoListener.getQuizRole();
         console.log(quizRole);
-
-        decideRoles(finishInfo, quizRole, jlptRoleTheyHad, kotoListener);
+        const japaneseRole = msg.guild.roles.cache.get('732644505248989215');
+        decideRoles(
+          finishInfo,
+          quizRole,
+          jlptRoleTheyHad,
+          kotoListener,
+          japaneseRole
+        );
       }
     }
   }
