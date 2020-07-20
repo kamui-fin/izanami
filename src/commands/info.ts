@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command } from '../types/command.d';
-import { getEmbed, fixDesc } from '../utils/utils';
+import { getEmbed, fixDesc, notFoundEmbed } from '../utils/utils';
 import AniList from '../utils/anilist';
 
 class AniInfo implements Command {
@@ -23,10 +23,15 @@ class AniInfo implements Command {
 
   async run(msg: Message): Promise<void> {
     const anilist: AniList = new AniList(this.stringParams[0]);
-    const res = await anilist.getInfoOfAnime();
-    res.description = fixDesc(res.description, 300);
-    const embed = getEmbed(res);
-    msg.channel.send({ embed });
+    try {
+      const res = await anilist.getInfoOfAnime();
+      res.description = fixDesc(res.description, 300);
+      const embed = getEmbed(res);
+
+      msg.channel.send({ embed });
+    } catch (error) {
+      notFoundEmbed(msg, 'Anime');
+    }
   }
 }
 
