@@ -12,8 +12,11 @@ class AniEvent implements Command {
 
   stringParams: string[];
 
-  constructor(prms: string[]) {
+  client: Client;
+
+  constructor(prms: string[], client: Client) {
     this.stringParams = prms;
+    this.client = client;
   }
 
   correctParams(): boolean {
@@ -22,7 +25,6 @@ class AniEvent implements Command {
   }
 
   async run(msg: Message): Promise<void> {
-    const client = new Client();
     const anilist: AniList = new AniList(this.stringParams[0]);
     const episodesToStream = this.stringParams[1];
     const mmddyyyy = this.stringParams[2];
@@ -34,7 +36,7 @@ class AniEvent implements Command {
     msg.channel.send({ embed });
 
     embed.title = 'Event Started';
-    eventStarter(client, embed, date);
+    eventStarter(this.client, embed, date);
   }
 }
 
