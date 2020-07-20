@@ -25,7 +25,7 @@ class AniInfo implements Command {
     const anilist: AniList = new AniList(this.stringParams[0]);
     const res = await anilist.getInfoOfAnime();
     res.description = fixDesc(res.description, 300);
-    const embed = getEmbed(res);
+    const embed = getEmbed(res, false, '', '');
 
     msg.channel.send({ embed });
   }

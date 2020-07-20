@@ -61,7 +61,7 @@ class AniRecommender implements Command {
     reccs.forEach((recc: TopLevel) => {
       const modifyedRecc: MediaRecommendation = recc.node.mediaRecommendation;
       modifyedRecc.description = fixDesc(modifyedRecc.description, 300);
-      const embed = getEmbed(modifyedRecc);
+      const embed = getEmbed(modifyedRecc, false, '', '');
       if (modifyedRecc.averageScore / 10 >= this.starFilter) {
         msg.channel.send({ embed });
       }
