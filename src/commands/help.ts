@@ -24,6 +24,11 @@ class AniHelp implements Command {
           'Shows information about an anime. Be sure to wrap the title around quotes',
       },
       {
+        name: '`event {title} {episodes_streamed} {stream_date} {time}`',
+        value:
+          'Creates event embed for show being hosted. Provide range of episodes, use mm/dd/yyyy for date, and UTC time for time',
+      },
+      {
         name: '`help`',
         value: 'Shows this help message',
       }
