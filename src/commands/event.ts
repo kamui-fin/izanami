@@ -18,8 +18,6 @@ class AniEvent implements Command {
 
   correctParams(): boolean {
     const fromAnime = this.stringParams[0];
-    const episodesToStream = this.stringParams[1];
-    const timeOfEvent = this.stringParams[2];
     return typeof fromAnime !== undefined;
   }
 
@@ -27,7 +25,12 @@ class AniEvent implements Command {
     const anilist: AniList = new AniList(this.stringParams[0]);
     const res = await anilist.getInfoOfAnime();
     res.description = fixDesc(res.description, 300);
-    const embed = getEmbed(res, true, this.stringParams[1], this.stringParams[2]);
+    const embed = getEmbed(
+      res,
+      true,
+      this.stringParams[1],
+      this.stringParams[2]
+    );
 
     msg.channel.send({ embed });
   }

@@ -37,13 +37,13 @@ export const getEmbed = (
   media: MediaRecommendation,
   isEvent: boolean,
   eventEpisodes: string,
-  timeOfEvent: string,
+  timeOfEvent: string
 ): Record<string, unknown> => {
   const embed = {
     title: media.title.native,
     description: media.description,
     url: media.siteUrl,
-    ...(!!timeOfEvent && {eventTime: timeOfEvent}),
+    ...(!!timeOfEvent && { eventTime: timeOfEvent }),
     color: media.coverImage.color,
     footer: {
       text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
@@ -58,8 +58,9 @@ export const getEmbed = (
       },
       {
         name: 'Episodes',
-        value: !!eventEpisodes ? eventEpisodes : 
-          media.episodes ? media.episodes.toLocaleString() : 'Unknown',
+        value:
+          eventEpisodes ||
+          (media.episodes ? media.episodes.toLocaleString() : 'Unknown'),
       },
       !isEvent && [
         {
@@ -77,7 +78,7 @@ export const getEmbed = (
           value: media.popularity.toLocaleString(),
           inline: true,
         },
-      ]
+      ],
     ],
   };
   return embed;
