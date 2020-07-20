@@ -1,6 +1,6 @@
-import { Message } from 'discord.js';
+import { Client, Message } from 'discord.js';
 import { Command } from '../types/command.d';
-import { getEmbed, fixDesc } from '../utils/utils';
+import { getEmbed, fixDesc, eventStarter } from '../utils/utils';
 import AniList from '../utils/anilist';
 
 class AniEvent implements Command {
@@ -22,17 +22,19 @@ class AniEvent implements Command {
   }
 
   async run(msg: Message) {
+    const client = new Client();
     const anilist: AniList = new AniList(this.stringParams[0]);
+    const episodesToStream = this.stringParams[1];
+    const mmddyyyy = this.stringParams[2];
+    const time = this.stringParams[3];
+    const date = new Date(`${`${mmddyyyy} ${time}`}`);
     const res = await anilist.getInfoOfAnime();
     res.description = fixDesc(res.description, 300);
-    const embed = getEmbed(
-      res,
-      true,
-      this.stringParams[1],
-      this.stringParams[2]
-    );
-
+    const embed = getEmbed(res, true, episodesToStream, mmddyyyy, time);
     msg.channel.send({ embed });
+
+    embed.title = 'Event Started';
+    eventStarter(client, embed, date);
   }
 }
 
