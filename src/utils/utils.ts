@@ -80,14 +80,15 @@ export const getEventEmbed = (
   media: MediaRecommendation,
   eventEpisodes: string,
   date: string,
-  timeOfEvent: string
+  timeOfEvent: string,
+  userID: string
 ): Record<string, unknown> => {
   const embed = {
-    title: 'Event Scheduled',
+    title: `<@&732668352022970458> Event Scheduled`,
     color: media.coverImage.color,
-    // footer: {
-    //   text: 'Hosted by Luck',
-    // },
+    footer: {
+      text: `Hosted by <@${userID}>`,
+    },
     image: {
       url: media.coverImage.large,
     },
@@ -201,19 +202,15 @@ export const boostReminder = (client: Client): void => {
 };
 
 export const eventStarter = (
-  client: Client,
   embed: Record<string, unknown>,
-  date: Date
+  date: Date,
+  channel: Channel | undefined
 ): void => {
-  const ourServer = client.guilds.cache.get('732631790191378453');
-  const eventChannel: Channel | undefined = ourServer?.channels.cache.get(
-    '732633915667251302'
-  );
   const etaMS = date.getTime() - Date.now();
 
-  if (eventChannel instanceof TextChannel) {
+  if (channel instanceof TextChannel) {
     setTimeout(() => {
-      eventChannel.send({ embed });
+      channel.send({ embed });
     }, etaMS);
   }
 };
