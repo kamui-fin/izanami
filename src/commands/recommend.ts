@@ -2,7 +2,7 @@
 import { Message } from 'discord.js';
 import { Command } from '../types/command.d';
 import { MediaRecommendation, TopLevel } from '../types/anime.d';
-import { getEmbed, fixDesc, shuffleArray } from '../utils/utils';
+import { getEmbed, fixDesc, shuffleArray, notFoundEmbed } from '../utils/utils';
 import AniList from '../utils/anilist';
 
 class AniRecommender implements Command {
@@ -55,17 +55,22 @@ class AniRecommender implements Command {
 
   async run(msg: Message): Promise<void> {
     const anilist: AniList = new AniList(this.stringParams[0]);
-    const reccs = await anilist.getReccomendations(this.limit);
 
-    shuffleArray(reccs);
-    reccs.forEach((recc: TopLevel) => {
-      const modifyedRecc: MediaRecommendation = recc.node.mediaRecommendation;
-      modifyedRecc.description = fixDesc(modifyedRecc.description, 300);
-      const embed = getEmbed(modifyedRecc);
-      if (modifyedRecc.averageScore / 10 >= this.starFilter) {
-        msg.channel.send({ embed });
-      }
-    });
+    try {
+      const reccs = await anilist.getReccomendations(this.limit);
+
+      shuffleArray(reccs);
+      reccs.forEach((recc: TopLevel) => {
+        const modifyedRecc: MediaRecommendation = recc.node.mediaRecommendation;
+        modifyedRecc.description = fixDesc(modifyedRecc.description, 300);
+        const embed = getEmbed(modifyedRecc);
+        if (modifyedRecc.averageScore / 10 >= this.starFilter) {
+          msg.channel.send({ embed });
+        }
+      });
+    } catch (error) {
+      notFoundEmbed(msg, 'Recommendation');
+    }
   }
 }
 
