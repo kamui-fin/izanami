@@ -42,7 +42,6 @@ export const getEmbed = (
   const embed = {
     title: media.title.native,
     url: media.siteUrl,
-    ...(timeOfEvent != '' ? { eventTime: timeOfEvent } : null),
     color: media.coverImage.color,
     ...(!isEvent ? {
       description: media.description,
@@ -54,6 +53,12 @@ export const getEmbed = (
       url: media.coverImage.large,
     },
     fields: [
+      {...
+        (!!timeOfEvent && {
+          name: "Event Time",
+          value: timeOfEvent 
+        })
+      },
       {
         name: 'Episodes',
         value:
