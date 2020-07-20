@@ -43,19 +43,17 @@ export const getEmbed = (
     title: media.title.native,
     description: media.description,
     url: media.siteUrl,
-    ...(!!timeOfEvent && { eventTime: timeOfEvent }),
+    ...(!!timeOfEvent ? { eventTime: timeOfEvent } : null),
     color: media.coverImage.color,
-    footer: {
-      text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
-    },
+    ...(!isEvent ? {
+      footer: {
+        text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
+      }
+    } : null),
     image: {
       url: media.coverImage.large,
     },
     fields: [
-      {
-        name: 'Genres',
-        value: media.genres.join(', '),
-      },
       {
         name: 'Episodes',
         value:
@@ -63,6 +61,10 @@ export const getEmbed = (
           (media.episodes ? media.episodes.toLocaleString() : 'Unknown'),
       },
       !isEvent && [
+        {
+          name: 'Genres',
+          value: media.genres.join(', '),
+        },
         {
           name: 'Favorites',
           value: media.favourites.toLocaleString(),
