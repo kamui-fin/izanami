@@ -43,7 +43,9 @@ export const getEmbed = (
   const embed = {
     title: 'Event Scheduled',
     url: '',
-    description: null,
+    ...(!isEvent ? {
+      description: media.description,
+    } : null),
     color: media.coverImage.color,
     footer: {
       text: 'Hosted by Luck',
@@ -52,10 +54,16 @@ export const getEmbed = (
       url: media.coverImage.large,
     },
     fields: [
-      !!timeOfEvent && {
+      !!timeOfEvent && [
+        {
+          name: 'Show',
+          value: media.title.native,
+          },
+        {
         name: 'Event Time',
         value: `${`${date} ${timeOfEvent}`} UTC`,
-      },
+        },
+      ],
       {
         name: 'Episodes',
         value:
@@ -86,11 +94,10 @@ export const getEmbed = (
         inline: true,
       },
     ];
-    embed.fields.concat(infoFields);
     embed.title = media.title.native;
     embed.url = media.siteUrl;
-    embed.description = media.description;
     embed.footer.text = `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`;
+    embed.fields.concat(infoFields);
   }
   return embed;
 };
