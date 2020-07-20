@@ -3,6 +3,7 @@ import Discord from 'discord.js';
 import AniRecommender from './commands/recommend';
 import AniHelp from './commands/help';
 import AniInfo from './commands/info';
+import AniEvent from './commands/event';
 import KotobaListener from './kotoba/kotobaListener';
 import {
   checkValidCommand,
@@ -29,6 +30,7 @@ client.on('message', async (msg: Discord.Message) => {
     const x: { [key: string]: Command } = {
       'recommend-anime': new AniRecommender(slicedParams),
       'info-anime': new AniInfo(slicedParams),
+      'event': new AniEvent(slicedParams),
       help: new AniHelp(slicedParams),
     };
 
