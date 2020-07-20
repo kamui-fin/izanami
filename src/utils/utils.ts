@@ -34,51 +34,27 @@ const fixAvgScore = (score: number): string => {
 };
 
 export const getEmbed = (
-  media: MediaRecommendation,
-  isEvent: boolean,
-  eventEpisodes: string,
-  date: string,
-  timeOfEvent: string
+  media: MediaRecommendation
 ): Record<string, unknown> => {
   const embed = {
-    title: 'Event Scheduled',
-    url: '',
-    ...(!isEvent
-      ? {
-          description: media.description,
-        }
-      : null),
+    title: media.title.native,
+    description: media.description,
+    url: media.siteUrl,
     color: media.coverImage.color,
     footer: {
-      text: 'Hosted by Luck',
+      text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
     },
     image: {
       url: media.coverImage.large,
     },
     fields: [
-      !!timeOfEvent && [
-        {
-          name: 'Show',
-          value: media.title.native,
-        },
-        {
-          name: 'Event Time',
-          value: `${`${date} ${timeOfEvent}`} UTC`,
-        },
-      ],
-      {
-        name: 'Episodes',
-        value:
-          eventEpisodes.slice(1, -1) ||
-          (media.episodes ? media.episodes.toLocaleString() : 'Unknown'),
-      },
-    ],
-  };
-  if (!isEvent) {
-    const infoFields = [
       {
         name: 'Genres',
         value: media.genres.join(', '),
+      },
+      {
+        name: 'Episodes',
+        value: media.episodes ? media.episodes.toLocaleString() : 'Unknown',
       },
       {
         name: 'Favorites',
@@ -95,12 +71,41 @@ export const getEmbed = (
         value: media.popularity.toLocaleString(),
         inline: true,
       },
-    ];
-    embed.title = media.title.native;
-    embed.url = media.siteUrl;
-    embed.footer.text = `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`;
-    embed.fields.concat(infoFields);
-  }
+    ],
+  };
+  return embed;
+};
+
+export const getEventEmbed = (
+  media: MediaRecommendation,
+  eventEpisodes: string,
+  date: string,
+  timeOfEvent: string
+): Record<string, unknown> => {
+  const embed = {
+    title: 'Event Scheduled',
+    color: media.coverImage.color,
+    // footer: {
+    //   text: 'Hosted by Luck',
+    // },
+    image: {
+      url: media.coverImage.large,
+    },
+    fields: [
+      {
+        name: 'Show',
+        value: media.title.native,
+      },
+      {
+        name: 'Event Time',
+        value: `${`${date} ${timeOfEvent}`} UTC`,
+      },
+      {
+        name: 'Episodes',
+        value: eventEpisodes.slice(1, -1),
+      },
+    ],
+  };
   return embed;
 };
 
