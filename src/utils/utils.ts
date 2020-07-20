@@ -53,11 +53,9 @@ export const getEmbed = (
       url: media.coverImage.large,
     },
     fields: [
-      {...
-        (!!timeOfEvent && {
-          name: "Event Time",
-          value: timeOfEvent 
-        })
+      !!timeOfEvent && {
+        name: "Event Time",
+        value: timeOfEvent 
       },
       {
         name: 'Episodes',
@@ -65,7 +63,7 @@ export const getEmbed = (
           eventEpisodes ||
           (media.episodes ? media.episodes.toLocaleString() : 'Unknown'),
       },
-      !isEvent && [
+      isEvent == false ? [
         {
           name: 'Genres',
           value: media.genres.join(', '),
@@ -85,7 +83,7 @@ export const getEmbed = (
           value: media.popularity.toLocaleString(),
           inline: true,
         },
-      ],
+      ] : null,
     ],
   };
   return embed;
