@@ -4,6 +4,7 @@ import { HowLongToBeatService, HowLongToBeatEntry } from 'howlongtobeat';
 import { MessageEmbed, Message } from 'discord.js';
 import { Command } from '../types/command.d';
 import { notFoundEmbed } from '../utils/utils';
+
 class GameDuration implements Command {
   name = 'duration-game';
 
