@@ -41,11 +41,11 @@ export const getEmbed = (
 ): Record<string, unknown> => {
   const embed = {
     title: media.title.native,
-    description: media.description,
     url: media.siteUrl,
-    ...(!!timeOfEvent ? { eventTime: timeOfEvent } : null),
+    ...(timeOfEvent != '' ? { eventTime: timeOfEvent } : null),
     color: media.coverImage.color,
     ...(!isEvent ? {
+      description: media.description,
       footer: {
         text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
       }
