@@ -34,12 +34,16 @@ const fixAvgScore = (score: number): string => {
 };
 
 export const getEmbed = (
-  media: MediaRecommendation
+  media: MediaRecommendation,
+  isEvent: boolean,
+  eventEpisodes: string,
+  timeOfEvent: string,
 ): Record<string, unknown> => {
   const embed = {
     title: media.title.native,
     description: media.description,
     url: media.siteUrl,
+    ...(!!timeOfEvent && {eventTime: timeOfEvent}),
     color: media.coverImage.color,
     footer: {
       text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
@@ -54,23 +58,26 @@ export const getEmbed = (
       },
       {
         name: 'Episodes',
-        value: media.episodes ? media.episodes.toLocaleString() : 'Unknown',
+        value: !!eventEpisodes ? eventEpisodes : 
+          media.episodes ? media.episodes.toLocaleString() : 'Unknown',
       },
-      {
-        name: 'Favorites',
-        value: media.favourites.toLocaleString(),
-        inline: true,
-      },
-      {
-        name: 'Average Score',
-        value: fixAvgScore(media.averageScore),
-        inline: true,
-      },
-      {
-        name: 'Popularity',
-        value: media.popularity.toLocaleString(),
-        inline: true,
-      },
+      !isEvent && [
+        {
+          name: 'Favorites',
+          value: media.favourites.toLocaleString(),
+          inline: true,
+        },
+        {
+          name: 'Average Score',
+          value: fixAvgScore(media.averageScore),
+          inline: true,
+        },
+        {
+          name: 'Popularity',
+          value: media.popularity.toLocaleString(),
+          inline: true,
+        },
+      ]
     ],
   };
   return embed;
@@ -133,7 +140,7 @@ export const decideRoles = (
       welcome(
         user,
         '732631790841495685',
-        "We're glad to have you! Make sure to read #welcome-and-rules and assign your role in #role-info"
+        "We're glad to have you! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>"
       );
     }
   }
