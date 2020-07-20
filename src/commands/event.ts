@@ -44,6 +44,7 @@ class AniEvent implements Command {
       msg.author.id
     );
     if (eventChannel instanceof TextChannel) {
+      eventChannel.send('<@&732668352022970458>');
       eventChannel.send({ embed });
     }
     embed.title = 'Event Started';
