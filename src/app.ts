@@ -32,7 +32,7 @@ client.on('message', async (msg: Discord.Message) => {
       const x: { [key: string]: Command } = {
         'recommend-anime': new AniRecommender(slicedParams),
         'info-anime': new AniInfo(slicedParams),
-        event: new AniEvent(slicedParams),
+        event: new AniEvent(slicedParams, client),
         help: new AniHelp(slicedParams),
       };
 
