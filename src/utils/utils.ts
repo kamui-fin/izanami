@@ -84,11 +84,8 @@ export const getEventEmbed = (
   userID: string
 ): Record<string, unknown> => {
   const embed = {
-    title: `<@&732668352022970458> Event Scheduled`,
+    title: `Event Scheduled`,
     color: media.coverImage.color,
-    footer: {
-      text: `Hosted by <@${userID}>`,
-    },
     image: {
       url: media.coverImage.large,
     },
@@ -105,6 +102,14 @@ export const getEventEmbed = (
         name: 'Episodes',
         value: eventEpisodes.slice(1, -1),
       },
+      {
+        name: 'Host',
+        value: `<@${userID}>`,
+      },
+      {
+        name: 'Attendees',
+        value: `<@&732668352022970458>`
+      }
     ],
   };
   return embed;
