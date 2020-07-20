@@ -63,29 +63,32 @@ export const getEmbed = (
           eventEpisodes ||
           (media.episodes ? media.episodes.toLocaleString() : 'Unknown'),
       },
-      isEvent == false ? [
-        {
-          name: 'Genres',
-          value: media.genres.join(', '),
-        },
-        {
-          name: 'Favorites',
-          value: media.favourites.toLocaleString(),
-          inline: true,
-        },
-        {
-          name: 'Average Score',
-          value: fixAvgScore(media.averageScore),
-          inline: true,
-        },
-        {
-          name: 'Popularity',
-          value: media.popularity.toLocaleString(),
-          inline: true,
-        },
-      ] : null,
     ],
   };
+  if(!isEvent) {
+    const infoFields = [
+      {
+        name: 'Genres',
+        value: media.genres.join(', '),
+      },
+      {
+        name: 'Favorites',
+        value: media.favourites.toLocaleString(),
+        inline: true,
+      },
+      {
+        name: 'Average Score',
+        value: fixAvgScore(media.averageScore),
+        inline: true,
+      },
+      {
+        name: 'Popularity',
+        value: media.popularity.toLocaleString(),
+        inline: true,
+      },
+    ];
+    embed.fields.concat(infoFields);
+  }
   return embed;
 };
 
