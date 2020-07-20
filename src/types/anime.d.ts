@@ -27,6 +27,7 @@ export interface MediaRecommendation {
   popularity: number;
   favourites: number;
   startDate: StartDate;
+  eventTime: String;
 }
 
 export interface CoverImage {
