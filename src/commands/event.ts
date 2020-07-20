@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { Client, Message, Channel, TextChannel } from 'discord.js';
 import { Command } from '../types/command.d';
 import { fixDesc, eventStarter, getEventEmbed } from '../utils/utils';
 import AniList from '../utils/anilist';
@@ -25,6 +25,10 @@ class AniEvent implements Command {
   }
 
   async run(msg: Message): Promise<void> {
+    const ourServer = this.client.guilds.cache.get('732631790191378453');
+    const eventChannel: Channel | undefined = ourServer?.channels.cache.get(
+      '732633915667251302'
+    );
     const anilist: AniList = new AniList(this.stringParams[0]);
     const episodesToStream = this.stringParams[1];
     const mmddyyyy = this.stringParams[2];
@@ -32,11 +36,18 @@ class AniEvent implements Command {
     const date = new Date(`${`${mmddyyyy} ${time}`}`);
     const res = await anilist.getInfoOfAnime();
     res.description = fixDesc(res.description, 300);
-    const embed = getEventEmbed(res, episodesToStream, mmddyyyy, time);
-    msg.channel.send({ embed });
-
+    const embed = getEventEmbed(
+      res,
+      episodesToStream,
+      mmddyyyy,
+      time,
+      msg.author.id
+    );
+    if (eventChannel instanceof TextChannel) {
+      eventChannel.send({ embed });
+    }
     embed.title = 'Event Started';
-    eventStarter(this.client, embed, date);
+    eventStarter(embed, date, eventChannel);
   }
 }
 
