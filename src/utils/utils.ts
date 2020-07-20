@@ -1,5 +1,12 @@
 /* eslint-disable radix */
-import { Role, Channel, Client, MessageEmbed, TextChannel } from 'discord.js';
+import {
+  Role,
+  Channel,
+  Client,
+  MessageEmbed,
+  TextChannel,
+  Message,
+} from 'discord.js';
 import axios, { AxiosResponse } from 'axios';
 import { MediaRecommendation } from '../types/anime.d';
 import { Command } from '../types/command.d';
@@ -182,7 +189,8 @@ export const decideRoles = (
         welcome(
           user,
           '732631790841495685',
-          "We're glad to have you! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>"
+          'Welcome to The Japan Zone!',
+          `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>`
         );
       }
     }
@@ -220,6 +228,14 @@ export const eventStarter = (
       channel.send({ embed });
     }, etaMS);
   }
+};
+
+export const notFoundEmbed = (msg: Message, typeMedia: string): void => {
+  const nfEmbed = new MessageEmbed()
+    .setTitle(`${typeMedia} not found`)
+    .setDescription('Please refine your search and try again')
+    .setColor('#f54c4c');
+  msg.channel.send({ embed: nfEmbed });
 };
 
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

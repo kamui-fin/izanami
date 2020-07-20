@@ -14,6 +14,7 @@ import {
 import { Command } from './types/command.d';
 import welcome from './utils/welcome';
 import 'dotenv/config';
+import GameDuration from './commands/durationGame';
 
 const client = new Discord.Client();
 
@@ -33,6 +34,7 @@ client.on('message', async (msg: Discord.Message) => {
         'recommend-anime': new AniRecommender(slicedParams),
         'info-anime': new AniInfo(slicedParams),
         event: new AniEvent(slicedParams, client),
+        'duration-game': new GameDuration(slicedParams),
         help: new AniHelp(slicedParams),
       };
 
@@ -96,7 +98,8 @@ client.on('guildMemberAdd', (member) => {
   welcome(
     member,
     '733500570421297253',
-    'To join the server, type `k!quiz n5` and get a 7/10 (or better) on the N5 quiz. Good luck!'
+    `Welcome to The Japan Zone, ${member.user?.username}!`,
+    `To join the server, type \`k!quiz n5\` and get a 7/10 (or better) on the N5 quiz. Good luck!`
   );
 });
 
