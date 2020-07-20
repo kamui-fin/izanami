@@ -37,35 +37,34 @@ export const getEmbed = (
   media: MediaRecommendation,
   isEvent: boolean,
   eventEpisodes: string,
+  date: string,
   timeOfEvent: string
 ): Record<string, unknown> => {
   const embed = {
-    title: media.title.native,
-    url: media.siteUrl,
+    title: 'Event Scheduled',
+    url: '',
+    description: null,
     color: media.coverImage.color,
-    ...(!isEvent ? {
-      description: media.description,
-      footer: {
-        text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
-      }
-    } : null),
+    footer: {
+      text: 'Hosted by Luck',
+    },
     image: {
       url: media.coverImage.large,
     },
     fields: [
       !!timeOfEvent && {
-        name: "Event Time",
-        value: timeOfEvent 
+        name: 'Event Time',
+        value: `${`${date} ${timeOfEvent}`} UTC`,
       },
       {
         name: 'Episodes',
         value:
-          eventEpisodes ||
+          eventEpisodes.slice(1, -1) ||
           (media.episodes ? media.episodes.toLocaleString() : 'Unknown'),
       },
     ],
   };
-  if(!isEvent) {
+  if (!isEvent) {
     const infoFields = [
       {
         name: 'Genres',
@@ -88,6 +87,10 @@ export const getEmbed = (
       },
     ];
     embed.fields.concat(infoFields);
+    embed.title = media.title.native;
+    embed.url = media.siteUrl;
+    embed.description = media.description;
+    embed.footer.text = `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`;
   }
   return embed;
 };
@@ -169,6 +172,24 @@ export const boostReminder = (client: Client): void => {
 
       general.send({ embed: remindEmbed });
     }, 7200000);
+  }
+};
+
+export const eventStarter = (
+  client: Client,
+  embed: Record<string, unknown>,
+  date: Date
+): void => {
+  const ourServer = client.guilds.cache.get('732631790191378453');
+  const eventChannel: Channel = ourServer.channels.cache.get(
+    '732633915667251302'
+  );
+  const etaMS = date.getTime() - Date.now();
+
+  if (eventChannel instanceof TextChannel) {
+    setTimeout(() => {
+      eventChannel.send({ embed });
+    }, etaMS);
   }
 };
 
