@@ -105,11 +105,13 @@ export const getEventEmbed = (
       {
         name: 'Host',
         value: `<@${userID}>`,
+        inline: true,
       },
       {
         name: 'Attendees',
-        value: `<@&732668352022970458>`
-      }
+        value: `<@&732668352022970458>`,
+        inline: true,
+      },
     ],
   };
   return embed;
