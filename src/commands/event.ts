@@ -21,7 +21,7 @@ class AniEvent implements Command {
     return typeof fromAnime !== undefined;
   }
 
-  async run(msg: Message) {
+  async run(msg: Message): Promise<void> {
     const client = new Client();
     const anilist: AniList = new AniList(this.stringParams[0]);
     const episodesToStream = this.stringParams[1];

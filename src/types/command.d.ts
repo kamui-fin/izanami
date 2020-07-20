@@ -6,5 +6,5 @@ export interface Command {
   description: string;
   stringParams: string[];
   correctParams(): boolean;
-  run(msg: Message): any;
+  run(msg: Message): void;
 }

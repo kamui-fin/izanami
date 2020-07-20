@@ -1,13 +1,26 @@
-import { MessageEmbed } from 'discord.js';
+import {
+  MessageEmbed,
+  GuildMember,
+  PartialGuildMember,
+  Channel,
+  TextChannel,
+} from 'discord.js';
 
-const welcome = (member, channel: string, description: string): void => {
-  const txtChannel: any = member.guild.channels.cache.get(channel);
+const welcome = (
+  member: GuildMember | PartialGuildMember,
+  channel: string,
+  description: string
+): void => {
+  const txtChannel: Channel | undefined = member.guild.channels.cache.get(
+    channel
+  );
   if (member.user) {
     const welcomeEmbed = new MessageEmbed()
       .setTitle(`Welcome to The Japan Zone, ${member.user.username}!`)
       .setDescription(description)
       .setColor('#e0b04a');
-    txtChannel.send({ embed: welcomeEmbed });
+    if (txtChannel instanceof TextChannel)
+      txtChannel.send({ embed: welcomeEmbed });
   }
 };
 export default welcome;

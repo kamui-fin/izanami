@@ -21,7 +21,7 @@ class AniInfo implements Command {
     return typeof fromAnime !== undefined;
   }
 
-  async run(msg: Message) {
+  async run(msg: Message): Promise<void> {
     const anilist: AniList = new AniList(this.stringParams[0]);
     const res = await anilist.getInfoOfAnime();
     res.description = fixDesc(res.description, 300);
