@@ -11,8 +11,8 @@ export const sendGraphQL = async (
   baseUrl: string,
   query: string,
   variables: Record<string, unknown>
-) => {
-  const res: AxiosResponse<any> = await axios({
+): Promise<AxiosResponse> => {
+  const res: AxiosResponse<unknown> = await axios({
     url: baseUrl,
     method: 'POST',
     headers: {
@@ -43,7 +43,7 @@ export const getEmbed = (
   const embed = {
     title: 'Event Scheduled',
     url: '',
-    description: null,
+    description: '',
     color: media.coverImage.color,
     footer: {
       text: 'Hosted by Luck',
@@ -103,8 +103,8 @@ export const fixDesc = (text: string, limitChars: number): string => {
   return desc;
 };
 
-export const splitCommand = (text: string): string[] => {
-  let splitted: any = text.match(/(?:[^\s"]+|"[^"]*")+/g);
+export const splitCommand = (text: string): string[] | null => {
+  let splitted: RegExpMatchArray | null = text.match(/(?:[^\s"]+|"[^"]*")+/g);
   if (splitted) {
     splitted = splitted.filter((el: string) => el.trim() !== '');
   }
@@ -120,11 +120,12 @@ export const checkValidCommand = (
     return false;
   }
   const splittedCommand = splitCommand(cmd);
-  const isCorrectCmdType = splittedCommand[1] === commandType.name;
-  const validParams = commandType.correctParams();
-  console.log(splittedCommand, isCorrectCmdType, validParams);
-
-  return validParams && isCorrectCmdType;
+  if (splittedCommand) {
+    const isCorrectCmdType = splittedCommand[1] === commandType.name;
+    const validParams = commandType.correctParams();
+    return validParams && isCorrectCmdType;
+  }
+  return false;
 };
 
 export const decideRoles = (
@@ -135,25 +136,33 @@ export const decideRoles = (
   japaneseRole: Role | undefined
 ): void => {
   const { user } = finishInfo.player;
-  if (jlptRoleTheyHad) {
-    if (
-      Number.parseInt(quizRole.name.charAt(1)) <
-      Number.parseInt(jlptRoleTheyHad.name.charAt(1))
-    ) {
-      // remove old and give them the new role
-      user.roles.remove(jlptRoleTheyHad);
-      user.roles.add(quizRole);
-    }
-  } else {
-    user.roles.add(quizRole);
-    if (finishInfo.player.justJoined) {
-      user.roles.remove(kotoListener.getUnverifiedRole());
-      user.roles.add(japaneseRole);
-      welcome(
-        user,
-        '732631790841495685',
-        "We're glad to have you! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>"
-      );
+  if (user) {
+    if (jlptRoleTheyHad) {
+      if (
+        quizRole &&
+        Number.parseInt(quizRole.name.charAt(1)) <
+          Number.parseInt(jlptRoleTheyHad.name.charAt(1))
+      ) {
+        // remove old and give them the new role
+        user.roles.remove(jlptRoleTheyHad);
+        user.roles.add(quizRole);
+      }
+    } else {
+      if (quizRole) user.roles.add(quizRole);
+      if (finishInfo.player.justJoined) {
+        const unverifiedRole:
+          | Role
+          | undefined = kotoListener.getUnverifiedRole();
+        if (unverifiedRole && japaneseRole) {
+          user.roles.remove(unverifiedRole);
+          user.roles.add(japaneseRole);
+        }
+        welcome(
+          user,
+          '732631790841495685',
+          "We're glad to have you! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>"
+        );
+      }
     }
   }
 };
@@ -161,7 +170,9 @@ export const decideRoles = (
 export const boostReminder = (client: Client): void => {
   const ourServer = client.guilds.cache.get('732631790191378453');
 
-  const general: Channel = ourServer.channels.cache.get('732631790841495685');
+  const general: Channel | undefined = ourServer?.channels.cache.get(
+    '732631790841495685'
+  );
 
   if (general instanceof TextChannel) {
     setTimeout(() => {
@@ -181,7 +192,7 @@ export const eventStarter = (
   date: Date
 ): void => {
   const ourServer = client.guilds.cache.get('732631790191378453');
-  const eventChannel: Channel = ourServer.channels.cache.get(
+  const eventChannel: Channel | undefined = ourServer?.channels.cache.get(
     '732633915667251302'
   );
   const etaMS = date.getTime() - Date.now();
@@ -194,10 +205,11 @@ export const eventStarter = (
 };
 
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-export const shuffleArray = (array: Array<any>) => {
+export const shuffleArray = <T>(array: Array<T>): Array<T> => {
   const copiedArray = array;
   for (let i = array.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [copiedArray[i], copiedArray[j]] = [array[j], array[i]];
   }
+  return copiedArray;
 };

@@ -1,4 +1,4 @@
-import { Message, Role } from 'discord.js';
+import { Message, Role, GuildMember } from 'discord.js';
 import { FinishInfo, UserInfo, FinishEmbedMatch } from '../types/kotoba.d';
 
 class KotobaListener {
@@ -16,9 +16,12 @@ class KotobaListener {
   }
 
   getPlayerInfo(): UserInfo {
-    const userWhoPassed = this.kMessage.guild?.members.cache.get(
-      this.finishEmbedMatch.descMatch[1]
-    );
+    let userWhoPassed: GuildMember | undefined;
+    if (this.finishEmbedMatch.descMatch) {
+      userWhoPassed = this.kMessage.guild?.members.cache.get(
+        this.finishEmbedMatch.descMatch[1]
+      );
+    }
     const rolesTheyHad = userWhoPassed?.roles.cache.array();
     const userJustJoined = !!rolesTheyHad?.find((e) => e.name === 'Unverified');
     const needToGetRight = userJustJoined ? 7 : 10;
@@ -54,8 +57,11 @@ class KotobaListener {
   }
 
   getFinishInfo(): FinishInfo {
-    // eslint-disable-next-line radix
-    const nLevel = Number.parseInt(this.finishEmbedMatch.titleMatch[0]);
+    let nLevel: number | null = null;
+    if (this.finishEmbedMatch.titleMatch) {
+      // eslint-disable-next-line radix
+      nLevel = Number.parseInt(this.finishEmbedMatch.titleMatch[0]);
+    }
     const player = this.getPlayerInfo();
     const answeredRight = this.getNumAnsweredRight();
     return {
@@ -80,9 +86,12 @@ class KotobaListener {
   }
 
   getQuizRole(): Role | undefined {
-    const nrole = this.kMessage.guild?.roles.cache.find(
-      (role) => role.name === this.finishEmbedMatch.titleMatch[1]
-    );
+    let n: string;
+    let nrole: Role | undefined;
+    if (this.finishEmbedMatch.titleMatch) {
+      [n] = this.finishEmbedMatch.titleMatch;
+      nrole = this.kMessage.guild?.roles.cache.find((role) => role.name === n);
+    }
     return nrole;
   }
 

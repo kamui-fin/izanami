@@ -18,7 +18,7 @@ import 'dotenv/config';
 const client = new Discord.Client();
 
 client.on('ready', () => {
-  // console.log(`Logged in !`);
+  // // console.log(`Logged in !`);
 });
 
 client.on('message', async (msg: Discord.Message) => {
@@ -26,26 +26,29 @@ client.on('message', async (msg: Discord.Message) => {
   if (msg.author.bot !== true && msg.content.startsWith('!maidchan')) {
     const msgText = msg.content;
     const params = splitCommand(msgText);
-    const slicedParams = params.slice(2);
-    const x: { [key: string]: Command } = {
-      'recommend-anime': new AniRecommender(slicedParams),
-      'info-anime': new AniInfo(slicedParams),
-      event: new AniEvent(slicedParams),
-      help: new AniHelp(slicedParams),
-    };
+    if (params) {
+      const slicedParams = params.slice(2);
 
-    const chosenCmd = x[params[1]];
-    if (!checkValidCommand(msgText, '!', chosenCmd)) {
-      const cmdErrorEmbed = new Discord.MessageEmbed()
-        .setColor('#ed1f1f')
-        .setTitle('Invalid command')
-        .setDescription(
-          'Try `!maidchan help` for instructions on how to use this bot'
-        );
-      msg.channel.send(cmdErrorEmbed);
-      return;
+      const x: { [key: string]: Command } = {
+        'recommend-anime': new AniRecommender(slicedParams),
+        'info-anime': new AniInfo(slicedParams),
+        event: new AniEvent(slicedParams),
+        help: new AniHelp(slicedParams),
+      };
+
+      const chosenCmd = x[params[1]];
+      if (!checkValidCommand(msgText, '!', chosenCmd)) {
+        const cmdErrorEmbed = new Discord.MessageEmbed()
+          .setColor('#ed1f1f')
+          .setTitle('Invalid command')
+          .setDescription(
+            'Try `!maidchan help` for instructions on how to use this bot'
+          );
+        msg.channel.send(cmdErrorEmbed);
+        return;
+      }
+      chosenCmd.run(msg);
     }
-    chosenCmd.run(msg);
   }
 
   // all jlpt related stuff goes here
@@ -56,20 +59,20 @@ client.on('message', async (msg: Discord.Message) => {
   ) {
     const kotoListener = new KotobaListener(msg);
     if (kotoListener.hasGameEnded()) {
-      console.log('Game has ended');
+      // console.log('Game has ended');
 
       const finishInfo = kotoListener.getFinishInfo();
-      console.log(finishInfo);
+      // console.log(finishInfo);
 
       if (finishInfo.answeredRight >= finishInfo.player.needToGetRight) {
         const jlptRoleTheyHad = KotobaListener.getJlptRoleTheyHad(
           finishInfo.player
         );
-        console.log(jlptRoleTheyHad);
+        // console.log(jlptRoleTheyHad);
 
         const quizRole = kotoListener.getQuizRole();
-        console.log(quizRole);
-        const japaneseRole = msg.guild.roles.cache.get('732644505248989215');
+        // console.log(quizRole);
+        const japaneseRole = msg.guild?.roles.cache.get('732644505248989215');
         decideRoles(
           finishInfo,
           quizRole,
@@ -83,7 +86,7 @@ client.on('message', async (msg: Discord.Message) => {
 
   if (msg.author.id === '302050872383242240' && msg.embeds) {
     const embed = msg.embeds[0];
-    if (embed.description.includes('Bump done')) {
+    if (embed.description?.includes('Bump done')) {
       boostReminder(client);
     }
   }

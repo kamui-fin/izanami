@@ -1,19 +1,19 @@
 import { GuildMember, Role } from 'discord.js';
 
 export interface UserInfo {
-  user: GuildMember;
-  roles: Array<Role>;
+  user: GuildMember | undefined;
+  roles: Array<Role> | undefined;
   justJoined: boolean;
   needToGetRight: number;
 }
 
 export interface FinishInfo {
-  quizlevel: number;
+  quizlevel: number | null;
   player: UserInfo;
   answeredRight: number;
 }
 
 export interface FinishEmbedMatch {
-  titleMatch: RegExpMatchArray;
-  descMatch: RegExpMatchArray;
+  titleMatch: RegExpMatchArray | null;
+  descMatch: RegExpMatchArray | null;
 }
