@@ -235,6 +235,14 @@ export const notFoundEmbed = (msg: Message, typeMedia: string): void => {
   msg.channel.send({ embed: nfEmbed });
 };
 
+export const notValidEmbed = (msg: Message): void => {
+  const invalidEmbed = new MessageEmbed()
+    .setTitle(`Invalid Permissions`)
+    .setDescription('You do not have permissions to run this command.')
+    .setColor('#8b0000');
+  msg.channel.send({ embed: invalidEmbed });
+};
+
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 export const shuffleArray = <T>(array: Array<T>): Array<T> => {
   const copiedArray = array;
