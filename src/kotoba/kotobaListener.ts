@@ -59,7 +59,7 @@ class KotobaListener {
 
   getFinishInfo(): FinishInfo {
     let nLevel: number | null = null;
-    if (this.finishEmbedMatch.titleMatch) {
+    if (this.finishEmbedMatch.titleMatch !== null) {
       // eslint-disable-next-line radix
       nLevel = Number.parseInt(this.finishEmbedMatch.titleMatch[1]);
     }
@@ -90,8 +90,8 @@ class KotobaListener {
     let n: string;
     let nrole: Role | undefined;
     if (this.finishEmbedMatch.titleMatch) {
-      [n] = this.finishEmbedMatch.titleMatch;
-      console.log(n);
+      // eslint-disable-next-line prefer-destructuring
+      n = this.finishEmbedMatch.titleMatch[1];
 
       nrole = this.kMessage.guild?.roles.cache.find((role) => role.name === n);
     }
