@@ -47,6 +47,7 @@ class KotobaListener {
     let matchedDescription: RegExpMatchArray | null = null;
     if (!!title && !!description) {
       matchedTitle = title.match(this.titlere);
+
       matchedDescription = description.match(this.descre);
     }
 
@@ -60,7 +61,7 @@ class KotobaListener {
     let nLevel: number | null = null;
     if (this.finishEmbedMatch.titleMatch) {
       // eslint-disable-next-line radix
-      nLevel = Number.parseInt(this.finishEmbedMatch.titleMatch[0]);
+      nLevel = Number.parseInt(this.finishEmbedMatch.titleMatch[1]);
     }
     const player = this.getPlayerInfo();
     const answeredRight = this.getNumAnsweredRight();
@@ -90,6 +91,8 @@ class KotobaListener {
     let nrole: Role | undefined;
     if (this.finishEmbedMatch.titleMatch) {
       [n] = this.finishEmbedMatch.titleMatch;
+      console.log(n);
+
       nrole = this.kMessage.guild?.roles.cache.find((role) => role.name === n);
     }
     return nrole;
