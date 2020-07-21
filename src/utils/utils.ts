@@ -185,13 +185,13 @@ export const decideRoles = (
         if (unverifiedRole && japaneseRole) {
           user.roles.remove(unverifiedRole);
           user.roles.add(japaneseRole);
+          welcome(
+            user,
+            '732631790841495685',
+            'Welcome to The Japan Zone!',
+            `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>`
+          );
         }
-        welcome(
-          user,
-          '732631790841495685',
-          'Welcome to The Japan Zone!',
-          `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>`
-        );
       }
     }
   }
