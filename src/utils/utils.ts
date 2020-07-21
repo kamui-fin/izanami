@@ -108,15 +108,11 @@ export const getEventEmbed = (
       {
         name: 'Episodes',
         value: eventEpisodes.slice(1, -1),
+        inline: true,
       },
       {
         name: 'Host',
         value: `<@${userID}>`,
-        inline: true,
-      },
-      {
-        name: 'Attendees',
-        value: `<@&732668352022970458>`,
         inline: true,
       },
     ],
@@ -225,6 +221,7 @@ export const eventStarter = (
 
   if (channel instanceof TextChannel) {
     setTimeout(() => {
+      channel.send('<@&732668352022970458>');
       channel.send({ embed });
     }, etaMS);
   }
@@ -236,6 +233,14 @@ export const notFoundEmbed = (msg: Message, typeMedia: string): void => {
     .setDescription('Please refine your search and try again')
     .setColor('#f54c4c');
   msg.channel.send({ embed: nfEmbed });
+};
+
+export const notValidEmbed = (msg: Message): void => {
+  const invalidEmbed = new MessageEmbed()
+    .setTitle(`Invalid Permissions`)
+    .setDescription('You do not have permissions to run this command.')
+    .setColor('#8b0000');
+  msg.channel.send({ embed: invalidEmbed });
 };
 
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

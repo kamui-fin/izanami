@@ -29,7 +29,7 @@ class AniHelp implements Command {
           'Creates event embed for show being hosted. Provide range of episodes, use mm/dd/yyyy for date, and UTC time for time',
       },
       {
-        name: `duration-game {title}`,
+        name: '`duration-game {title}`',
         value: `Displays how long a game or a visual novels is`,
       },
       {
