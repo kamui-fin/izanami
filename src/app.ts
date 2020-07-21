@@ -61,19 +61,19 @@ client.on('message', async (msg: Discord.Message) => {
   ) {
     const kotoListener = new KotobaListener(msg);
     if (kotoListener.hasGameEnded()) {
-      // console.log('Game has ended');
+      console.log('Game has ended');
 
       const finishInfo = kotoListener.getFinishInfo();
-      // console.log(finishInfo);
+      console.log(finishInfo);
 
       if (finishInfo.answeredRight >= finishInfo.player.needToGetRight) {
         const jlptRoleTheyHad = KotobaListener.getJlptRoleTheyHad(
           finishInfo.player
         );
-        // console.log(jlptRoleTheyHad);
+        console.log(jlptRoleTheyHad);
 
         const quizRole = kotoListener.getQuizRole();
-        // console.log(quizRole);
+        console.log(quizRole);
         const japaneseRole = msg.guild?.roles.cache.get('732644505248989215');
         decideRoles(
           finishInfo,
