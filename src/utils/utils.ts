@@ -22,6 +22,7 @@ import { FinishInfo } from '../types/kotoba.d';
 import KotobaListener from '../kotoba/kotobaListener';
 import welcome from './welcome';
 import { VNDetail } from '../types/vn.d';
+import { LNDetail } from '../types/ln.d';
 
 const keyv = new Keyv();
 
@@ -177,6 +178,20 @@ export const getVNEmbed = (
   msgEmbed
     .addField('Average Rating', details.avgRating)
     .addField('Total Votes', details.totalVotes);
+  return msgEmbed;
+};
+
+export const getLNEmbed = (details: LNDetail): MessageEmbed => {
+  const msgEmbed = new MessageEmbed()
+    .setTitle(details.title)
+    .setURL(details.link)
+    .setDescription(fixDesc(details.desc, 300))
+    .setImage(details.image)
+    .setColor('#fabd39');
+
+  msgEmbed
+    .addField('Page Count', details.pageCount)
+    .addField('Author', details.author);
   return msgEmbed;
 };
 

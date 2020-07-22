@@ -21,6 +21,7 @@ import MangaRecommender from './commands/media-recommend/manga-recommend';
 import MangaInfo from './commands/media-info/manga-info';
 import VNInfo from './commands/media-info/vn-info';
 import VNRecc from './commands/media-recommend/vn-recommend';
+import LNInfo from './commands/media-info/ln-info';
 
 const client = new Discord.Client();
 
@@ -43,6 +44,7 @@ client.on('message', async (msg: Discord.Message) => {
         'recommend-manga': new MangaRecommender(slicedParams),
         'recommend-vn': new VNRecc(slicedParams),
         'info-anime': new AniInfo(slicedParams),
+        'info-ln': new LNInfo(slicedParams),
         'info-manga': new MangaInfo(slicedParams),
         'info-vn': new VNInfo(slicedParams),
         event: new AniEvent(slicedParams, client),
