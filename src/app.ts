@@ -11,6 +11,7 @@ import {
   decideRoles,
   boostReminder,
   deleteBump,
+  setupRandomNewsFeed,
 } from './utils/utils';
 import { Command } from './types/command.d';
 import welcome from './utils/welcome';
@@ -25,6 +26,7 @@ const client = new Discord.Client();
 
 client.on('ready', () => {
   // // console.log(`Logged in !`);
+  setupRandomNewsFeed(client);
 });
 
 client.on('message', async (msg: Discord.Message) => {
