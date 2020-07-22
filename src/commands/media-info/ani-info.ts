@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
-import { Command } from '../types/command.d';
-import { getEmbed, fixDesc, notFoundEmbed } from '../utils/utils';
-import AniList from '../utils/anilist';
+import { Command } from '../../types/command.d';
+import { getAnilistEmbed, fixDesc, notFoundEmbed } from '../../utils/utils';
+import AniList from '../../utils/anilist';
 
 class AniInfo implements Command {
   name = 'info-anime';
@@ -22,11 +22,11 @@ class AniInfo implements Command {
   }
 
   async run(msg: Message): Promise<void> {
-    const anilist: AniList = new AniList(this.stringParams[0]);
+    const anilist: AniList = new AniList(this.stringParams[0], 'ANIME');
     try {
-      const res = await anilist.getInfoOfAnime();
+      const res = await anilist.getInfo();
       res.description = fixDesc(res.description, 300);
-      const embed = getEmbed(res);
+      const embed = getAnilistEmbed(res);
 
       msg.channel.send({ embed });
     } catch (error) {

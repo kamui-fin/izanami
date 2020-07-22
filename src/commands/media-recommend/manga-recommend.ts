@@ -1,16 +1,21 @@
 /* eslint-disable radix */
 import { Message } from 'discord.js';
-import { Command } from '../types/command.d';
-import { MediaRecommendation, TopLevel } from '../types/anime.d';
-import { getEmbed, fixDesc, shuffleArray, notFoundEmbed } from '../utils/utils';
-import AniList from '../utils/anilist';
+import { Command } from '../../types/command.d';
+import { AnilistRecommendation, TopLevel } from '../../types/anilist.d';
+import {
+  getAnilistEmbed,
+  fixDesc,
+  shuffleArray,
+  notFoundEmbed,
+} from '../../utils/utils';
+import AniList from '../../utils/anilist';
 
-class AniRecommender implements Command {
-  name = 'recommend-anime';
+class MangaRecommender implements Command {
+  name = 'recommend-manga';
 
   aliases?: string[] | undefined;
 
-  description = 'Recommends anime from anilist based on a title';
+  description = 'Recommends manga from anilist based on a title';
 
   stringParams: string[];
 
@@ -23,11 +28,11 @@ class AniRecommender implements Command {
   }
 
   correctParams(): boolean {
-    const fromAnime = this.stringParams[0];
+    const fromManga = this.stringParams[0];
     const limitRecs = this.stringParams[1];
     const starFilter = this.stringParams[2];
 
-    if (fromAnime) {
+    if (fromManga) {
       if (limitRecs) {
         if (
           !Number.isNaN(parseInt(limitRecs)) &&
@@ -54,16 +59,17 @@ class AniRecommender implements Command {
   }
 
   async run(msg: Message): Promise<void> {
-    const anilist: AniList = new AniList(this.stringParams[0]);
+    const anilist: AniList = new AniList(this.stringParams[0], 'MANGA');
 
     try {
       const reccs = await anilist.getReccomendations(this.limit);
 
       shuffleArray(reccs);
       reccs.forEach((recc: TopLevel) => {
-        const modifyedRecc: MediaRecommendation = recc.node.mediaRecommendation;
+        const modifyedRecc: AnilistRecommendation =
+          recc.node.mediaRecommendation;
         modifyedRecc.description = fixDesc(modifyedRecc.description, 300);
-        const embed = getEmbed(modifyedRecc);
+        const embed = getAnilistEmbed(modifyedRecc);
         if (modifyedRecc.averageScore / 10 >= this.starFilter) {
           msg.channel.send({ embed });
         }
@@ -74,4 +80,4 @@ class AniRecommender implements Command {
   }
 }
 
-export default AniRecommender;
+export default MangaRecommender;

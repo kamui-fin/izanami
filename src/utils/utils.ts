@@ -8,11 +8,22 @@ import {
   Message,
 } from 'discord.js';
 import axios, { AxiosResponse } from 'axios';
-import { MediaRecommendation } from '../types/anime.d';
+import Keyv from 'keyv';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { HowLongToBeatEntry } from 'howlongtobeat';
+import {
+  AnilistRecommendation,
+  AnilistRecommendationAnime,
+  AnilistRecommendationManga,
+} from '../types/anilist.d';
 import { Command } from '../types/command.d';
 import { FinishInfo } from '../types/kotoba.d';
 import KotobaListener from '../kotoba/kotobaListener';
 import welcome from './welcome';
+import { VNDetail } from '../types/vn.d';
+
+const keyv = new Keyv();
 
 export const sendGraphQL = async (
   baseUrl: string,
@@ -40,8 +51,36 @@ const fixAvgScore = (score: number): string => {
   return `${divided} ⭐`;
 };
 
-export const getEmbed = (
-  media: MediaRecommendation
+interface EmbedField {
+  name: string;
+  value: string;
+}
+export const fixDesc = (text: string, limitChars: number): string => {
+  let desc = text.replace(/<br>/g, '');
+  if (desc.length > limitChars) {
+    desc = `${desc.slice(0, limitChars)}...`;
+  }
+  return desc;
+};
+const getDurationAnilist = (media: AnilistRecommendation): EmbedField => {
+  if ((media as AnilistRecommendationAnime).episodes === undefined) {
+    return {
+      name: 'Volumes',
+      value: (media as AnilistRecommendationManga).volumes
+        ? (media as AnilistRecommendationManga).volumes
+        : 'Unknown',
+    };
+  }
+  return {
+    name: 'Episodes',
+    value: (media as AnilistRecommendationManga).volumes
+      ? (media as AnilistRecommendationAnime).episodes
+      : 'Unknown',
+  };
+};
+
+export const getAnilistEmbed = (
+  media: AnilistRecommendation
 ): Record<string, unknown> => {
   const embed = {
     title: media.title.native,
@@ -57,12 +96,9 @@ export const getEmbed = (
     fields: [
       {
         name: 'Genres',
-        value: media.genres.join(', '),
+        value: media.genres ? media.genres.join(', ') : 'Unknown',
       },
-      {
-        name: 'Episodes',
-        value: media.episodes ? media.episodes.toLocaleString() : 'Unknown',
-      },
+      getDurationAnilist(media),
       {
         name: 'Favorites',
         value: media.favourites.toLocaleString(),
@@ -84,7 +120,7 @@ export const getEmbed = (
 };
 
 export const getEventEmbed = (
-  media: MediaRecommendation,
+  media: AnilistRecommendationAnime,
   eventEpisodes: string,
   date: string,
   timeOfEvent: string,
@@ -120,12 +156,28 @@ export const getEventEmbed = (
   return embed;
 };
 
-export const fixDesc = (text: string, limitChars: number): string => {
-  let desc = text.replace(/<br>/g, '');
-  if (desc.length > limitChars) {
-    desc = `${desc.slice(0, limitChars)}...`;
+export const getVNEmbed = (
+  details: VNDetail,
+  playTime: HowLongToBeatEntry
+): MessageEmbed => {
+  const msgEmbed = new MessageEmbed()
+    .setTitle(details.title)
+    .setURL(details.link)
+    .setDescription(fixDesc(details.desc, 300))
+    .setImage(details.image)
+    .setColor('#fabd39')
+    .setFooter(details.year);
+
+  if (playTime) {
+    playTime.timeLabels.forEach((x: Array<string>) => {
+      msgEmbed.addField(x[1], playTime[x[0]], true);
+    });
   }
-  return desc;
+
+  msgEmbed
+    .addField('Average Rating', details.avgRating)
+    .addField('Total Votes', details.totalVotes);
+  return msgEmbed;
 };
 
 export const splitCommand = (text: string): string[] | null => {
@@ -193,12 +245,17 @@ export const decideRoles = (
   }
 };
 
-export const boostReminder = (client: Client): void => {
+const getGeneral = (client: Client): Channel | undefined => {
   const ourServer = client.guilds.cache.get('732631790191378453');
 
   const general: Channel | undefined = ourServer?.channels.cache.get(
     '732631790841495685'
   );
+  return general;
+};
+
+export const boostReminder = (client: Client): void => {
+  const general: Channel | undefined = getGeneral(client);
 
   if (general instanceof TextChannel) {
     setTimeout(() => {
@@ -207,8 +264,23 @@ export const boostReminder = (client: Client): void => {
         .setDescription(`Type \`!d bump\` to keep our server up in rankings`)
         .setColor('#42f572');
 
-      general.send({ embed: remindEmbed });
+      general.send({ embed: remindEmbed }).then((msg: Message) => {
+        keyv.set('boostmsg', msg.id);
+      });
     }, 7200000);
+  }
+};
+
+export const deleteBump = async (client: Client): Promise<void> => {
+  const general: Channel | undefined = getGeneral(client);
+  const boostKey: string = await keyv.get('boostmsg');
+  if (general instanceof TextChannel) {
+    general.messages
+      .fetch(boostKey)
+      .then((msg: Message) => {
+        msg.delete();
+      })
+      .catch(console.error);
   }
 };
 

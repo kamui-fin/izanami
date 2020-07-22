@@ -1,8 +1,8 @@
 /* eslint-disable radix */
 import Discord from 'discord.js';
-import AniRecommender from './commands/recommend';
+import AniRecommender from './commands/media-recommend/ani-recommend';
 import AniHelp from './commands/help';
-import AniInfo from './commands/info';
+import AniInfo from './commands/media-info/ani-info';
 import AniEvent from './commands/event';
 import KotobaListener from './kotoba/kotobaListener';
 import {
@@ -10,11 +10,16 @@ import {
   splitCommand,
   decideRoles,
   boostReminder,
+  deleteBump,
 } from './utils/utils';
 import { Command } from './types/command.d';
 import welcome from './utils/welcome';
 import 'dotenv/config';
-import GameDuration from './commands/durationGame';
+// import VN from './utils/vn';
+import MangaRecommender from './commands/media-recommend/manga-recommend';
+import MangaInfo from './commands/media-info/manga-info';
+import VNInfo from './commands/media-info/vn-info';
+import VNRecc from './commands/media-recommend/vn-recommend';
 
 const client = new Discord.Client();
 
@@ -24,6 +29,7 @@ client.on('ready', () => {
 
 client.on('message', async (msg: Discord.Message) => {
   // all maidchan commands go here
+
   if (msg.author.bot !== true && msg.content.startsWith('!maidchan')) {
     const msgText = msg.content;
     const params = splitCommand(msgText);
@@ -32,13 +38,17 @@ client.on('message', async (msg: Discord.Message) => {
 
       const x: { [key: string]: Command } = {
         'recommend-anime': new AniRecommender(slicedParams),
+        'recommend-manga': new MangaRecommender(slicedParams),
+        'recommend-vn': new VNRecc(slicedParams),
         'info-anime': new AniInfo(slicedParams),
+        'info-manga': new MangaInfo(slicedParams),
+        'info-vn': new VNInfo(slicedParams),
         event: new AniEvent(slicedParams, client),
-        'duration-game': new GameDuration(slicedParams),
         help: new AniHelp(slicedParams),
       };
 
       const chosenCmd = x[params[1]];
+
       if (!checkValidCommand(msgText, '!', chosenCmd)) {
         const cmdErrorEmbed = new Discord.MessageEmbed()
           .setColor('#ed1f1f')
@@ -89,6 +99,7 @@ client.on('message', async (msg: Discord.Message) => {
   if (msg.author.id === '302050872383242240' && msg.embeds) {
     const embed = msg.embeds[0];
     if (embed.description?.includes('Bump done')) {
+      deleteBump(client);
       boostReminder(client);
     }
   }
