@@ -254,6 +254,15 @@ const getGeneral = (client: Client): Channel | undefined => {
   return general;
 };
 
+const getMedia = (client: Client): Channel | undefined => {
+  const ourServer = client.guilds.cache.get('732631790191378453');
+
+  const media: Channel | undefined = ourServer?.channels.cache.get(
+    '732634726883655821'
+  );
+  return media;
+};
+
 export const boostReminder = (client: Client): void => {
   const general: Channel | undefined = getGeneral(client);
 
@@ -315,6 +324,21 @@ export const notValidEmbed = (msg: Message): void => {
   msg.channel.send({ embed: invalidEmbed });
 };
 
+interface Source {
+  id: string;
+  name: string;
+}
+interface Article {
+  source: Source;
+  author: string;
+  title: string;
+  description: string;
+  url: string;
+  urlToImage: string;
+  publishedAt: string;
+  content: string;
+}
+
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 export const shuffleArray = <T>(array: Array<T>): Array<T> => {
   const copiedArray = array;
@@ -323,4 +347,21 @@ export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     [copiedArray[i], copiedArray[j]] = [array[j], array[i]];
   }
   return copiedArray;
+};
+
+const getRandomNews = async (): Promise<string> => {
+  const url = `http://newsapi.org/v2/top-headlines?country=jp&apiKey=${process.env.NEWSAPI_KEY}`;
+  const data = await axios.get(url);
+  const articles: Array<Article> = shuffleArray(data.data.articles);
+  return articles[0].url;
+};
+
+export const setupRandomNewsFeed = (client: Client): void => {
+  const mediaChannel = getMedia(client);
+  if (mediaChannel instanceof TextChannel) {
+    setInterval(async () => {
+      const url = await getRandomNews();
+      mediaChannel.send(url);
+    }, 86400000);
+  }
 };
