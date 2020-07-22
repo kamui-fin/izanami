@@ -7,6 +7,7 @@ import {
   notValidEmbed,
 } from '../utils/utils';
 import AniList from '../utils/anilist';
+import { AnilistRecommendationAnime } from '../types/anilist.d';
 
 class AniEvent implements Command {
   name = 'event';
@@ -35,15 +36,15 @@ class AniEvent implements Command {
       '732633915667251302'
     );
     if (msg.member?.roles.cache.has('732649305625722900')) {
-      const anilist: AniList = new AniList(this.stringParams[0]);
+      const anilist: AniList = new AniList(this.stringParams[0], 'ANIME');
       const episodesToStream = this.stringParams[1];
       const mmddyyyy = this.stringParams[2];
       const time = this.stringParams[3];
       const date = new Date(`${`${mmddyyyy} ${time}`}`);
-      const res = await anilist.getInfoOfAnime();
+      const res = await anilist.getInfo();
       res.description = fixDesc(res.description, 300);
       const embed = getEventEmbed(
-        res,
+        res as AnilistRecommendationAnime,
         episodesToStream,
         mmddyyyy,
         time,
