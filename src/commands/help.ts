@@ -14,23 +14,43 @@ class AniHelp implements Command {
     .setTitle('MaidChan usage instructions')
     .addFields(
       {
-        name: '`recommend-anime {title} [limit] [star_#]`',
-        value:
-          'Recommends an anime from a title you liked, with an optional limit and star filter. Be sure to wrap the title around quotes',
-      },
-      {
         name: '`info-anime {title}`',
         value:
           'Shows information about an anime. Be sure to wrap the title around quotes',
       },
       {
+        name: '`info-ln {title}`',
+        value: `Displays information for a light novel`,
+      },
+      {
+        name: '`info-manga {title}`',
+        value: `Displays information for manga`,
+      },
+      {
+        name: '`info-vn {title}`',
+        value: `Displays information for a visual novel`,
+      },
+      {
+        name: '`recommend-anime {title} [limit] [star_#]`',
+        value:
+          'Recommends an anime from a title you liked, with an optional limit and star filter. Be sure to wrap the title around quotes',
+      },
+      {
+        name: '`recommend-ln {title} [limit]`',
+        value: `Recommends light novels from a title you enjoy`,
+      },
+      {
+        name: '`recommend-manga {title} [limit]`',
+        value: `Recommends manga from a title you enjoy`,
+      },
+      {
+        name: '`recommend-vn {title} [limit]`',
+        value: `Recommends visual novels from a title you enjoy`,
+      },
+      {
         name: '`event {title} {episodes_streamed} {stream_date} {time}`',
         value:
           'Creates event embed for show being hosted. Provide range of episodes, use mm/dd/yyyy for date, and UTC time for time',
-      },
-      {
-        name: '`duration-game {title}`',
-        value: `Displays how long a game or a visual novels is`,
       },
       {
         name: '`help`',
