@@ -20,7 +20,11 @@ export default class LN {
       const res = await LN.searchLN(title);
       lookupID = res.id;
     }
-    const detailRes = await Axios.get(`https://bookmeter.com/${lookupID}`);
+    console.log('reached details');
+
+    const detailRes = await Axios.get(
+      encodeURI(`https://bookmeter.com/${lookupID}`)
+    );
     const html: string = detailRes.data;
     const $ = cheerio.load(html);
 
