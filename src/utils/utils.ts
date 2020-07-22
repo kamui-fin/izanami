@@ -350,8 +350,7 @@ export const shuffleArray = <T>(array: Array<T>): Array<T> => {
 };
 
 const getRandomNews = async (): Promise<string> => {
-  const url =
-    'http://newsapi.org/v2/top-headlines?country=jp&apiKey=460667df4de44a518f57689ca5dbfecd';
+  const url = `http://newsapi.org/v2/top-headlines?country=jp&apiKey=${process.env.NEWSAPI_KEY}`;
   const data = await axios.get(url);
   const articles: Array<Article> = shuffleArray(data.data.articles);
   return articles[0].url;
