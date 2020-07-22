@@ -7,7 +7,7 @@ export default class LN {
     const res: AxiosResponse<any> = await Axios.get(
       encodeURI(`https://bookmeter.com/search?keyword=${title}`)
     );
-    const searchResult: SearchResult = res.data[0];
+    const searchResult: SearchResult = res.data.resources[0].contents.book;
     return searchResult;
   }
 
@@ -20,10 +20,10 @@ export default class LN {
       const res = await LN.searchLN(title);
       lookupID = res.id;
     }
-    console.log('reached details');
+    console.log(lookupID);
 
     const detailRes = await Axios.get(
-      encodeURI(`https://bookmeter.com/${lookupID}`)
+      encodeURI(`https://bookmeter.com/books/${lookupID}`)
     );
     const html: string = detailRes.data;
     const $ = cheerio.load(html);
@@ -31,7 +31,7 @@ export default class LN {
     const titleA = $('body > header.show__header > h1.inner__title');
 
     const titleText = titleA.text();
-    const bookMeterLink = `https://bookmeter.com/${lookupID}`;
+    const bookMeterLink = `https://bookmeter.com/books/${lookupID}`;
     const desc = $('div.book-summary__default > p').text();
     const image = $(
       'body > div.bm-wrapper > div.group__image > div.image__cover > img'

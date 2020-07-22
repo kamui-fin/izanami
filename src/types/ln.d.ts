@@ -1,7 +1,8 @@
 export interface SearchResult {
-  id: string;
+  id : string;
   title: string;
   page: string;
+  path: string;
 }
 
 export interface LNDetail {
