@@ -108,12 +108,22 @@ client.on('message', async (msg: Discord.Message) => {
 });
 
 client.on('guildMemberAdd', (member) => {
-  welcome(
-    member,
+  const joinChannels: Array<string> = [
     '733500570421297253',
-    `Welcome to The Japan Zone, ${member.user?.username}!`,
-    `To join the server, type \`k!quiz n5\` and get a 7/10 (or better) on the N5 quiz. Good luck!`
-  );
+    '735624705427636315',
+    '735624831156092929',
+    '735625180176580700',
+    '735625233624596510',
+  ];
+
+  joinChannels.forEach((id) => {
+    welcome(
+      member,
+      id,
+      `Welcome to The Japan Zone, ${member.user?.username}!`,
+      `To join the server, type \`k!quiz n5\` and get a 7/10 (or better) on the N5 quiz. Good luck!`
+    );
+  });
 });
 
 client.login(process.env.BOT_TOKEN);
