@@ -6,7 +6,7 @@ import { LNDetail, SearchResult } from '../types/ln.d';
 export default class LN {
   static async searchLN(title: string): Promise<SearchResult> {
     const res = await fetch(
-      'https://bookmeter.com/search?keyword=%E8%83%BD%E6%A5%BD%E3%82%82%E3%81%AE%E3%81%8C%E3%81%9F%E3%82%8A%E3%80%80%E7%A8%9A%E5%85%90%E6%A1%9C'
+      encodeURI(`https://bookmeter.com/search?keyword=${title}`)
     );
     const data = await res.json();
 
