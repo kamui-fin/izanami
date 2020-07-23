@@ -49,6 +49,11 @@ class AniHelp implements Command {
           'Creates event embed for show being hosted. Provide range of episodes, use mm/dd/yyyy for date, and UTC time for time',
       },
       {
+        name: '`lookup {word}`',
+        value:
+          'Looks up a word in goo dictionary. Remember to put quotes around the word',
+      },
+      {
         name: '`help`',
         value: 'Shows this help message',
       }
