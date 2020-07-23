@@ -6,6 +6,7 @@
   "dependencies": {
     "@types/axios": "^0.14.0",
     "@types/cheerio": "^0.22.21",
+    "@types/node-fetch": "^2.5.7",
     "@types/ws": "^7.2.6",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
@@ -13,11 +14,14 @@
     "dotenv": "^8.2.0",
     "howlongtobeat": "^1.2.1",
     "keyv": "^4.0.1",
-    "newsapi": "^2.4.0"
+    "newsapi": "^2.4.0",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "@types/keyv": "^3.1.1",
     "@types/node": "^14.0.23",
+    "@types/request": "^2.48.5",
     "eslint": "^7.4.0",
     "eslint-config-airbnb-typescript-prettier": "^3.1.0",
     "husky": "^4.2.5",

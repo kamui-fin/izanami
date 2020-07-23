@@ -1,13 +1,17 @@
-import Axios, { AxiosResponse } from 'axios';
+import Axios from 'axios';
 import * as cheerio from 'cheerio';
+import fetch from 'node-fetch';
 import { LNDetail, SearchResult } from '../types/ln.d';
 
 export default class LN {
   static async searchLN(title: string): Promise<SearchResult> {
-    const res: AxiosResponse<any> = await Axios.get(
-      encodeURI(`https://bookmeter.com/search?keyword=${title}`)
+    const res = await fetch(
+      'https://bookmeter.com/search?keyword=%E8%83%BD%E6%A5%BD%E3%82%82%E3%81%AE%E3%81%8C%E3%81%9F%E3%82%8A%E3%80%80%E7%A8%9A%E5%85%90%E6%A1%9C'
     );
-    const searchResult: SearchResult = res.data.resources[0].contents.book;
+    const data = await res.json();
+
+    const searchResult: SearchResult = data.resources[0].contents.book;
+
     return searchResult;
   }
 
@@ -20,7 +24,6 @@ export default class LN {
       const res = await LN.searchLN(title);
       lookupID = res.id;
     }
-    console.log(lookupID);
 
     const detailRes = await Axios.get(
       encodeURI(`https://bookmeter.com/books/${lookupID}`)
@@ -42,6 +45,16 @@ export default class LN {
       'body > dl.bm-details-side > dd:nth-child(2) > span'
     ).text();
     const author = $('body > ul.header__authors > li > a').text();
+    console.log({
+      id: lookupID,
+      title: titleText,
+      link: bookMeterLink,
+      desc,
+      author,
+      image: image || '',
+      pageCount,
+    });
+
     return {
       id: lookupID,
       title: titleText,
