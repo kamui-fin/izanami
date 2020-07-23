@@ -1,17 +1,16 @@
 /* eslint-disable radix */
 import { Message } from 'discord.js';
 import { Command } from '../../types/command.d';
-import VN from '../../utils/vn';
-import GameDuration from '../../utils/durationGame';
-import { VNDetail } from '../../types/vn.d';
-import { getVNEmbed, notFoundEmbed, shuffleArray } from '../../utils/utils';
+import LN from '../../utils/ln';
+import { getLNEmbed, notFoundEmbed } from '../../utils/utils';
+import { LNDetail } from '../../types/ln.d';
 
-class VNRecc implements Command {
-  name = 'recommend-vn';
+class LNRecc implements Command {
+  name = 'recommend-ln';
 
   aliases?: string[] | undefined;
 
-  description = 'Recommends visual novels from vndb with a title';
+  description = 'Recommends light novels with a title';
 
   stringParams: string[];
 
@@ -22,10 +21,10 @@ class VNRecc implements Command {
   }
 
   correctParams(): boolean {
-    const fromVN = this.stringParams[0];
+    const fromLN = this.stringParams[0];
     const limitRecs = this.stringParams[1];
 
-    if (fromVN) {
+    if (fromLN) {
       if (limitRecs) {
         if (
           !Number.isNaN(parseInt(limitRecs)) &&
@@ -45,24 +44,24 @@ class VNRecc implements Command {
 
   async run(msg: Message): Promise<void> {
     try {
-      const reccIds = await VN.showDetailsForVN(
+      const reccIds = await LN.showDetailsForLN(
         null,
         this.stringParams[0].slice(1, -1),
         true
       );
-      shuffleArray(reccIds as string[])
+      (reccIds as string[])
         .slice(0, this.limit)
         .forEach(async (recc: string) => {
-          const vnInfo = await VN.showDetailsForVN(recc, '');
-          const duration = new GameDuration((vnInfo as VNDetail).title);
-          const playTime = await duration.findGameDurationInfo();
-          const embed = getVNEmbed(vnInfo as VNDetail, playTime);
+          const lnInfo = await LN.showDetailsForLN(recc, '');
+          const embed = getLNEmbed(lnInfo as LNDetail);
           msg.channel.send({ embed });
         });
     } catch (error) {
-      notFoundEmbed(msg, 'Visual Novel');
+      console.log(error);
+
+      notFoundEmbed(msg, 'Light Novel');
     }
   }
 }
 
-export default VNRecc;
+export default LNRecc;
