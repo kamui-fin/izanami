@@ -7,10 +7,10 @@ export interface SearchResult {
 
 export interface LNDetail {
   id: string | null;
-  title: string;
-  author: string;
+  title: string | undefined;
+  author: string | undefined;
   link: string;
-  desc: string;
+  desc: string | undefined;
   image: string;
-  pageCount: string;
+  pageCount: string | undefined;
 }

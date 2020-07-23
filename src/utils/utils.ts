@@ -185,7 +185,7 @@ export const getLNEmbed = (details: LNDetail): MessageEmbed => {
   const msgEmbed = new MessageEmbed()
     .setTitle(details.title)
     .setURL(details.link)
-    .setDescription(fixDesc(details.desc, 300))
+    .setDescription(details.desc ? fixDesc(details.desc, 300) : '')
     .setImage(details.image)
     .setColor('#fabd39');
 

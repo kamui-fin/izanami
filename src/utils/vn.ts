@@ -36,7 +36,7 @@ export default class VN {
       'body > div.container > div > div.col-md-3.col-lg-2.sidebar > div > h3 > a'
     );
     const titleText = titleA.text();
-    const vndbLink = `https://vndb.org/v9428${lookupID}`;
+    const vndbLink = `https://vndb.org/v${lookupID}`;
     const desc = $('#summary > div.row.text-center > small > p').text();
     const image = $(
       'body > div.container > div > div.col-md-3.col-lg-2.sidebar > div > img'
