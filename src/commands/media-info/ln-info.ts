@@ -26,6 +26,7 @@ class LNInfo implements Command {
   async run(msg: Message): Promise<void> {
     try {
       const details = await LN.showDetailsForLN(
+        null,   
         this.stringParams[0].slice(1, -1)
       );
       const embed = getLNEmbed(details as LNDetail);
