@@ -23,6 +23,7 @@ import VNInfo from './commands/media-info/vn-info';
 import VNRecc from './commands/media-recommend/vn-recommend';
 import LNInfo from './commands/media-info/ln-info';
 import Lookup from './commands/lookup';
+
 const client = new Discord.Client();
 
 client.on('ready', () => {
