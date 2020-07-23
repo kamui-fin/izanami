@@ -36,10 +36,6 @@ class AniHelp implements Command {
           'Recommends an anime from a title you liked, with an optional limit and star filter. Be sure to wrap the title around quotes',
       },
       {
-        name: '`recommend-ln {title} [limit]`',
-        value: `Recommends light novels from a title you enjoy`,
-      },
-      {
         name: '`recommend-manga {title} [limit]`',
         value: `Recommends manga from a title you enjoy`,
       },

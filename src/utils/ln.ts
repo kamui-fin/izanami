@@ -1,6 +1,5 @@
-import Axios from 'axios';
-import * as cheerio from 'cheerio';
 import fetch from 'node-fetch';
+import { JSDOM } from 'jsdom';
 import { LNDetail, SearchResult } from '../types/ln.d';
 
 export default class LN {
@@ -25,35 +24,32 @@ export default class LN {
       lookupID = res.id;
     }
 
-    const detailRes = await Axios.get(
+    const dom = await JSDOM.fromURL(
       encodeURI(`https://bookmeter.com/books/${lookupID}`)
     );
-    const html: string = detailRes.data;
-    const $ = cheerio.load(html);
+    const { document } = dom.window;
 
-    const titleA = $('body > header.show__header > h1.inner__title');
+    const titleA = document.querySelector(
+      'body > section.books.show > header > div.header__inner > h1'
+    );
 
-    const titleText = titleA.text();
+    const titleText = titleA?.innerHTML;
     const bookMeterLink = `https://bookmeter.com/books/${lookupID}`;
-    const desc = $('div.book-summary__default > p').text();
-    const image = $(
-      'body > div.bm-wrapper > div.group__image > div.image__cover > img'
-    )
-      .attr('src')
+    const desc = document.querySelector(
+      'body > section.books.show > div.bm-wrapper > div.bm-wrapper__side > div > section:nth-child(1) > div.group__detail > dl > dd.bm-details-side__item.bm-details-side__item--full > div > div > p'
+    )?.innerHTML;
+    const image = document
+      .querySelector(
+        'body > section.books.show > div.bm-wrapper > div.bm-wrapper__side > div > section:nth-child(1) > div.group__image > a > img'
+      )
+      ?.getAttribute('src')
       ?.toString();
-    const pageCount = $(
-      'body > dl.bm-details-side > dd:nth-child(2) > span'
-    ).text();
-    const author = $('body > ul.header__authors > li > a').text();
-    console.log({
-      id: lookupID,
-      title: titleText,
-      link: bookMeterLink,
-      desc,
-      author,
-      image: image || '',
-      pageCount,
-    });
+    const pageCount = document.querySelector(
+      'body > section.books.show > div.bm-wrapper > div.bm-wrapper__side > div > section:nth-child(1) > div.group__detail > dl > dd:nth-child(4) > span:nth-child(1)'
+    )?.innerHTML;
+    const author = document.querySelector(
+      'body > section.books.show > header > div.header__inner > ul > li > a'
+    )?.innerHTML;
 
     return {
       id: lookupID,

@@ -26,8 +26,10 @@ class VNInfo implements Command {
 
   async run(msg: Message): Promise<void> {
     const duration = new GameDuration(this.stringParams[0].slice(1, -1));
+
     try {
       const details = await VN.showDetailsForVN(
+        null,
         this.stringParams[0].slice(1, -1)
       );
       const playTime = await duration.findGameDurationInfo();
