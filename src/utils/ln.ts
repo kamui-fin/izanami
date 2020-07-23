@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 // import { JSDOM } from 'jsdom';
 import puppeteer from 'puppeteer';
 import { LNDetail, SearchResult } from '../types/ln.d';
-import { shuffleArray } from '../utils/utils';
+import { shuffleArray } from './utils';
 
 export default class LN {
   static async searchLN(title: string): Promise<SearchResult> {
