@@ -27,7 +27,7 @@ export default class Goo {
             '#NR-main > section > div > div.contents-wrap-b.meanging.person.first > div > div.content-box.contents_area.meaning_area.p10'
           )
           ?.textContent?.replace(/ +?/g, '')
-          .replace(/\n+/g, '\n')
+          .replace(/\n+/g, '\n\n')
           .trim();
       reading = doc
         .querySelector(
@@ -35,11 +35,10 @@ export default class Goo {
         )
         ?.textContent?.trim()
         .replace(/ の解説/, '');
-      sentence = doc
-        .querySelector(
-          '#NR-main > div.cx > div.rcont > section:nth-child(1) > div > div.example_sentence > ul.content_list.nolink.cx > li:nth-child(1) > p'
-        )
-        ?.textContent?.replace(/\s+/g, '');
+      sentence = document
+        .querySelector('.example_sentence > ul > li > p')
+        ?.textContent?.replace('', '');
+      // ?.textContent?.replace(/\s+/g, '');
     }
     return {
       title: reading,

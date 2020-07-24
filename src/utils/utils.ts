@@ -235,7 +235,7 @@ export const getLookupEmbed = (wordRes: Word): MessageEmbed => {
     .setTitle(wordRes.title)
     .addField('Meaning', wordRes.meaning)
     .setColor('#5db0cf')
-    .addField('Sentence', wordRes.sentence);
+    .addField('Sentence', wordRes.sentence || 'Not found');
 };
 
 export const splitCommand = (text: string): string[] | null => {
