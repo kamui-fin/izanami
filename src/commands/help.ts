@@ -44,26 +44,21 @@ class AniHelp implements Command {
       },
       {
         name: '`recommend-vn "{title}" [limit]`',
-        value: `Recommends visual novels from a title you liked, with an optional limit and star filter.`,
+        value: `Recommends visual novels from a title you liked, with an optional limit`,
       },
       {
         name: '`recommend-ln "{title}" [limit]`',
-        value: `Recommends light novels from a title you liked, with an optional limit and star filter.`,
+        value: `Recommends light novels from a title you liked, with an optional limit`,
       },
       {
         name: '`recommend-drama "{title}" [limit]`',
-        value: `Recommends drama or movies from a title you liked, with an optional limit and star filter.`,
+        value: `Recommends drama or movies from a title you liked, with an optional limit`,
       },
       {
         name:
           '`create-event "{title}" {episodes_streamed} {stream_date} {time}`',
         value:
           'Creates event embed for show being hosted. Provide range of episodes, use mm/dd/yyyy for date, and UTC time for time',
-      },
-      {
-        name: '`lookup {word}`',
-        value:
-          'Looks up a word in goo dictionary. Remember to put quotes around the word',
       },
       {
         name: '`help`',

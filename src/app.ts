@@ -22,7 +22,6 @@ import MangaInfo from './commands/media-info/manga-info';
 import VNInfo from './commands/media-info/vn-info';
 import VNRecc from './commands/media-recommend/vn-recommend';
 import LNInfo from './commands/media-info/ln-info';
-import Lookup from './commands/lookup';
 import LNRecc from './commands/media-recommend/ln-recommend';
 import DramaInfo from './commands/media-info/drama-info';
 import ShowRecc from './commands/media-recommend/drama-recommend';
@@ -54,7 +53,6 @@ client.on('message', async (msg: Discord.Message) => {
         'info-manga': new MangaInfo(slicedParams),
         'info-vn': new VNInfo(slicedParams),
         'info-drama': new DramaInfo(slicedParams),
-        lookup: new Lookup(slicedParams),
         'create-event': new AniEvent(slicedParams, client),
         help: new AniHelp(slicedParams),
       };
@@ -131,7 +129,8 @@ client.on('guildMemberAdd', (member) => {
       member,
       id,
       `Welcome to The Japan Zone, ${member.user?.username}!`,
-      `To join the server, type \`k!quiz n5\` and get a 7/10 (or better) on the N5 quiz. Good luck!`
+      `To gain access to the server, type \`k!quiz n5\` and get a 7 answers correct (or better) on the N5 quiz. Good luck! 
+       If you are new to Japanese, we suggest reading a guide in <#732787641656934442>`
     );
   });
 });
