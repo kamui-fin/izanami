@@ -132,7 +132,7 @@ client.on('guildMemberAdd', (member) => {
       id,
       `Welcome to The Japan Zone, ${member.user?.username}!`,
       `To gain access to the server, type \`k!quiz n5\` and get a 7 answers correct (or better) on the N5 quiz. Good luck! 
-       If you are new to Japanese, we suggest reading a guide in <#732787641656934442>`,
+       If you are new to Japanese, we suggest reading a guide in <#732787641656934442>`
     );
   });
 });
