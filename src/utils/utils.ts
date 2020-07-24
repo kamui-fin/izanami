@@ -84,7 +84,7 @@ const getDurationAnilist = (media: AnilistRecommendation): EmbedField => {
 export const getDramaEmbed = (show: Show) => {
   const embed = {
     title: show.title,
-    description: show.overview,
+    description: show.description,
     color: '#34ebe1',
     footer: {
       text: show.aired,
@@ -155,22 +155,34 @@ export const getAnilistEmbed = (
 };
 
 export const getEventEmbed = (
-  media: AnilistRecommendationAnime,
+  media: AnilistRecommendationAnime | Show,
   eventEpisodes: string,
   date: string,
   timeOfEvent: string,
-  userID: string
-): Record<string, unknown> => {
-  const embed = {
-    title: `Event Scheduled`,
-    color: media.coverImage.color,
-    image: {
-      url: media.coverImage.large,
-    },
-    fields: [
+  userID: string,
+  kind: string
+): MessageEmbed => {
+  const image =
+    kind === 'drama'
+      ? (media as Show).picture
+      : (media as AnilistRecommendationAnime).coverImage.large;
+  const color =
+    kind === 'drama'
+      ? '#34ebe1'
+      : (media as AnilistRecommendationAnime).coverImage.color;
+  const title =
+    kind === 'drama'
+      ? (media as Show).title
+      : (media as AnilistRecommendationAnime).title.native;
+
+  const embed = new MessageEmbed()
+    .setTitle('Event Scheduled')
+    .setColor(color)
+    .setImage(image || '')
+    .addFields([
       {
         name: 'Show',
-        value: media.title.native,
+        value: title,
       },
       {
         name: 'Event Time',
@@ -186,8 +198,7 @@ export const getEventEmbed = (
         value: `<@${userID}>`,
         inline: true,
       },
-    ],
-  };
+    ]);
   return embed;
 };
 
