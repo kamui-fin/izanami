@@ -62,11 +62,21 @@ export default class Drama {
       const overview = document.querySelector(
         '#show-detailsxx > div.show-synopsis > p > span'
       )?.textContent;
-      const episodes = document
-        .querySelector(
-          '#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(3)'
-        )
-        ?.textContent?.replace(/Episodes: /, '');
+
+      const moreDetails = document.querySelectorAll(
+        '#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li'
+      );
+      let episodes;
+      let aired;
+
+      moreDetails.forEach((elm) => {
+        if (elm.textContent?.startsWith('Episodes')) {
+          episodes = elm.textContent?.replace(/Episodes: /, '');
+        } else if (elm.textContent?.startsWith('Aired:')) {
+          aired = elm.textContent;
+        }
+      });
+
       const rank = document.querySelector(
         '#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(3) > div.box-body.light-b > ul > li:nth-child(2)'
       )?.textContent;
@@ -80,9 +90,6 @@ export default class Drama {
           '#content > div > div.container-fluid.title-container > div > div.col-lg-8.col-md-8.col-right > div:nth-child(1) > div.box-body > div > div.col-sm-4.film-cover.cover > a:nth-child(2) > img'
         )
         ?.getAttribute('src');
-      const aired = document.querySelector(
-        '#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(4)'
-      )?.textContent;
 
       return {
         title,

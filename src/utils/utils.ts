@@ -23,7 +23,6 @@ import KotobaListener from '../kotoba/kotobaListener';
 import welcome from './welcome';
 import { VNDetail } from '../types/vn.d';
 import { LNDetail } from '../types/ln.d';
-import { Word } from '../types/goo.d';
 import { Show } from '../types/drama.d';
 
 const keyv = new Keyv();
@@ -96,7 +95,7 @@ export const getDramaEmbed = (show: Show) => {
     fields: [
       {
         name: 'Episodes',
-        value: show.episodes,
+        value: show.episodes || 'Movie',
       },
       {
         name: 'Genres',
@@ -228,14 +227,6 @@ export const getLNEmbed = (details: LNDetail): MessageEmbed => {
     .addField('Page Count', details.pageCount)
     .addField('Author', details.author);
   return msgEmbed;
-};
-
-export const getLookupEmbed = (wordRes: Word): MessageEmbed => {
-  return new MessageEmbed()
-    .setTitle(wordRes.title)
-    .addField('Meaning', wordRes.meaning)
-    .setColor('#5db0cf')
-    .addField('Sentence', wordRes.sentence || 'Not found');
 };
 
 export const splitCommand = (text: string): string[] | null => {
