@@ -86,22 +86,29 @@ export const getDramaEmbed = (show: Show) => {
   const embed = {
     title: show.title,
     description: show.overview,
-    color: '#301934',
+    color: '#34ebe1',
     footer: {
-      text: show.year,
+      text: show.aired,
+    },
+    image: {
+      url: show.picture,
     },
     fields: [
       {
         name: 'Episodes',
-        value: show.aired_episodes,
+        value: show.episodes,
       },
       {
         name: 'Genres',
-        value: show.genres.join(', '),
+        value: show.genres,
       },
       {
-        name: 'Rating',
-        value: show.rating,
+        name: 'Average Score',
+        value: show.score,
+      },
+      {
+        name: 'Rank',
+        value: show.rank,
       },
     ],
   };

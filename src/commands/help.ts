@@ -14,37 +14,49 @@ class AniHelp implements Command {
     .setTitle('MaidChan usage instructions')
     .addFields(
       {
-        name: '`info-anime {title}`',
-        value:
-          'Shows information about an anime. Be sure to wrap the title around quotes',
+        name: '`info-anime "{title}"`',
+        value: 'Shows information about an anime',
       },
       {
-        name: '`info-ln {title}`',
-        value: `Displays information for a light novel`,
-      },
-      {
-        name: '`info-manga {title}`',
+        name: '`info-manga "{title}"`',
         value: `Displays information for manga`,
       },
       {
-        name: '`info-vn {title}`',
+        name: '`info-vn "{title}"`',
         value: `Displays information for a visual novel`,
       },
       {
-        name: '`recommend-anime {title} [limit] [star_#]`',
+        name: '`info-ln "{title}"`',
+        value: `Displays information for a light novel`,
+      },
+      {
+        name: '`info-drama "{title}"`',
+        value: `Displays information for a drama or movie`,
+      },
+      {
+        name: '`recommend-anime "{title}" [limit] [star_#]`',
         value:
-          'Recommends an anime from a title you liked, with an optional limit and star filter. Be sure to wrap the title around quotes',
+          'Recommends an anime from a title you liked, with an optional limit and star filter.',
       },
       {
-        name: '`recommend-manga {title} [limit]`',
-        value: `Recommends manga from a title you enjoy`,
+        name: '`recommend-manga "{title}" [limit]`',
+        value: `Recommends manga from a title you liked, with an optional limit and star filter.`,
       },
       {
-        name: '`recommend-vn {title} [limit]`',
-        value: `Recommends visual novels from a title you enjoy`,
+        name: '`recommend-vn "{title}" [limit]`',
+        value: `Recommends visual novels from a title you liked, with an optional limit and star filter.`,
       },
       {
-        name: '`event {title} {episodes_streamed} {stream_date} {time}`',
+        name: '`recommend-ln "{title}" [limit]`',
+        value: `Recommends light novels from a title you liked, with an optional limit and star filter.`,
+      },
+      {
+        name: '`recommend-drama "{title}" [limit]`',
+        value: `Recommends drama or movies from a title you liked, with an optional limit and star filter.`,
+      },
+      {
+        name:
+          '`create-event "{title}" {episodes_streamed} {stream_date} {time}`',
         value:
           'Creates event embed for show being hosted. Provide range of episodes, use mm/dd/yyyy for date, and UTC time for time',
       },
