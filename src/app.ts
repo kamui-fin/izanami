@@ -55,7 +55,7 @@ client.on('message', async (msg: Discord.Message) => {
         'info-vn': new VNInfo(slicedParams),
         'info-drama': new DramaInfo(slicedParams),
         lookup: new Lookup(slicedParams),
-        event: new AniEvent(slicedParams, client),
+        'create-event': new AniEvent(slicedParams, client),
         help: new AniHelp(slicedParams),
       };
 
