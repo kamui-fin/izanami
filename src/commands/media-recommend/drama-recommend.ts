@@ -6,7 +6,7 @@ import Drama from '../../utils/drama';
 import { Show } from '../../types/drama.d';
 
 class ShowRecc implements Command {
-  name = 'recommend-show';
+  name = 'recommend-drama';
 
   aliases?: string[] | undefined;
 
