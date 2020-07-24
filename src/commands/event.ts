@@ -10,7 +10,7 @@ import AniList from '../utils/anilist';
 import { AnilistRecommendationAnime } from '../types/anilist.d';
 
 class AniEvent implements Command {
-  name = 'event';
+  name = 'create-event';
 
   aliases?: string[] | undefined;
 

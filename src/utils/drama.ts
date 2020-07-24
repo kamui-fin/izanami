@@ -77,9 +77,11 @@ export default class Drama {
         }
       });
 
-      const rank = document.querySelector(
-        '#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(3) > div.box-body.light-b > ul > li:nth-child(2)'
-      )?.textContent;
+      const rank = document
+        .querySelector(
+          '#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(3) > div.box-body.light-b > ul > li:nth-child(2)'
+        )
+        ?.textContent?.replace(/Ranked: /, '');
       const score = document
         .querySelector(
           '#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(3) > div.box-body.light-b > ul > li:nth-child(1)'
