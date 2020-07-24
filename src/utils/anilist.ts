@@ -36,7 +36,7 @@ export default class AniList {
 
   async getInfo(): Promise<AnilistRecommendation> {
     const res = await sendGraphQL(this.baseURL, this.getSearchQuery(), {
-      txt: this.query.slice(1, this.query.length),
+      txt: this.query.slice(1, -1),
     });
     return res.data.data.Media;
   }

@@ -2,6 +2,7 @@ import { Message } from 'discord.js';
 import { Command } from '../../types/command.d';
 import { notFoundEmbed, getDramaEmbed } from '../../utils/utils';
 import Drama from '../../utils/drama';
+import { Show } from '../../types/drama.d';
 
 class DramaInfo implements Command {
   name = 'info-drama';
@@ -25,7 +26,8 @@ class DramaInfo implements Command {
     const drama: Drama = new Drama(this.stringParams[0].slice(1, -1));
     try {
       const res = await drama.getInfo();
-      const embed = getDramaEmbed(res);
+
+      const embed = getDramaEmbed(res as Show);
 
       msg.channel.send({ embed });
     } catch (error) {
