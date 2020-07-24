@@ -24,6 +24,7 @@ import welcome from './welcome';
 import { VNDetail } from '../types/vn.d';
 import { LNDetail } from '../types/ln.d';
 import { Word } from '../types/goo.d';
+import { Show } from '../types/drama.d';
 
 const keyv = new Keyv();
 
@@ -79,6 +80,32 @@ const getDurationAnilist = (media: AnilistRecommendation): EmbedField => {
       ? (media as AnilistRecommendationAnime).episodes
       : 'Unknown',
   };
+};
+
+export const getDramaEmbed = (show: Show) => {
+  const embed = {
+    title: show.title,
+    description: show.overview,
+    color: '#301934',
+    footer: {
+      text: show.year,
+    },
+    fields: [
+      {
+        name: 'Episodes',
+        value: show.aired_episodes,
+      },
+      {
+        name: 'Genres',
+        value: show.genres.join(', '),
+      },
+      {
+        name: 'Rating',
+        value: show.rating,
+      },
+    ],
+  };
+  return embed;
 };
 
 export const getAnilistEmbed = (

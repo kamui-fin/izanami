@@ -20,7 +20,8 @@
     "newsapi": "^2.4.0",
     "node-fetch": "^2.6.0",
     "puppeteer": "^5.2.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "trakt.tv": "^8.0.0"
   },
   "devDependencies": {
     "@types/keyv": "^3.1.1",

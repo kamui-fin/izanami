@@ -24,6 +24,7 @@ import VNRecc from './commands/media-recommend/vn-recommend';
 import LNInfo from './commands/media-info/ln-info';
 import Lookup from './commands/lookup';
 import LNRecc from './commands/media-recommend/ln-recommend';
+import DramaInfo from './commands/media-info/drama-info';
 
 const client = new Discord.Client();
 
@@ -50,6 +51,7 @@ client.on('message', async (msg: Discord.Message) => {
         'info-ln': new LNInfo(slicedParams),
         'info-manga': new MangaInfo(slicedParams),
         'info-vn': new VNInfo(slicedParams),
+        'info-drama': new DramaInfo(slicedParams),
         lookup: new Lookup(slicedParams),
         event: new AniEvent(slicedParams, client),
         help: new AniHelp(slicedParams),
