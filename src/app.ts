@@ -1,8 +1,8 @@
 /* eslint-disable radix */
 import Discord from 'discord.js';
-import AniRecommender from './commands/recommend';
+import AniRecommender from './commands/media-recommend/ani-recommend';
 import AniHelp from './commands/help';
-import AniInfo from './commands/info';
+import AniInfo from './commands/media-info/ani-info';
 import AniEvent from './commands/event';
 import KotobaListener from './kotoba/kotobaListener';
 import {
@@ -10,20 +10,33 @@ import {
   splitCommand,
   decideRoles,
   boostReminder,
+  deleteBump,
+  setupRandomNewsFeed,
 } from './utils/utils';
 import { Command } from './types/command.d';
 import welcome from './utils/welcome';
 import 'dotenv/config';
-import GameDuration from './commands/durationGame';
+// import VN from './utils/vn';
+import MangaRecommender from './commands/media-recommend/manga-recommend';
+import MangaInfo from './commands/media-info/manga-info';
+import VNInfo from './commands/media-info/vn-info';
+import VNRecc from './commands/media-recommend/vn-recommend';
+import LNInfo from './commands/media-info/ln-info';
+import Lookup from './commands/lookup';
+import LNRecc from './commands/media-recommend/ln-recommend';
+import DramaInfo from './commands/media-info/drama-info';
+import ShowRecc from './commands/media-recommend/drama-recommend';
 
 const client = new Discord.Client();
 
 client.on('ready', () => {
   // // console.log(`Logged in !`);
+  setupRandomNewsFeed(client);
 });
 
 client.on('message', async (msg: Discord.Message) => {
   // all maidchan commands go here
+
   if (msg.author.bot !== true && msg.content.startsWith('!maidchan')) {
     const msgText = msg.content;
     const params = splitCommand(msgText);
@@ -32,13 +45,22 @@ client.on('message', async (msg: Discord.Message) => {
 
       const x: { [key: string]: Command } = {
         'recommend-anime': new AniRecommender(slicedParams),
+        'recommend-manga': new MangaRecommender(slicedParams),
+        'recommend-vn': new VNRecc(slicedParams),
+        'recommend-ln': new LNRecc(slicedParams),
+        'recommend-drama': new ShowRecc(slicedParams),
         'info-anime': new AniInfo(slicedParams),
+        'info-ln': new LNInfo(slicedParams),
+        'info-manga': new MangaInfo(slicedParams),
+        'info-vn': new VNInfo(slicedParams),
+        'info-drama': new DramaInfo(slicedParams),
+        lookup: new Lookup(slicedParams),
         event: new AniEvent(slicedParams, client),
-        'duration-game': new GameDuration(slicedParams),
         help: new AniHelp(slicedParams),
       };
 
       const chosenCmd = x[params[1]];
+
       if (!checkValidCommand(msgText, '!', chosenCmd)) {
         const cmdErrorEmbed = new Discord.MessageEmbed()
           .setColor('#ed1f1f')
@@ -89,18 +111,29 @@ client.on('message', async (msg: Discord.Message) => {
   if (msg.author.id === '302050872383242240' && msg.embeds) {
     const embed = msg.embeds[0];
     if (embed.description?.includes('Bump done')) {
+      deleteBump(client);
       boostReminder(client);
     }
   }
 });
 
 client.on('guildMemberAdd', (member) => {
-  welcome(
-    member,
+  const joinChannels: Array<string> = [
     '733500570421297253',
-    `Welcome to The Japan Zone, ${member.user?.username}!`,
-    `To join the server, type \`k!quiz n5\` and get a 7/10 (or better) on the N5 quiz. Good luck!`
-  );
+    '735624705427636315',
+    '735624831156092929',
+    '735625180176580700',
+    '735625233624596510',
+  ];
+
+  joinChannels.forEach((id) => {
+    welcome(
+      member,
+      id,
+      `Welcome to The Japan Zone, ${member.user?.username}!`,
+      `To join the server, type \`k!quiz n5\` and get a 7/10 (or better) on the N5 quiz. Good luck!`
+    );
+  });
 });
 
 client.login(process.env.BOT_TOKEN);

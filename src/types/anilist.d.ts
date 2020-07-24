@@ -4,7 +4,7 @@ export interface TopLevel {
 
 export interface Node {
   media: Media;
-  mediaRecommendation: MediaRecommendation;
+  mediaRecommendation: AnilistRecommendation;
 }
 
 export interface Media {
@@ -15,13 +15,12 @@ export interface Title {
   native: string;
 }
 
-export interface MediaRecommendation {
+export interface AnilistRecommendationBase {
   id?: number;
   coverImage: CoverImage;
   title: Title;
   siteUrl: string;
   description: string;
-  episodes: number;
   genres: string[];
   averageScore: number;
   popularity: number;
@@ -29,6 +28,18 @@ export interface MediaRecommendation {
   startDate: StartDate;
   eventTime: string;
 }
+
+export interface AnilistRecommendationAnime extends AnilistRecommendationBase {
+  episodes: string;
+}
+
+export interface AnilistRecommendationManga extends AnilistRecommendationBase {
+  volumes: string;
+}
+
+export type AnilistRecommendation =
+  | AnilistRecommendationAnime
+  | AnilistRecommendationManga;
 
 export interface CoverImage {
   color: string;

@@ -8,11 +8,25 @@ import {
   Message,
 } from 'discord.js';
 import axios, { AxiosResponse } from 'axios';
-import { MediaRecommendation } from '../types/anime.d';
+import Keyv from 'keyv';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { HowLongToBeatEntry } from 'howlongtobeat';
+import {
+  AnilistRecommendation,
+  AnilistRecommendationAnime,
+  AnilistRecommendationManga,
+} from '../types/anilist.d';
 import { Command } from '../types/command.d';
 import { FinishInfo } from '../types/kotoba.d';
 import KotobaListener from '../kotoba/kotobaListener';
 import welcome from './welcome';
+import { VNDetail } from '../types/vn.d';
+import { LNDetail } from '../types/ln.d';
+import { Word } from '../types/goo.d';
+import { Show } from '../types/drama.d';
+
+const keyv = new Keyv();
 
 export const sendGraphQL = async (
   baseUrl: string,
@@ -40,8 +54,69 @@ const fixAvgScore = (score: number): string => {
   return `${divided} ⭐`;
 };
 
-export const getEmbed = (
-  media: MediaRecommendation
+interface EmbedField {
+  name: string;
+  value: string;
+}
+export const fixDesc = (text: string, limitChars: number): string => {
+  let desc = text.replace(/<br>/g, '');
+  if (desc.length > limitChars) {
+    desc = `${desc.slice(0, limitChars)}...`;
+  }
+  return desc;
+};
+const getDurationAnilist = (media: AnilistRecommendation): EmbedField => {
+  if ((media as AnilistRecommendationAnime).episodes === undefined) {
+    return {
+      name: 'Volumes',
+      value: (media as AnilistRecommendationManga).volumes
+        ? (media as AnilistRecommendationManga).volumes
+        : 'Unknown',
+    };
+  }
+  return {
+    name: 'Episodes',
+    value: (media as AnilistRecommendationManga).volumes
+      ? (media as AnilistRecommendationAnime).episodes
+      : 'Unknown',
+  };
+};
+
+export const getDramaEmbed = (show: Show) => {
+  const embed = {
+    title: show.title,
+    description: show.overview,
+    color: '#34ebe1',
+    footer: {
+      text: show.aired,
+    },
+    image: {
+      url: show.picture,
+    },
+    fields: [
+      {
+        name: 'Episodes',
+        value: show.episodes,
+      },
+      {
+        name: 'Genres',
+        value: show.genres,
+      },
+      {
+        name: 'Average Score',
+        value: show.score,
+      },
+      {
+        name: 'Rank',
+        value: show.rank,
+      },
+    ],
+  };
+  return embed;
+};
+
+export const getAnilistEmbed = (
+  media: AnilistRecommendation
 ): Record<string, unknown> => {
   const embed = {
     title: media.title.native,
@@ -57,12 +132,9 @@ export const getEmbed = (
     fields: [
       {
         name: 'Genres',
-        value: media.genres.join(', '),
+        value: media.genres ? media.genres.join(', ') : 'Unknown',
       },
-      {
-        name: 'Episodes',
-        value: media.episodes ? media.episodes.toLocaleString() : 'Unknown',
-      },
+      getDurationAnilist(media),
       {
         name: 'Favorites',
         value: media.favourites.toLocaleString(),
@@ -84,7 +156,7 @@ export const getEmbed = (
 };
 
 export const getEventEmbed = (
-  media: MediaRecommendation,
+  media: AnilistRecommendationAnime,
   eventEpisodes: string,
   date: string,
   timeOfEvent: string,
@@ -120,12 +192,50 @@ export const getEventEmbed = (
   return embed;
 };
 
-export const fixDesc = (text: string, limitChars: number): string => {
-  let desc = text.replace(/<br>/g, '');
-  if (desc.length > limitChars) {
-    desc = `${desc.slice(0, limitChars)}...`;
+export const getVNEmbed = (
+  details: VNDetail,
+  playTime: HowLongToBeatEntry
+): MessageEmbed => {
+  const msgEmbed = new MessageEmbed()
+    .setTitle(details.title)
+    .setURL(details.link)
+    .setDescription(fixDesc(details.desc, 300))
+    .setImage(details.image)
+    .setColor('#fabd39')
+    .setFooter(details.year);
+
+  if (playTime) {
+    playTime.timeLabels.forEach((x: Array<string>) => {
+      msgEmbed.addField(x[1], playTime[x[0]], true);
+    });
   }
-  return desc;
+
+  msgEmbed
+    .addField('Average Rating', details.avgRating)
+    .addField('Total Votes', details.totalVotes);
+  return msgEmbed;
+};
+
+export const getLNEmbed = (details: LNDetail): MessageEmbed => {
+  const msgEmbed = new MessageEmbed()
+    .setTitle(details.title)
+    .setURL(details.link)
+    .setDescription(details.desc ? fixDesc(details.desc, 300) : '')
+    .setImage(details.image)
+    .setColor('#fabd39');
+
+  msgEmbed
+    .addField('Page Count', details.pageCount)
+    .addField('Author', details.author);
+  return msgEmbed;
+};
+
+export const getLookupEmbed = (wordRes: Word): MessageEmbed => {
+  return new MessageEmbed()
+    .setTitle(wordRes.title)
+    .addField('Meaning', wordRes.meaning)
+    .setColor('#5db0cf')
+    .addField('Sentence', wordRes.sentence);
 };
 
 export const splitCommand = (text: string): string[] | null => {
@@ -193,12 +303,26 @@ export const decideRoles = (
   }
 };
 
-export const boostReminder = (client: Client): void => {
+const getGeneral = (client: Client): Channel | undefined => {
   const ourServer = client.guilds.cache.get('732631790191378453');
 
   const general: Channel | undefined = ourServer?.channels.cache.get(
     '732631790841495685'
   );
+  return general;
+};
+
+const getMedia = (client: Client): Channel | undefined => {
+  const ourServer = client.guilds.cache.get('732631790191378453');
+
+  const media: Channel | undefined = ourServer?.channels.cache.get(
+    '732634726883655821'
+  );
+  return media;
+};
+
+export const boostReminder = (client: Client): void => {
+  const general: Channel | undefined = getGeneral(client);
 
   if (general instanceof TextChannel) {
     setTimeout(() => {
@@ -207,8 +331,23 @@ export const boostReminder = (client: Client): void => {
         .setDescription(`Type \`!d bump\` to keep our server up in rankings`)
         .setColor('#42f572');
 
-      general.send({ embed: remindEmbed });
+      general.send({ embed: remindEmbed }).then((msg: Message) => {
+        keyv.set('boostmsg', msg.id);
+      });
     }, 7200000);
+  }
+};
+
+export const deleteBump = async (client: Client): Promise<void> => {
+  const general: Channel | undefined = getGeneral(client);
+  const boostKey: string = await keyv.get('boostmsg');
+  if (general instanceof TextChannel) {
+    general.messages
+      .fetch(boostKey)
+      .then((msg: Message) => {
+        msg.delete();
+      })
+      .catch(console.error);
   }
 };
 
@@ -243,6 +382,21 @@ export const notValidEmbed = (msg: Message): void => {
   msg.channel.send({ embed: invalidEmbed });
 };
 
+interface Source {
+  id: string;
+  name: string;
+}
+interface Article {
+  source: Source;
+  author: string;
+  title: string;
+  description: string;
+  url: string;
+  urlToImage: string;
+  publishedAt: string;
+  content: string;
+}
+
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 export const shuffleArray = <T>(array: Array<T>): Array<T> => {
   const copiedArray = array;
@@ -251,4 +405,21 @@ export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     [copiedArray[i], copiedArray[j]] = [array[j], array[i]];
   }
   return copiedArray;
+};
+
+const getRandomNews = async (): Promise<string> => {
+  const url = `http://newsapi.org/v2/top-headlines?country=jp&apiKey=${process.env.NEWSAPI_KEY}`;
+  const data = await axios.get(url);
+  const articles: Array<Article> = shuffleArray(data.data.articles);
+  return articles[0].url;
+};
+
+export const setupRandomNewsFeed = (client: Client): void => {
+  const mediaChannel = getMedia(client);
+  if (mediaChannel instanceof TextChannel) {
+    setInterval(async () => {
+      const url = await getRandomNews();
+      mediaChannel.send(url);
+    }, 86400000);
+  }
 };
