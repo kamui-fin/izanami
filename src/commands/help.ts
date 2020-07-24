@@ -39,7 +39,7 @@ class AniHelp implements Command {
           'Recommends an anime from a title you liked, with an optional limit and star filter.',
       },
       {
-        name: '`recommend-manga "{title}" [limit]`',
+        name: '`recommend-manga "{title}" [limit] [star_#]`',
         value: `Recommends manga from a title you liked, with an optional limit and star filter.`,
       },
       {
@@ -58,7 +58,17 @@ class AniHelp implements Command {
         name:
           '`create-event "{title}" {episodes_streamed} {stream_date} {time}`',
         value:
-          'Creates event embed for show being hosted. Provide range of episodes, use mm/dd/yyyy for date, and UTC time for time',
+          'Creates event embed for show being hosted. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and UTC time for time',
+      },
+      {
+        name:
+          '`reschedule-event "{title}" {drama OR anime} {episodes_streamed} {stream_date} {time}`',
+        value:
+          'Reschedules event. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and UTC time for time',
+      },
+      {
+        name: '`cancel-event`',
+        value: 'Cancels event',
       },
       {
         name: '`help`',

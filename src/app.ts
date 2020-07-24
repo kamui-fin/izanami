@@ -3,7 +3,6 @@ import Discord from 'discord.js';
 import AniRecommender from './commands/media-recommend/ani-recommend';
 import AniHelp from './commands/help';
 import AniInfo from './commands/media-info/ani-info';
-import AniEvent from './commands/event';
 import KotobaListener from './kotoba/kotobaListener';
 import {
   checkValidCommand,
@@ -25,11 +24,18 @@ import LNInfo from './commands/media-info/ln-info';
 import LNRecc from './commands/media-recommend/ln-recommend';
 import DramaInfo from './commands/media-info/drama-info';
 import ShowRecc from './commands/media-recommend/drama-recommend';
+import EventHelper from './utils/eventHelper';
+import RescheduleEvent from './commands/events/rescheduleEvent';
+import CreateEvent from './commands/events/createEvent';
+import CancelEvent from './commands/events/cancelEvent';
 
 const client = new Discord.Client();
+let eventHelper: EventHelper;
 
 client.on('ready', () => {
   // // console.log(`Logged in !`);
+  eventHelper = new EventHelper(client);
+
   setupRandomNewsFeed(client);
 });
 
@@ -53,7 +59,9 @@ client.on('message', async (msg: Discord.Message) => {
         'info-manga': new MangaInfo(slicedParams),
         'info-vn': new VNInfo(slicedParams),
         'info-drama': new DramaInfo(slicedParams),
-        'create-event': new AniEvent(slicedParams, client),
+        'create-event': new CreateEvent(slicedParams, eventHelper),
+        'reschedule-event': new RescheduleEvent(slicedParams, eventHelper),
+        'cancel-event': new CancelEvent(slicedParams, eventHelper),
         help: new AniHelp(slicedParams),
       };
 

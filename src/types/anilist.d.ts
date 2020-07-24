@@ -31,6 +31,7 @@ export interface AnilistRecommendationBase {
 
 export interface AnilistRecommendationAnime extends AnilistRecommendationBase {
   episodes: string;
+  kind: 'anime';
 }
 
 export interface AnilistRecommendationManga extends AnilistRecommendationBase {

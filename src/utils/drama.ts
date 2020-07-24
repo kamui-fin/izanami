@@ -95,14 +95,14 @@ export default class Drama {
 
       return {
         title,
-        overview,
+        description: overview,
         episodes,
         rank,
         score,
         picture,
         aired,
         genres,
-      };
+      } as Show;
     }
     return null;
   }
