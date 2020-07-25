@@ -42,7 +42,7 @@ client.on('ready', () => {
 client.on('message', async (msg: Discord.Message) => {
   // all maidchan commands go here
 
-  if (msg.author.bot !== true && msg.content.startsWith('!maidchan')) {
+  if (msg.author.bot !== true && msg.content.startsWith('mc!')) {
     const msgText = msg.content;
     const params = splitCommand(msgText);
     if (params) {
