@@ -6,6 +6,7 @@ import {
   MessageEmbed,
   TextChannel,
   Message,
+  Collection,
 } from 'discord.js';
 import axios, { AxiosResponse } from 'axios';
 import Keyv from 'keyv';
@@ -24,6 +25,7 @@ import welcome from './welcome';
 import { VNDetail } from '../types/vn.d';
 import { LNDetail } from '../types/ln.d';
 import { Show } from '../types/drama.d';
+import EventHelper from './eventHelper';
 
 const keyv = new Keyv();
 
@@ -186,7 +188,7 @@ export const getEventEmbed = (
       },
       {
         name: 'Event Time',
-        value: `${`${date} ${timeOfEvent}`} UTC`,
+        value: `${`${date} ${timeOfEvent}`} CT`,
       },
       {
         name: 'Episodes',
@@ -314,6 +316,15 @@ const getGeneral = (client: Client): Channel | undefined => {
   return general;
 };
 
+const getEventChannel = (client: Client): Channel | undefined => {
+  const ourServer = client.guilds.cache.get('732631790191378453');
+
+  const eventsChannel: Channel | undefined = ourServer?.channels.cache.get(
+    '732633915667251302'
+  );
+  return eventsChannel;
+};
+
 const getMedia = (client: Client): Channel | undefined => {
   const ourServer = client.guilds.cache.get('732631790191378453');
 
@@ -351,6 +362,22 @@ export const deleteBump = async (client: Client): Promise<void> => {
       })
       .catch(console.error);
   }
+};
+
+export const fetchEvents = async (client: Client): Promise<Message[]> => {
+  const events: Channel | undefined = getEventChannel(client);
+  const currentEvents: Message[] = [];
+  if (events instanceof TextChannel) {
+    const messages: Collection<string, Message> = await events.messages.fetch({
+      limit: 20,
+    });
+    messages.forEach((msg: Message) => {
+      if (msg.embeds) {
+        currentEvents.push(msg);
+      }
+    });
+  }
+  return currentEvents;
 };
 
 export const eventStarter = (
@@ -424,4 +451,64 @@ export const setupRandomNewsFeed = (client: Client): void => {
       mediaChannel.send(url);
     }, 86400000);
   }
+};
+
+export const checkEvents = async (
+  client: Client,
+  eventHelper: EventHelper
+): Promise<void> => {
+  const events = await fetchEvents(client);
+  const cancelledEvents: string[] = [];
+  const rescheduledEvents: string[] = [];
+  // Finds cancelled events and rescheduled events
+  events.forEach((event) => {
+    const embed = event.embeds[0];
+    let eventTitle: EmbedField | undefined;
+    if (embed?.title?.includes('Event Cancelled')) {
+      eventTitle = embed.fields.find((el) => el.name.startsWith('Show'));
+      if (eventTitle) cancelledEvents.push(eventTitle.value);
+    } else if (embed?.title?.includes('Event Rescheduled')) {
+      eventTitle = embed.fields.find((el) => el.name.startsWith('Show'));
+      if (eventTitle) rescheduledEvents.push(eventTitle.value);
+    }
+  });
+
+  // Sets up events again (if not cancelled)
+  events.forEach((event) => {
+    const embed = event.embeds[0];
+    if (
+      embed?.title?.includes('Event Scheduled') ||
+      embed?.title?.includes('Event Rescheduled')
+    ) {
+      const eventTitle: EmbedField | undefined = embed?.fields.find((el) =>
+        el.name.startsWith('Show')
+      );
+      const findEventTime: EmbedField | undefined = embed?.fields.find((el) =>
+        el.name.startsWith('Event Time')
+      );
+      const eventTime = findEventTime?.value.substring(
+        0,
+        findEventTime?.value.length - 4
+      );
+      const eventDate = eventTime ? new Date(eventTime) : new Date();
+      if (
+        eventTitle &&
+        embed?.title?.includes('Event Scheduled') &&
+        !rescheduledEvents.includes(eventTitle.value) &&
+        !cancelledEvents.includes(eventTitle.value) &&
+        eventDate.getTime() > Date.now()
+      ) {
+        console.log(eventDate);
+        eventHelper.reallocateEvent(event, eventDate, embed);
+      } else if (
+        eventTitle &&
+        embed?.title?.includes('Event Rescheduled') &&
+        !cancelledEvents.includes(eventTitle.value) &&
+        eventDate.getTime() > Date.now()
+      ) {
+        console.log(eventDate);
+        eventHelper.reallocateEvent(event, eventDate, embed);
+      }
+    }
+  });
 };

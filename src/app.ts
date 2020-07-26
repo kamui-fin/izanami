@@ -11,6 +11,7 @@ import {
   boostReminder,
   deleteBump,
   setupRandomNewsFeed,
+  checkEvents,
 } from './utils/utils';
 import { Command } from './types/command.d';
 import welcome from './utils/welcome';
@@ -35,8 +36,8 @@ let eventHelper: EventHelper;
 client.on('ready', () => {
   // // console.log(`Logged in !`);
   eventHelper = new EventHelper(client);
-
   setupRandomNewsFeed(client);
+  checkEvents(client, eventHelper);
 });
 
 client.on('message', async (msg: Discord.Message) => {
