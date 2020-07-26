@@ -44,7 +44,7 @@ export default class Drama {
     }
     if (resLink) {
       const { window } = await JSDOM.fromURL(
-        `https://mydramalist.com/${resLink}`
+        `https://mydramalist.com/search?q=${resLink}&adv=titles&co=1&so=relevance`
       );
       const { document } = window;
       const showDetails = document.querySelectorAll(
