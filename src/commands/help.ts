@@ -58,13 +58,13 @@ class AniHelp implements Command {
         name:
           '`create-event "{title}" {drama OR anime} {episodes_streamed} {stream_date} {time}`',
         value:
-          'Creates event embed for show being hosted. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and UTC time for time',
+          'Creates event embed for show being hosted. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and CT time for time',
       },
       {
         name:
           '`reschedule-event "{title}" {drama OR anime} {episodes_streamed} {stream_date} {time}`',
         value:
-          'Reschedules event. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and UTC time for time',
+          'Reschedules event. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and CT time for time',
       },
       {
         name: '`cancel-event`',
