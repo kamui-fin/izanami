@@ -84,7 +84,7 @@ class EventHelper {
     this.addEvent(msg, date, embed, true);
   }
 
-  reallocateEvent(msg: Message, date: Date, embed: MessageEmbed) : void {
+  reallocateEvent(msg: Message, date: Date, embed: MessageEmbed): void {
     const etaMS = date.getTime() - Date.now();
     const timeout = setTimeout(() => {
       embed.setTitle('Event Started');
