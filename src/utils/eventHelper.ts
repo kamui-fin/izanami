@@ -84,6 +84,19 @@ class EventHelper {
     this.addEvent(msg, date, embed, true);
   }
 
+  reallocateEvent(msg: Message, date: Date, embed: MessageEmbed) : void {
+    const etaMS = date.getTime() - Date.now();
+    const timeout = setTimeout(() => {
+      embed.setTitle('Event Started');
+      if (this.eventChannel) {
+        this.eventChannel.send('<@&732668352022970458>');
+        this.eventChannel.send({ embed });
+      }
+    }, etaMS);
+    const { id } = msg.author;
+    this.eventData.push({ timeout, embed, title: embed.title, host: id });
+  }
+
   getEventChannel(): TextChannel | undefined {
     const ourServer = this.client.guilds.cache.get('732631790191378453');
     const eventChannel: Channel | undefined = ourServer?.channels.cache.get(
