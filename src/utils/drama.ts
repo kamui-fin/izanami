@@ -11,7 +11,9 @@ export default class Drama {
 
   async searchShow(): Promise<string | undefined> {
     const { window } = await JSDOM.fromURL(
-      encodeURI(`https://mydramalist.com/search?q=${this.query}&adv=titles&co=1&so=relevance`)
+      encodeURI(
+        `https://mydramalist.com/search?q=${this.query}&adv=titles&co=1&so=relevance`
+      )
     );
     const { document } = window;
     const res = document.querySelector('h6 > a:nth-child(1)');
