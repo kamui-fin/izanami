@@ -77,7 +77,7 @@ const getDurationAnilist = (media: AnilistRecommendation): EmbedField => {
   }
   return {
     name: 'Episodes',
-    value: (media as AnilistRecommendationManga).volumes
+    value: (media as AnilistRecommendationAnime).episodes
       ? (media as AnilistRecommendationAnime).episodes
       : 'Unknown',
   };
@@ -307,31 +307,23 @@ export const decideRoles = (
   }
 };
 
-const getGeneral = (client: Client): Channel | undefined => {
-  const ourServer = client.guilds.cache.get('732631790191378453');
+const getChannel = (client: Client, id: string): Channel | undefined => {
+  const ourServer = client.guilds.cache.get(id);
 
-  const general: Channel | undefined = ourServer?.channels.cache.get(
-    '732631790841495685'
-  );
-  return general;
+  const channel: Channel | undefined = ourServer?.channels.cache.get(id);
+  return channel;
+};
+
+const getGeneral = (client: Client): Channel | undefined => {
+  return getChannel(client, '732631790841495685');
 };
 
 const getEventChannel = (client: Client): Channel | undefined => {
-  const ourServer = client.guilds.cache.get('732631790191378453');
-
-  const eventsChannel: Channel | undefined = ourServer?.channels.cache.get(
-    '732633915667251302'
-  );
-  return eventsChannel;
+  return getChannel(client, '732633915667251302');
 };
 
 const getMedia = (client: Client): Channel | undefined => {
-  const ourServer = client.guilds.cache.get('732631790191378453');
-
-  const media: Channel | undefined = ourServer?.channels.cache.get(
-    '732634726883655821'
-  );
-  return media;
+  return getChannel(client, '732634726883655821');
 };
 
 export const boostReminder = (client: Client): void => {
@@ -355,12 +347,8 @@ export const deleteBump = async (client: Client): Promise<void> => {
   const general: Channel | undefined = getGeneral(client);
   const boostKey: string = await keyv.get('boostmsg');
   if (general instanceof TextChannel) {
-    general.messages
-      .fetch(boostKey)
-      .then((msg: Message) => {
-        msg.delete();
-      })
-      .catch(console.error);
+    const msg: Message = await general.messages.fetch(boostKey);
+    msg.delete();
   }
 };
 
@@ -385,7 +373,7 @@ export const eventStarter = (
   date: Date,
   channel: Channel | undefined
 ): void => {
-  const etaMS = date.getTime() - Date.now();
+  const etaMS: number = date.getTime() - Date.now();
 
   if (channel instanceof TextChannel) {
     setTimeout(() => {
