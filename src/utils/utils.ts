@@ -308,7 +308,7 @@ export const decideRoles = (
 };
 
 const getChannel = (client: Client, id: string): Channel | undefined => {
-  const ourServer = client.guilds.cache.get(id);
+  const ourServer = client.guilds.cache.get('732631790191378453');
 
   const channel: Channel | undefined = ourServer?.channels.cache.get(id);
   return channel;
