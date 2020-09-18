@@ -299,7 +299,7 @@ export const decideRoles = (
             user,
             '732631790841495685',
             'Welcome to The Japan Zone!',
-            `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#732636997876842569>`
+            `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#756578161453432923>`
           );
         }
       }
