@@ -297,7 +297,7 @@ export const decideRoles = (
           user.roles.add(japaneseRole);
           welcome(
             user,
-            '7763417576562622464',
+            '763417576562622464',
             'Welcome to The Japan Zone!',
             `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#756578161453432923>`
           );
