@@ -297,9 +297,9 @@ export const decideRoles = (
           user.roles.add(japaneseRole);
           welcome(
             user,
-            '732631790841495685',
+            '763417576562622464',
             'Welcome to The Japan Zone!',
-            `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#732641885843357717>`
+            `We're glad to have you, <@${user.user.id}>! Make sure to read <#732633420236062870> and assign your role in <#756578161453432923>`
           );
         }
       }
@@ -315,7 +315,7 @@ const getChannel = (client: Client, id: string): Channel | undefined => {
 };
 
 const getGeneral = (client: Client): Channel | undefined => {
-  return getChannel(client, '732631790841495685');
+  return getChannel(client, '763417576562622464');
 };
 
 const getEventChannel = (client: Client): Channel | undefined => {

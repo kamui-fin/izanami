@@ -103,7 +103,7 @@ client.on('message', async (msg: Discord.Message) => {
 
         const quizRole = kotoListener.getQuizRole();
         console.log(quizRole);
-        const japaneseRole = msg.guild?.roles.cache.get('732644505248989215');
+        const japaneseRole = msg.guild?.roles.cache.get('778723446883614731');
         decideRoles(
           finishInfo,
           quizRole,
@@ -126,11 +126,9 @@ client.on('message', async (msg: Discord.Message) => {
 
 client.on('guildMemberAdd', (member) => {
   const joinChannels: Array<string> = [
-    '733500570421297253',
-    '735624705427636315',
-    '735624831156092929',
-    '735625180176580700',
-    '735625233624596510',
+    '779089434603159584',
+    '779089455763161149',
+    '779089659162001438',
   ];
 
   joinChannels.forEach((id) => {
@@ -139,7 +137,7 @@ client.on('guildMemberAdd', (member) => {
       id,
       `Welcome to The Japan Zone, ${member.user?.username}!`,
       `To gain access to the server, type \`k!quiz n5\` and miss 3 or less on the N5 quiz. Good luck! 
-       If you are new to Japanese, we suggest reading a guide in <#732787641656934442>`
+       If you are new to Japanese, we suggest reading a guide in <#742105750951821374>`
     );
   });
 });
