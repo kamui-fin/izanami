@@ -21,7 +21,7 @@ import {
 import { Command } from '../types/command.d';
 import { FinishInfo } from '../types/kotoba.d';
 import KotobaListener from '../kotoba/kotobaListener';
-// import welcome from './welcome';
+import welcome from './welcome';
 import { VNDetail } from '../types/vn.d';
 import { LNDetail } from '../types/ln.d';
 import { Show } from '../types/drama.d';
