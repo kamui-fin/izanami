@@ -125,31 +125,23 @@ client.on('message', async (msg: Discord.Message) => {
 });
 
 client.on('guildMemberAdd', (member) => {
-  // const joinChannels: Array<string> = [
-  //   '733500570421297253',
-  //   '735624705427636315',
-  //   '735624831156092929',
-  //   '735625180176580700',
-  //   '735625233624596510',
-  // ];
+  const joinChannels: Array<string> = [
+    '733500570421297253',
+    '735624705427636315',
+    '735624831156092929',
+    '735625180176580700',
+    '735625233624596510',
+  ];
 
-  // joinChannels.forEach((id) => {
-  //   welcome(
-  //     member,
-  //     id,
-  //     `Welcome to The Japan Zone, ${member.user?.username}!`,
-  //     `To gain access to the server, type \`k!quiz n5\` and miss 3 or less on the N5 quiz. Good luck!
-  //      If you are new to Japanese, we suggest reading a guide in <#732787641656934442>`
-  //   );
-  // });
-  if (member.user) {
+  joinChannels.forEach((id) => {
     welcome(
       member,
-      '763417576562622464',
-      'Welcome to The Japan Zone!',
-      `We're glad to have you, <@${member.user.id}>! Make sure to read and assign your role in <#756578161453432923>`
+      id,
+      `Welcome to The Japan Zone, ${member.user?.username}!`,
+      `To gain access to the server, type \`k!quiz n5\` and miss 3 or less on the N5 quiz. Good luck! 
+       If you are new to Japanese, we suggest reading a guide in <#732787641656934442>`
     );
-  }
+  });
 });
 
 client.login(process.env.BOT_TOKEN);

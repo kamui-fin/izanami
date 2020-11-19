@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable radix */
 import {
   Role,
@@ -272,8 +271,8 @@ export const decideRoles = (
   finishInfo: FinishInfo,
   quizRole: Role | undefined,
   jlptRoleTheyHad: Role | undefined,
-  _kotoListener: KotobaListener,
-  _japaneseRole: Role | undefined
+  kotoListener: KotobaListener,
+  japaneseRole: Role | undefined
 ): void => {
   const { user } = finishInfo.player;
   if (user) {
@@ -288,7 +287,6 @@ export const decideRoles = (
         user.roles.add(quizRole);
       }
     } else {
-      // eslint-disable-next-line no-lonely-if
       if (quizRole) user.roles.add(quizRole);
       if (finishInfo.player.justJoined) {
         const unverifiedRole:
@@ -316,8 +314,8 @@ const getChannel = (client: Client, id: string): Channel | undefined => {
   return channel;
 };
 
-export const getGeneral = (client: Client): Channel | undefined => {
-  return getChannel(client, '763417576562622464');
+const getGeneral = (client: Client): Channel | undefined => {
+  return getChannel(client, '732631790841495685');
 };
 
 const getEventChannel = (client: Client): Channel | undefined => {
