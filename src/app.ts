@@ -95,7 +95,7 @@ client.on('message', async (msg: Discord.Message) => {
       const finishInfo = kotoListener.getFinishInfo();
       console.log(finishInfo);
 
-      if (finishInfo.answeredRight >= finishInfo.player.needToGetRight) {
+      if (finishInfo.answeredRight >= finishInfo.player.needToGetRight && finishInfo.numOfPlayers === 1) {
         const jlptRoleTheyHad = KotobaListener.getJlptRoleTheyHad(
           finishInfo.player
         );

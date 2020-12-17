@@ -65,10 +65,12 @@ class KotobaListener {
     }
     const player = this.getPlayerInfo();
     const answeredRight = this.getNumAnsweredRight();
+    const numOfPlayers = this.getNumOfPlayers();
     return {
       quizlevel: nLevel,
       player,
       answeredRight,
+      numOfPlayers
     };
   }
 
@@ -78,6 +80,15 @@ class KotobaListener {
     );
     const numofunansweredQuestions = flds ? flds.value.split('\n').length : 0;
     return 10 - numofunansweredQuestions;
+  }
+
+  getNumOfPlayers(): number {
+    const flds = this.kMessage.embeds[0].fields.find((el) =>
+      el.name.startsWith('Final')
+    );
+
+    const numOfPlayers = flds ? flds.value.split('\n').length : 0;
+    return numOfPlayers;
   }
 
   getUnverifiedRole(): Role | undefined {

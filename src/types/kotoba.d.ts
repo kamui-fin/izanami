@@ -11,6 +11,7 @@ export interface FinishInfo {
   quizlevel: number | null;
   player: UserInfo;
   answeredRight: number;
+  numOfPlayers: number;
 }
 
 export interface FinishEmbedMatch {
