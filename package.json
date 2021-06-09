@@ -10,7 +10,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/puppeteer": "^3.0.1",
     "@types/ws": "^7.2.6",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
