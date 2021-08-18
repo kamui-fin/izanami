@@ -1,84 +1,50 @@
-import { AnilistRecommendation, TopLevel } from '../types/anilist.d';
-import { sendGraphQL } from './utils';
+import { AnilistRecommendation, TopLevel } from "../types";
+import { sendGraphQL } from ".";
 
-export default class AniList {
-  baseURL = 'https://graphql.anilist.co';
+const BASE_URL = "https://graphql.anilist.co";
 
-  query: string;
+const getLengthType = (type: string): string => {
+    return type === "MANGA" ? "volumes" : "episodes";
+}
 
-  type: string;
-
-  constructor(query: string, type: string) {
-    this.query = query;
-    this.type = type;
-  }
-
-  async getReccomendations(limit: number): Promise<TopLevel[]> {
-    const res = await this.getInfo();
-
-    const { id } = res;
-    // const basedOfTitle = res.data.data.Media.title.native;
-
-    const recommendations = await sendGraphQL(
-      this.baseURL,
-      this.getReccQuery(),
-      {
-        id,
-      }
-    );
-
-    const reccs = <TopLevel[]>(
-      recommendations.data.data.Media.recommendations.edges
-    );
-
-    return limit > reccs.length ? reccs : reccs.slice(0, limit);
-  }
-
-  async getInfo(): Promise<AnilistRecommendation> {
-    const res = await sendGraphQL(this.baseURL, this.getSearchQuery(), {
-      txt: this.query.slice(1, -1),
-    });
-    return res.data.data.Media;
-  }
-
-  getSearchQuery(): string {
+const getSearchQuery = (type: string): string => {
     const searchQuery = `
     query ($txt: String) {
-      Media(search:$txt, type:${this.type}){
-        id,
-        title{
-          native
+        Media(search:$txt, type:${type}){
+            id,
+            title{
+                native
+            }
+            coverImage {
+                color
+                extraLarge
+                large
+                medium
+            }
+            title {
+                native
+            }
+            siteUrl
+            description
+            ${getLengthType(type)}
+            averageScore
+            popularity
+            favourites
+            startDate {
+                year
+                month
+                day
+            }
         }
-        coverImage {
-          color
-          extraLarge
-          large
-          medium
-      }
-      title {
-          native
-      }
-      siteUrl
-      description
-      ${this.type === 'MANGA' ? 'volumes' : 'episodes'}
-      averageScore
-      popularity
-      favourites
-      startDate {
-          year
-          month
-          day
-      }
-      }
     }
     `;
     return searchQuery;
-  }
+};
 
-  getReccQuery(): string {
+const getReccQuery = (type: string): string => {
     const reccQuery = `
     query ($id: Int) {
-        Media(id: $id, type: ${this.type}) {
+        Media(id: $id, type: ${type}) {
         recommendations {
             edges {
             node {
@@ -99,7 +65,7 @@ export default class AniList {
                 }
                 siteUrl
                 description
-                ${this.type === 'MANGA' ? 'volumes' : 'episodes'}
+                ${getLengthType(type)}
                 genres
                 averageScore
                 popularity
@@ -117,5 +83,32 @@ export default class AniList {
     }
   `;
     return reccQuery;
-  }
-}
+};
+
+export const getInfo = async (
+    type: string,
+    query: string
+): Promise<AnilistRecommendation> => {
+    const res = await sendGraphQL(BASE_URL, getSearchQuery(type), {
+        txt: query.slice(1, -1),
+    });
+    return res.data.data.Media;
+};
+
+export const getReccomendations = async (
+    type: string,
+    query: string,
+    limit: number
+): Promise<TopLevel[]> => {
+    const res = await getInfo(type, query);
+    const { id } = res;
+    const recommendations = await sendGraphQL(BASE_URL, getReccQuery(type), {
+        id,
+    });
+
+    const reccs = <TopLevel[]>(
+        recommendations.data.data.Media.recommendations.edges
+    );
+
+    return limit > reccs.length ? reccs : reccs.slice(0, limit);
+};
