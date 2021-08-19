@@ -52,7 +52,11 @@ class MangaRecommender implements Command {
 
     async run(msg: Message): Promise<void> {
         try {
-            const reccs = await anilist.getReccomendations("MANGA", this.stringParams[0], this.limit);
+            const reccs = await anilist.getReccomendations(
+                "MANGA",
+                this.stringParams[0],
+                this.limit
+            );
 
             shuffleArray(reccs);
             reccs.forEach((recc: TopLevel) => {

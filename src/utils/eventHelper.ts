@@ -1,18 +1,18 @@
+import { TextChannel, Message, MessageEmbed, Client } from "discord.js";
+import { Event } from "../types";
 import {
-    Channel,
-    TextChannel,
-    Message,
-    MessageEmbed,
-    Client,
-} from "discord.js";
-import { EVENT_CHANNEL, EVENT_CLIENT_ROLE, SERVER } from "../config";
+    ERROR_COLOR,
+    EVENT_CHANNEL,
+    EVENT_CLIENT_ROLE,
+    SERVER,
+} from "../config";
 
 class EventHelper {
     eventData: Event[];
 
     client: Client;
 
-    eventChannel: TextChannel | undefined;
+    eventChannel: TextChannel | null;
 
     constructor(client: Client) {
         this.eventData = [];
@@ -34,8 +34,10 @@ class EventHelper {
                 this.eventChannel.send({ embed });
             }
         }, etaMS);
+
         const { id } = msg.author;
         this.eventData.push({ timeout, embed, title: embed.title, host: id });
+
         if (reschedule) {
             embed.setTitle("Event Rescheduled");
         }
@@ -62,7 +64,7 @@ class EventHelper {
 
                         const cancelEmbed = new MessageEmbed()
                             .setTitle(`Event Cancelled`)
-                            .setColor("#CF574C")
+                            .setColor(ERROR_COLOR)
                             .addField("Show", showName)
                             .addField("Host", `<@${event.host}>`);
                         this.eventChannel.send({ embed: cancelEmbed });
@@ -90,14 +92,13 @@ class EventHelper {
         this.eventData.push({ timeout, embed, title: embed.title, host: id });
     }
 
-    getEventChannel(): TextChannel | undefined {
+    getEventChannel(): TextChannel | null {
         const ourServer = this.client.guilds.cache.get(SERVER);
-        const eventChannel: Channel | undefined =
-            ourServer?.channels.cache.get(EVENT_CHANNEL);
+        const eventChannel = ourServer?.channels.cache.get(EVENT_CHANNEL);
         if (eventChannel instanceof TextChannel) {
             return eventChannel as TextChannel;
         }
-        return undefined;
+        return null;
     }
 }
 

@@ -1,7 +1,12 @@
 import { Message } from "discord.js";
 import { Command, VNDetail } from "../../../types";
 import * as vnstat from "../../../utils/vnstat";
-import { findGameDurationInfo, getVNEmbed, notFoundEmbed, shuffleArray } from "../../../utils";
+import {
+    findGameDurationInfo,
+    getVNEmbed,
+    notFoundEmbed,
+    shuffleArray,
+} from "../../../utils";
 
 class VNRecc implements Command {
     stringParams: string[];

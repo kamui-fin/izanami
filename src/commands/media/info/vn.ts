@@ -1,6 +1,10 @@
 import { Message } from "discord.js";
 import { Command, VNDetail } from "../../../types";
-import { findGameDurationInfo, getVNEmbed, notFoundEmbed } from "../../../utils";
+import {
+    findGameDurationInfo,
+    getVNEmbed,
+    notFoundEmbed,
+} from "../../../utils";
 import * as vnstat from "../../../utils/vnstat";
 
 class VNInfo implements Command {
@@ -21,7 +25,9 @@ class VNInfo implements Command {
                 null,
                 this.stringParams[0].slice(1, -1)
             );
-            const playTime = await findGameDurationInfo(this.stringParams[0].slice(1, -1));
+            const playTime = await findGameDurationInfo(
+                this.stringParams[0].slice(1, -1)
+            );
             const embed = getVNEmbed(details as VNDetail, playTime);
             msg.channel.send({ embed });
         } catch (error) {

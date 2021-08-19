@@ -5,7 +5,7 @@ const BASE_URL = "https://graphql.anilist.co";
 
 const getLengthType = (type: string): string => {
     return type === "MANGA" ? "volumes" : "episodes";
-}
+};
 
 const getSearchQuery = (type: string): string => {
     const searchQuery = `

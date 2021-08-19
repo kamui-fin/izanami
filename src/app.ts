@@ -37,6 +37,7 @@ import {
     PREFIX,
     RESOURCE_CHANNEL,
 } from "./config";
+import Schedule from "./commands/events/schedule";
 
 const client = new Discord.Client();
 let eventHelper: EventHelper;
@@ -68,13 +69,14 @@ client.on("message", async (msg: Discord.Message) => {
                 "info-manga": new MangaInfo(slicedParams),
                 "info-vn": new VNInfo(slicedParams),
                 "info-drama": new DramaInfo(slicedParams),
-                "create-event": new CreateEvent(slicedParams, eventHelper),
-                "reschedule-event": new RescheduleEvent(
+                "create-event": new Schedule(slicedParams, eventHelper),
+                "reschedule-event": new Schedule(
                     slicedParams,
-                    eventHelper
+                    eventHelper,
+                    true
                 ),
-                "cancel-event": new CancelEvent(slicedParams, eventHelper),
-                help: new Help(slicedParams),
+                "cancel-event": new CancelEvent(eventHelper),
+                help: new Help(),
             };
 
             const chosenCmd = cmds[cmdName];
