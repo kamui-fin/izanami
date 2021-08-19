@@ -1,27 +1,29 @@
 import { Message } from "discord.js";
 import { Command, AnilistRecommendationAnime, Show } from "../../types";
 import { fixDesc, getEventEmbed, notValidEmbed } from "../../utils";
+import { EVENT_HOST_ROLE } from "../../config";
+import EventHelper from "../../utils/eventHelper";
 import * as anilist from "../../utils/anilist";
 import * as dramalist from "../../utils/dramalist";
-import EventHelper from "../../utils/eventHelper";
-import Drama from "../../utils/dramalist";
-import { EVENT_HOST_ROLE } from "../../config";
 
-class RescheduleEvent implements Command {
+class Schedule implements Command {
     stringParams: string[];
 
     eventHelper: EventHelper;
 
-    constructor(prms: string[], eventHelper: EventHelper) {
+    reschedule: boolean;
+
+    constructor(prms: string[], eventHelper: EventHelper, reschedule = false) {
         this.stringParams = prms;
         this.eventHelper = eventHelper;
+        this.reschedule = reschedule;
     }
 
     correctParams(): boolean {
         const fromAnime = this.stringParams[0];
         const type = this.stringParams[1];
         return (
-            typeof fromAnime !== undefined && ["anime", "drama"].includes(type)
+            typeof fromAnime !== undefined && ["drama", "anime"].includes(type)
         );
     }
 
@@ -29,7 +31,10 @@ class RescheduleEvent implements Command {
         if (msg.member?.roles.cache.has(EVENT_HOST_ROLE)) {
             let res: AnilistRecommendationAnime | Show;
             if (this.stringParams[1] === "anime") {
-                res = (await anilist.getInfo(this.stringParams[0], "ANIME")) as AnilistRecommendationAnime;
+                res = (await anilist.getInfo(
+                    this.stringParams[0],
+                    "ANIME"
+                )) as AnilistRecommendationAnime;
             } else {
                 res = (await dramalist.getInfo(this.stringParams[0])) as Show;
             }
@@ -46,11 +51,15 @@ class RescheduleEvent implements Command {
                 msg.author.id,
                 this.stringParams[1]
             );
-            this.eventHelper.rescheduleEvent(msg, date, embed);
+            if (this.reschedule) {
+                this.eventHelper.rescheduleEvent(msg, date, embed);
+            } else {
+                this.eventHelper.addEvent(msg, date, embed);
+            }
         } else {
             notValidEmbed(msg);
         }
     }
 }
 
-export default RescheduleEvent;
+export default Schedule;

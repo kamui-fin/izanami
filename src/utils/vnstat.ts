@@ -13,16 +13,18 @@ export const searchVN = async (title: string): Promise<SearchResult> => {
 };
 
 export const showDetailsForVN = async (
-    id: string | null = null,
-    title = "",
+    vnId: string | null = null,
+    vnTitle = "",
     onlyReccs = false
 ): Promise<VNDetail | string[]> => {
-    let lookupID: string | null = id;
-    if (id === null) {
-        const res = await searchVN(title);
-        lookupID = res.id;
+    let id = vnId;
+    if (vnId === null) {
+        res = await searchVN(vnTitle);
+        id = res.id;
     }
-    const detailRes = await Axios.get(`${BASE_URL}/novel/${lookupID}`);
+
+    const link = `https://vndb.org/v${id}`;
+    const detailRes = await Axios.get(`${BASE_URL}/novel/${id}`);
     const html: string = detailRes.data;
     const $ = cheerio.load(html);
 
@@ -33,33 +35,27 @@ export const showDetailsForVN = async (
 
         return recs;
     }
-    const titleA = $(
-        "body > div.container > div > div.col-md-3.col-lg-2.sidebar > div > h3 > a"
+
+    const sidebar = $(
+        "body > div.container > div > div.col-md-3.col-lg-2.sidebar"
     );
-    const titleText = titleA.text();
-    const vndbLink = `https://vndb.org/v${lookupID}`;
+    const title = sidebar.find("div > h3 > a").text();
     const desc = $("#summary > div.row.text-center > small > p").text();
-    const image = $(
-        "body > div.container > div > div.col-md-3.col-lg-2.sidebar > div > img"
-    )
-        .attr("src")
-        ?.toString();
-    const year = $(
-        "body > div.container > div > div.col-md-3.col-lg-2.sidebar > div > h3 > small"
-    ).text();
-    const avgRating = $(
-        "body > div.container > div > div.col-md-3.col-lg-2.sidebar > div > p:nth-child(3) > span:nth-child(2)"
-    ).text();
-    const totalVotes = $(
-        "body > div.container > div > div.col-md-3.col-lg-2.sidebar > div > p:nth-child(4) > span.pull-right.text-right"
-    ).text();
+    const image = sidebar.find("div > img").attr("src")?.toString() || "";
+    const year = sidebar.find("div > h3 > small").text();
+    const avgRating = sidebar
+        .find("div > p:nth-child(3) > span:nth-child(2)")
+        .text();
+    const totalVotes = sidebar
+        .find("div > p:nth-child(4) > span.pull-right.text-right")
+        .text();
 
     return {
-        id: lookupID,
-        title: titleText,
-        link: vndbLink,
+        id,
+        title,
+        link,
         desc,
-        image: image || "",
+        image,
         year,
         avgRating,
         totalVotes,

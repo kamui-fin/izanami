@@ -36,7 +36,11 @@ class ShowRecc implements Command {
 
     async run(msg: Message): Promise<void> {
         try {
-            const reccIds = await dramalist.getInfo(this.stringParams[0].slice(1, -1), null, true);
+            const reccIds = await dramalist.getInfo(
+                this.stringParams[0].slice(1, -1),
+                null,
+                true
+            );
             (reccIds as string[])
                 .slice(0, this.limit)
                 .forEach(async (recc: string) => {

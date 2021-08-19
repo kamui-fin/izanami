@@ -17,7 +17,9 @@ class DramaInfo implements Command {
 
     async run(msg: Message): Promise<void> {
         try {
-            const res = await dramalist.getInfo(this.stringParams[0].slice(1, -1));
+            const res = await dramalist.getInfo(
+                this.stringParams[0].slice(1, -1)
+            );
             const embed = getDramaEmbed(res as Show);
             msg.channel.send({ embed });
         } catch (error) {

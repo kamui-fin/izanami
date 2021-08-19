@@ -62,6 +62,7 @@ export interface Command {
     correctParams?(): boolean;
     run(msg: Message): void;
 }
+
 export interface Show {
     kind: "drama";
     title: string | undefined | null;

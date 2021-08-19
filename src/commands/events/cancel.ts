@@ -11,7 +11,7 @@ class CancelEvent implements Command {
         this.eventHelper = eventHelper;
     }
 
-    run(msg: Message) {
+    run(msg: Message): void {
         if (msg.member?.roles.cache.has(EVENT_HOST_ROLE)) {
             this.eventHelper.cancelEvent(msg);
         } else {

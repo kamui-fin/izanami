@@ -44,20 +44,18 @@ class KotobaListener {
         );
     }
 
-    getFinishEmbedMatch(): FinishEmbedMatch {
+    getFinishEmbedMatch(): FinishEmbedMatch | null {
         const { title, description } = this.kMessage.embeds[0];
-        let matchedTitle: RegExpMatchArray | null = null;
-        let matchedDescription: RegExpMatchArray | null = null;
+
         if (!!title && !!description) {
-            matchedTitle = title.match(this.titlere);
-
-            matchedDescription = description.match(this.descre);
+            const matchedTitle = title.match(this.titlere);
+            const matchedDescription = description.match(this.descre);
+            return {
+                titleMatch: matchedTitle,
+                descMatch: matchedDescription,
+            };
         }
-
-        return {
-            titleMatch: matchedTitle,
-            descMatch: matchedDescription,
-        };
+        return null;
     }
 
     getFinishInfo(): FinishInfo {
