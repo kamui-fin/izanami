@@ -14,12 +14,12 @@ export const searchVN = async (title: string): Promise<SearchResult> => {
 
 export const showDetailsForVN = async (
     vnId: string | null = null,
-    vnTitle = "",
+    vnTitle: string | null = null,
     onlyReccs = false
-): Promise<VNDetail | string[]> => {
+): Promise<VNDetail | string[] | null> => {
     let id = vnId;
-    if (vnId === null) {
-        res = await searchVN(vnTitle);
+    if (vnId === null && vnTitle) {
+        const res = await searchVN(vnTitle);
         id = res.id;
     }
 
@@ -50,14 +50,26 @@ export const showDetailsForVN = async (
         .find("div > p:nth-child(4) > span.pull-right.text-right")
         .text();
 
-    return {
-        id,
-        title,
-        link,
-        desc,
-        image,
-        year,
-        avgRating,
-        totalVotes,
-    };
+    if (
+        id &&
+        title &&
+        link &&
+        desc &&
+        image &&
+        year &&
+        avgRating &&
+        totalVotes
+    ) {
+        return {
+            id,
+            title,
+            link,
+            desc,
+            image,
+            year,
+            avgRating,
+            totalVotes,
+        };
+    }
+    return null;
 };

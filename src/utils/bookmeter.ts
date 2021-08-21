@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import puppeteer, { Puppeteer } from "puppeteer";
+import puppeteer from "puppeteer";
 import { LNDetail, SearchResult } from "../types";
 import { shuffleArray } from ".";
 
@@ -13,22 +13,22 @@ export const searchLN = async (title: string): Promise<SearchResult> => {
     return searchResult;
 };
 
-const findBookInfo = (bookID: string): LNDetail => {
-    const titleA = document.querySelector(
+const findBookInfo = (id: string): LNDetail | null => {
+    const title = document.querySelector(
         "body > section.books.show > header > div.header__inner > h1"
-    );
-    const titleText = titleA?.innerHTML;
-    const bookMeterLink = `${BASE_URL}/books/${bookID}`;
+    )?.innerHTML;
+    const link = `${BASE_URL}/books/${id}`;
     const section = document.querySelector(
         "body > section.books.show > div.bm-wrapper > div.bm-wrapper__side > div > section:nth-child(1)"
     );
     const desc = section?.querySelector(
         "div.group__detail > dl > dd.bm-details-side__item.bm-details-side__item--full > div > div > p"
     )?.innerHTML;
-    const image = section
-        .querySelector("div.group__image > a > img")
-        ?.getAttribute("src")
-        ?.toString();
+    const image =
+        section
+            ?.querySelector("div.group__image > a > img")
+            ?.getAttribute("src")
+            ?.toString() || "";
     const pageCount = section?.querySelector(
         "div.group__detail > dl > dd:nth-child(4) > span:nth-child(1)"
     )?.innerHTML;
@@ -36,15 +36,19 @@ const findBookInfo = (bookID: string): LNDetail => {
         "body > section.books.show > header > div.header__inner > ul > li > a"
     )?.innerHTML;
 
-    return {
-        id: bookID,
-        title: titleText,
-        link: bookMeterLink,
-        desc,
-        author,
-        image: image || "",
-        pageCount,
-    };
+    if (title && desc && author && pageCount) {
+        return {
+            id,
+            title,
+            link,
+            desc,
+            author,
+            image,
+            pageCount,
+        };
+    } else {
+        return null;
+    }
 };
 
 const findBookRecommendations = async (page: puppeteer.Page) => {
@@ -66,11 +70,11 @@ const findBookRecommendations = async (page: puppeteer.Page) => {
 
 export const showDetailsForLN = async (
     id: string | null = null,
-    title = "",
+    title: string | null = null,
     onlyReccs = false
-): Promise<LNDetail | string[]> => {
+): Promise<LNDetail | string[] | null> => {
     let lookupID: string | null = id;
-    if (id === null) {
+    if (id === null && title) {
         const res = await searchLN(title);
         lookupID = res.id;
     }
@@ -86,7 +90,7 @@ export const showDetailsForLN = async (
         return findBookRecommendations(page);
     }
 
-    const results: LNDetail = await page.evaluate(findBookInfo, lookupID);
+    const results = await page.evaluate(findBookInfo, lookupID);
     browser.close();
     return results;
 };

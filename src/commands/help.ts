@@ -67,7 +67,7 @@ class Help implements Command {
         .setFooter("{} means mandatory \t[] means optional");
 
     run(msg: Message): void {
-        msg.channel.send(this.helpEmbed);
+        msg.channel.send({ embeds: [this.helpEmbed] });
     }
 }
 

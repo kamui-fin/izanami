@@ -6,20 +6,23 @@ import {
     TextChannel,
     Message,
     Collection,
+    PartialGuildMember,
+    GuildMember,
+    ColorResolvable,
 } from "discord.js";
 import axios, { AxiosResponse } from "axios";
 import Keyv from "keyv";
 import { HowLongToBeatService, HowLongToBeatEntry } from "howlongtobeat";
 import {
     AnilistRecommendation,
-    AnilistRecommendationAnime,
-    AnilistRecommendationManga,
     Command,
     FinishInfo,
     VNDetail,
     LNDetail,
     Show,
     EmbedField,
+    MediaType,
+    Article,
 } from "../types";
 import KotobaListener from "./kotobaListener";
 import EventHelper from "./eventHelper";
@@ -55,7 +58,7 @@ export const welcome = (
             .setDescription(description)
             .setColor(ORANGE_COLOR);
         if (txtChannel instanceof TextChannel)
-            txtChannel.send({ embed: welcomeEmbed });
+            txtChannel.send({ embeds: [welcomeEmbed] });
     }
 };
 
@@ -93,35 +96,25 @@ export const fixDesc = (text: string, limitChars: number): string => {
     return desc;
 };
 
-const getDurationAnilist = (media: AnilistRecommendation): EmbedField => {
-    if ((media as AnilistRecommendationAnime).episodes === undefined) {
-        return {
-            name: "Volumes",
-            value: (media as AnilistRecommendationManga).volumes
-                ? (media as AnilistRecommendationManga).volumes
-                : "Unknown",
-        };
-    }
+export const getDurationAnilist = (
+    media: AnilistRecommendation,
+    mediaType: MediaType
+): EmbedField => {
+    const name = mediaType === MediaType.MANGA ? "Volumes" : "Episodes";
     return {
-        name: "Episodes",
-        value: (media as AnilistRecommendationAnime).episodes
-            ? (media as AnilistRecommendationAnime).episodes
-            : "Unknown",
+        name,
+        value: media.length || "Unknown",
     };
 };
 
 export const getDramaEmbed = (show: Show): MessageEmbed => {
-    const embed = {
-        title: show.title,
-        description: show.description,
-        color: CYAN_COLOR,
-        footer: {
-            text: show.aired,
-        },
-        image: {
-            url: show.picture,
-        },
-        fields: [
+    const embed = new MessageEmbed()
+        .setTitle(show.title)
+        .setDescription(show.description)
+        .setColor(CYAN_COLOR)
+        .setFooter(show.aired)
+        .setImage(show.picture)
+        .setFields([
             {
                 name: "Episodes",
                 value: show.episodes || "Movie",
@@ -138,31 +131,29 @@ export const getDramaEmbed = (show: Show): MessageEmbed => {
                 name: "Rank",
                 value: show.rank,
             },
-        ],
-    };
+        ]);
     return embed;
 };
 
 export const getAnilistEmbed = (
-    media: AnilistRecommendation
-): Record<string, unknown> => {
-    const embed = {
-        title: media.title.native,
-        description: media.description,
-        url: media.siteUrl,
-        color: media.coverImage.color,
-        footer: {
-            text: `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`,
-        },
-        image: {
-            url: media.coverImage.large,
-        },
-        fields: [
+    media: AnilistRecommendation,
+    mediaType: MediaType
+): MessageEmbed => {
+    const embed = new MessageEmbed()
+        .setTitle(media.title.native)
+        .setDescription(media.description)
+        .setURL(media.siteUrl)
+        .setColor(media.coverImage.color as ColorResolvable)
+        .setFooter(
+            `Started ${media.startDate.month}/${media.startDate.day}/${media.startDate.year}`
+        )
+        .setImage(media.coverImage.large)
+        .setFields([
             {
                 name: "Genres",
                 value: media.genres ? media.genres.join(", ") : "Unknown",
             },
-            getDurationAnilist(media),
+            getDurationAnilist(media, mediaType),
             {
                 name: "Favorites",
                 value: media.favourites.toLocaleString(),
@@ -178,35 +169,35 @@ export const getAnilistEmbed = (
                 value: media.popularity.toLocaleString(),
                 inline: true,
             },
-        ],
-    };
+        ]);
     return embed;
 };
 
 export const getEventEmbed = (
-    media: AnilistRecommendationAnime | Show,
+    media: AnilistRecommendation | Show,
     eventEpisodes: string,
     date: string,
     timeOfEvent: string,
     userID: string,
-    kind: string
+    kind: MediaType.ANIME | MediaType.DRAMA
 ): MessageEmbed => {
-    const image =
-        kind === "drama"
-            ? (media as Show).picture
-            : (media as AnilistRecommendationAnime).coverImage.large;
-    const color =
-        kind === "drama"
-            ? CYAN_COLOR
-            : (media as AnilistRecommendationAnime).coverImage.color;
-    const title =
-        kind === "drama"
-            ? (media as Show).title
-            : (media as AnilistRecommendationAnime).title.native;
+    let image;
+    let color;
+    let title;
+
+    if (kind === MediaType.DRAMA) {
+        image = (media as Show).picture;
+        title = (media as Show).title;
+        color = CYAN_COLOR;
+    } else {
+        image = (media as AnilistRecommendation).coverImage.large;
+        title = (media as AnilistRecommendation).title.native;
+        color = (media as AnilistRecommendation).coverImage.color;
+    }
 
     const embed = new MessageEmbed()
         .setTitle("Event Scheduled")
-        .setColor(color)
+        .setColor(color as ColorResolvable)
         .setImage(image || "")
         .addFields([
             {
@@ -270,16 +261,12 @@ export const getLNEmbed = (details: LNDetail): MessageEmbed => {
 };
 
 export const splitCommand = (text: string): string[] | null => {
-    let splitted: RegExpMatchArray | null = text.match(/(?:[^\s"]+|"[^"]*")+/g);
-    if (splitted) {
-        splitted = splitted.filter((el: string) => el.trim() !== "");
-    }
-    return splitted;
+    const splitted = text.match(/(?:[^\s"]+|"[^"]*")+/g);
+    return splitted && splitted.filter((el: string) => el.trim() !== "");
 };
 
 export const checkValidCommand = (
     cmd: string,
-    prefix: string,
     commandType: Command
 ): boolean => {
     if (!commandType) {
@@ -287,17 +274,18 @@ export const checkValidCommand = (
     }
     const splittedCommand = splitCommand(cmd);
     if (splittedCommand) {
-        const isCorrectCmdType = splittedCommand[1] === commandType.name;
-        const validParams = commandType.correctParams();
-        return validParams && isCorrectCmdType;
+        if (commandType.correctParams) {
+            const validParams = commandType.correctParams();
+            return validParams;
+        }
     }
     return false;
 };
 
 export const decideRoles = (
     finishInfo: FinishInfo,
-    quizRole: Role | undefined,
-    jlptRoleTheyHad: Role | undefined,
+    quizRole: Role | undefined | null,
+    jlptRoleTheyHad: Role | undefined | null,
     kotoListener: KotobaListener,
     japaneseRole: Role | undefined
 ): void => {
@@ -306,8 +294,8 @@ export const decideRoles = (
         if (jlptRoleTheyHad) {
             if (
                 quizRole &&
-                Number.Number(quizRole.name.charAt(1)) <
-                    Number.Number(jlptRoleTheyHad.name.charAt(1))
+                Number(quizRole.name.charAt(1)) <
+                    Number(jlptRoleTheyHad.name.charAt(1))
             ) {
                 user.roles.remove(jlptRoleTheyHad);
                 user.roles.add(quizRole);
@@ -332,26 +320,26 @@ export const decideRoles = (
     }
 };
 
-const getChannel = (client: Client, id: string): Channel | undefined => {
+const getChannel = (client: Client, id: string): Channel | null => {
     const ourServer = client.guilds.cache.get(SERVER);
-    const channel: Channel | undefined = ourServer?.channels.cache.get(id);
-    return channel;
+    const channel = ourServer?.channels.cache.get(id);
+    return channel || null;
 };
 
-const getGeneral = (client: Client): Channel | undefined => {
+const getGeneral = (client: Client): Channel | null => {
     return getChannel(client, GENERAL_CHANNEL);
 };
 
-const getEventChannel = (client: Client): Channel | undefined => {
+const getEventChannel = (client: Client): Channel | null => {
     return getChannel(client, EVENT_CHANNEL);
 };
 
-const getMedia = (client: Client): Channel | undefined => {
+const getMedia = (client: Client): Channel | null => {
     return getChannel(client, MEDIA_CHANNEL);
 };
 
 export const bumpReminder = (client: Client): void => {
-    const general: Channel | undefined = getGeneral(client);
+    const general = getGeneral(client);
 
     if (general instanceof TextChannel) {
         setTimeout(() => {
@@ -362,7 +350,7 @@ export const bumpReminder = (client: Client): void => {
                 )
                 .setColor(SUCCESS_COLOR);
 
-            general.send({ embed: remindEmbed }).then((msg: Message) => {
+            general.send({ embeds: [remindEmbed] }).then((msg: Message) => {
                 keyv.set("boostmsg", msg.id);
             });
         }, BUMP_INTERVAL);
@@ -370,7 +358,7 @@ export const bumpReminder = (client: Client): void => {
 };
 
 export const deleteBump = async (client: Client): Promise<void> => {
-    const general: Channel | undefined = getGeneral(client);
+    const general = getGeneral(client);
     const boostKey: string = await keyv.get("boostmsg");
     if (general instanceof TextChannel) {
         const msg: Message = await general.messages.fetch(boostKey);
@@ -379,7 +367,7 @@ export const deleteBump = async (client: Client): Promise<void> => {
 };
 
 export const fetchEvents = async (client: Client): Promise<Message[]> => {
-    const events: Channel | undefined = getEventChannel(client);
+    const events = getEventChannel(client);
     const currentEvents: Message[] = [];
     if (events instanceof TextChannel) {
         const messages: Collection<string, Message> =
@@ -401,21 +389,20 @@ export const eventStarter = (
     channel: Channel | undefined
 ): void => {
     const etaMS: number = date.getTime() - Date.now();
-
     if (channel instanceof TextChannel) {
         setTimeout(() => {
             channel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-            channel.send({ embed });
+            channel.send({ embeds: [embed] });
         }, etaMS);
     }
 };
 
-export const notFoundEmbed = (msg: Message, typeMedia: string): void => {
+export const notFoundEmbed = (msg: Message): void => {
     const nfEmbed = new MessageEmbed()
-        .setTitle(`${typeMedia} not found`)
+        .setTitle(`Not found`)
         .setDescription("Please refine your search and try again")
         .setColor(ERROR_COLOR);
-    msg.channel.send({ embed: nfEmbed });
+    msg.channel.send({ embeds: [nfEmbed] });
 };
 
 export const notValidEmbed = (msg: Message): void => {
@@ -423,13 +410,13 @@ export const notValidEmbed = (msg: Message): void => {
         .setTitle(`Invalid Permissions`)
         .setDescription("You do not have permissions to run this command.")
         .setColor(ERROR_COLOR);
-    msg.channel.send({ embed: invalidEmbed });
+    msg.channel.send({ embeds: [invalidEmbed] });
 };
 
 // thanks to https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 export const shuffleArray = <T>(array: Array<T>): Array<T> => {
     const copiedArray = array;
-    for (let i = array.length - 1; i > 0; i--) {
+    for (let i = array.length - 1; i > 0; i -= 1) {
         const j = Math.floor(Math.random() * (i + 1));
         [copiedArray[i], copiedArray[j]] = [array[j], array[i]];
     }
@@ -460,31 +447,34 @@ export const checkEvents = async (
     const events = await fetchEvents(client);
     const cancelledEvents: string[] = [];
     const rescheduledEvents: string[] = [];
+
     // Finds cancelled events and rescheduled events
     events.forEach((event) => {
         const embed = event.embeds[0];
-        let eventTitle: EmbedField | undefined;
-        if (embed?.title?.includes("Event Cancelled")) {
-            eventTitle = embed.fields.find((el) => el.name.startsWith("Show"));
-            if (eventTitle) cancelledEvents.push(eventTitle.value);
-        } else if (embed?.title?.includes("Event Rescheduled")) {
-            eventTitle = embed.fields.find((el) => el.name.startsWith("Show"));
-            if (eventTitle) rescheduledEvents.push(eventTitle.value);
+        const { title } = embed;
+        const eventTitle = embed.fields.find((el) =>
+            el.name.startsWith("Show")
+        );
+        if (title?.includes("Event Cancelled") && eventTitle) {
+            cancelledEvents.push(eventTitle.value);
+        } else if (title?.includes("Event Rescheduled") && eventTitle) {
+            rescheduledEvents.push(eventTitle.value);
         }
     });
 
     // Sets up events again (if not cancelled)
     events.forEach((event) => {
         const embed = event.embeds[0];
+        const { title } = embed;
         if (
-            embed?.title?.includes("Event Scheduled") ||
-            embed?.title?.includes("Event Rescheduled")
+            title?.includes("Event Scheduled") ||
+            title?.includes("Event Rescheduled")
         ) {
-            const eventTitle: EmbedField | undefined = embed?.fields.find(
-                (el) => el.name.startsWith("Show")
+            const eventTitle = embed?.fields.find((el) =>
+                el.name.startsWith("Show")
             );
-            const findEventTime: EmbedField | undefined = embed?.fields.find(
-                (el) => el.name.startsWith("Event Time")
+            const findEventTime = embed?.fields.find((el) =>
+                el.name.startsWith("Event Time")
             );
             const eventTime = findEventTime?.value.substring(
                 0,
@@ -517,4 +507,13 @@ export const findGameDurationInfo = async (
     const hltbService = new HowLongToBeatService();
     const data: Array<HowLongToBeatEntry> = await hltbService.search(query);
     return data[0];
+};
+
+export const removeQuotes = (input: string): string => {
+    const first = input[0];
+    const last = input[input.length - 1];
+    if (first === '"' && last === '"') {
+        return input.slice(1, -1);
+    }
+    return input;
 };
