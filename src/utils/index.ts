@@ -450,7 +450,7 @@ export const checkEvents = async (
 
     // Finds cancelled events and rescheduled events
     events.forEach((event) => {
-        const embed = event.embeds[0];
+        const [ embed ] = event.embeds;
         const { title } = embed;
         const eventTitle = embed.fields.find((el) =>
             el.name.startsWith("Show")
@@ -464,12 +464,13 @@ export const checkEvents = async (
 
     // Sets up events again (if not cancelled)
     events.forEach((event) => {
-        const embed = event.embeds[0];
+        const [embed] = event.embeds;
         const { title } = embed;
-        if (
-            title?.includes("Event Scheduled") ||
-            title?.includes("Event Rescheduled")
-        ) {
+        const [isSchedule, isReschedule] = [
+            title?.includes("Scheduled"),
+            title?.includes("Rescheduled"),
+        ];
+        if (isSchedule || isReschedule) {
             const eventTitle = embed?.fields.find((el) =>
                 el.name.startsWith("Show")
             );
@@ -481,21 +482,19 @@ export const checkEvents = async (
                 findEventTime?.value.length - 4
             );
             const eventDate = eventTime ? new Date(eventTime) : new Date();
-            if (
-                eventTitle &&
-                embed?.title?.includes("Event Scheduled") &&
-                !rescheduledEvents.includes(eventTitle.value) &&
-                !cancelledEvents.includes(eventTitle.value) &&
-                eventDate.getTime() > Date.now()
-            ) {
-                eventHelper.reallocateEvent(event, eventDate, embed);
-            } else if (
-                eventTitle &&
-                embed?.title?.includes("Event Rescheduled") &&
-                !cancelledEvents.includes(eventTitle.value) &&
-                eventDate.getTime() > Date.now()
-            ) {
-                eventHelper.reallocateEvent(event, eventDate, embed);
+            if (eventTitle && eventDate.getTime() > Date.now()) {
+                if (isSchedule) {
+                    if (
+                        !rescheduledEvents.includes(eventTitle.value) &&
+                        !cancelledEvents.includes(eventTitle.value)
+                    ) {
+                        eventHelper.reallocateEvent(event, eventDate, embed);
+                    }
+                } else if (isReschedule) {
+                    if (!cancelledEvents.includes(eventTitle.value)) {
+                        eventHelper.reallocateEvent(event, eventDate, embed);
+                    }
+                }
             }
         }
     });

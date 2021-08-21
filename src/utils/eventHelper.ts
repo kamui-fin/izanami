@@ -20,36 +20,40 @@ class EventHelper {
         this.eventChannel = this.getEventChannel();
     }
 
+    sendEventEmbed(embed: MessageEmbed): void {
+        if (this.eventChannel) {
+            this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
+            this.eventChannel.send({ embeds: [embed] });
+        }
+    }
+
+    reallocateEvent(msg: Message, date: Date, embed: MessageEmbed): void {
+        const title = embed.title || "";
+        const etaMS = date.getTime() - Date.now();
+        const timeout = setTimeout(() => {
+            embed.setTitle("Event Started");
+            this.sendEventEmbed(embed);
+        }, etaMS);
+        const { id } = msg.author;
+        this.eventData.push({
+            timeout,
+            embed,
+            title,
+            host: id,
+        });
+    }
+
     addEvent(
         msg: Message,
         date: Date,
         embed: MessageEmbed,
         reschedule = false
     ): void {
-        const etaMS = date.getTime() - Date.now();
-        const timeout = setTimeout(() => {
-            embed.setTitle("Event Started");
-            if (this.eventChannel) {
-                this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-                this.eventChannel.send({ embeds: [embed] });
-            }
-        }, etaMS);
-
-        const { id } = msg.author;
-        this.eventData.push({
-            timeout,
-            embed,
-            title: embed.title || "",
-            host: id,
-        });
-
+        this.reallocateEvent(msg, date, embed);
         if (reschedule) {
             embed.setTitle("Event Rescheduled");
         }
-        if (this.eventChannel) {
-            this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-            this.eventChannel.send({ embeds: [embed] });
-        }
+        this.sendEventEmbed(embed);
     }
 
     cancelEvent(msg: Message, verbose = true): void {
@@ -65,14 +69,12 @@ class EventHelper {
                         (fld) => fld.name === "Show"
                     )?.value;
                     if (showName && verbose) {
-                        this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-
                         const cancelEmbed = new MessageEmbed()
                             .setTitle(`Event Cancelled`)
                             .setColor(ERROR_COLOR)
                             .addField("Show", showName)
                             .addField("Host", `<@${event.host}>`);
-                        this.eventChannel.send({ embeds: [cancelEmbed] });
+                        this.sendEventEmbed(cancelEmbed);
                     }
                 }
             }
@@ -82,24 +84,6 @@ class EventHelper {
     rescheduleEvent(msg: Message, date: Date, embed: MessageEmbed): void {
         this.cancelEvent(msg, false);
         this.addEvent(msg, date, embed, true);
-    }
-
-    reallocateEvent(msg: Message, date: Date, embed: MessageEmbed): void {
-        const etaMS = date.getTime() - Date.now();
-        const timeout = setTimeout(() => {
-            embed.setTitle("Event Started");
-            if (this.eventChannel) {
-                this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-                this.eventChannel.send({ embeds: [embed] });
-            }
-        }, etaMS);
-        const { id } = msg.author;
-        this.eventData.push({
-            timeout,
-            embed,
-            title: embed.title || "",
-            host: id,
-        });
     }
 
     getEventChannel(): TextChannel | null {

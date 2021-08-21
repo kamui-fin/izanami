@@ -1,6 +1,11 @@
 import { Message } from "discord.js";
 import { Command, AnilistRecommendation, Show, MediaType } from "../../types";
-import { fixDesc, getEventEmbed, notValidEmbed } from "../../utils";
+import {
+    fixDesc,
+    getEventEmbed,
+    notValidEmbed,
+    removeQuotes,
+} from "../../utils";
 import { EVENT_HOST_ROLE } from "../../config";
 import EventHelper from "../../utils/eventHelper";
 import * as anilist from "../../utils/anilist";
@@ -13,17 +18,19 @@ class Schedule implements Command {
 
     reschedule: boolean;
 
+    query: string;
+
     constructor(prms: string[], eventHelper: EventHelper, reschedule = false) {
         this.stringParams = prms;
         this.eventHelper = eventHelper;
         this.reschedule = reschedule;
+        this.query = removeQuotes(prms[0]);
     }
 
     correctParams(): boolean {
-        const fromAnime = this.stringParams[0];
         const type = this.stringParams[1];
         return (
-            typeof fromAnime !== undefined && ["drama", "anime"].includes(type)
+            typeof this.query !== undefined && ["drama", "anime"].includes(type)
         );
     }
 
@@ -33,10 +40,10 @@ class Schedule implements Command {
             if (this.stringParams[1] === "anime") {
                 res = (await anilist.getInfo(
                     MediaType.ANIME,
-                    this.stringParams[0]
+                    this.query
                 )) as AnilistRecommendation;
             } else {
-                res = (await dramalist.getInfo(this.stringParams[0])) as Show;
+                res = (await dramalist.getInfo(this.query)) as Show;
             }
             res.description = fixDesc(res.description || "", 300);
             const episodesToStream = this.stringParams[2];
