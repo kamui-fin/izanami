@@ -46,9 +46,8 @@ const findBookInfo = (id: string): LNDetail | null => {
             image,
             pageCount,
         };
-    } else {
-        return null;
     }
+    return null;
 };
 
 const findBookRecommendations = async (page: puppeteer.Page) => {

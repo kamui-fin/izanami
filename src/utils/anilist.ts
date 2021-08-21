@@ -90,7 +90,7 @@ export const getInfo = async (
     query: string
 ): Promise<AnilistRecommendation> => {
     const res = await sendGraphQL(BASE_URL, getSearchQuery(type), {
-        txt: query.slice(1, -1),
+        txt: query
     });
     return res.data.data.Media;
 };
@@ -106,9 +106,9 @@ export const getReccomendations = async (
         id,
     });
 
-    const reccs = <TopLevel[]>(
+    const reccs: TopLevel[] = [
         recommendations.data.data.Media.recommendations.edges
-    );
+    ];
 
     return limit > reccs.length ? reccs : reccs.slice(0, limit);
 };
