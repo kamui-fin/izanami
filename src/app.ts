@@ -1,8 +1,6 @@
 import "dotenv/config";
-import Discord from "discord.js";
-import AniRecommender from "./commands/media/recommend/anime";
+import Discord, { Intents } from "discord.js";
 import Help from "./commands/help";
-import AniInfo from "./commands/media/info/anime";
 import KotobaListener from "./utils/kotobaListener";
 import {
     checkValidCommand,
@@ -14,18 +12,8 @@ import {
     checkEvents,
     welcome,
 } from "./utils";
-import { Command } from "./types";
-import MangaRecommender from "./commands/media/recommend/manga";
-import MangaInfo from "./commands/media/info/manga";
-import VNInfo from "./commands/media/info/vn";
-import VNRecc from "./commands/media/recommend/vn";
-import LNInfo from "./commands/media/info/novel";
-import LNRecc from "./commands/media/recommend/novel";
-import DramaInfo from "./commands/media/info/drama";
-import ShowRecc from "./commands/media/recommend/drama";
+import { Command, MediaType } from "./types";
 import EventHelper from "./utils/eventHelper";
-import RescheduleEvent from "./commands/events/reschedule";
-import CreateEvent from "./commands/events/create";
 import CancelEvent from "./commands/events/cancel";
 import {
     DISBOARD_ID,
@@ -38,8 +26,12 @@ import {
     RESOURCE_CHANNEL,
 } from "./config";
 import Schedule from "./commands/events/schedule";
+import MediaRecommender from "./commands/media/recommend";
+import MediaInfo from "./commands/media/info";
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+});
 let eventHelper: EventHelper;
 
 client.on("ready", () => {
@@ -55,20 +47,35 @@ client.on("message", async (msg: Discord.Message) => {
         const params = splitCommand(msgText);
 
         if (params) {
-            const [cmdName]: string = params;
+            const [cmdName] = params;
             const slicedParams = params.slice(2);
 
             const cmds: { [key: string]: Command } = {
-                "recommend-anime": new AniRecommender(slicedParams),
-                "recommend-manga": new MangaRecommender(slicedParams),
-                "recommend-vn": new VNRecc(slicedParams),
-                "recommend-ln": new LNRecc(slicedParams),
-                "recommend-drama": new ShowRecc(slicedParams),
-                "info-anime": new AniInfo(slicedParams),
-                "info-ln": new LNInfo(slicedParams),
-                "info-manga": new MangaInfo(slicedParams),
-                "info-vn": new VNInfo(slicedParams),
-                "info-drama": new DramaInfo(slicedParams),
+                "recommend-anime": new MediaRecommender(
+                    slicedParams,
+                    MediaType.ANIME
+                ),
+                "recommend-manga": new MediaRecommender(
+                    slicedParams,
+                    MediaType.MANGA
+                ),
+                "recommend-vn": new MediaRecommender(
+                    slicedParams,
+                    MediaType.VISUAL_NOVEL
+                ),
+                "recommend-ln": new MediaRecommender(
+                    slicedParams,
+                    MediaType.LIGHT_NOVEL
+                ),
+                "recommend-drama": new MediaRecommender(
+                    slicedParams,
+                    MediaType.DRAMA
+                ),
+                "info-anime": new MediaInfo(slicedParams, MediaType.ANIME),
+                "info-manga": new MediaInfo(slicedParams, MediaType.MANGA),
+                "info-vn": new MediaInfo(slicedParams, MediaType.VISUAL_NOVEL),
+                "info-ln": new MediaInfo(slicedParams, MediaType.LIGHT_NOVEL),
+                "info-drama": new MediaInfo(slicedParams, MediaType.DRAMA),
                 "create-event": new Schedule(slicedParams, eventHelper),
                 "reschedule-event": new Schedule(
                     slicedParams,
@@ -81,14 +88,14 @@ client.on("message", async (msg: Discord.Message) => {
 
             const chosenCmd = cmds[cmdName];
 
-            if (!checkValidCommand(msgText, "!", chosenCmd)) {
+            if (!checkValidCommand(msgText, chosenCmd)) {
                 const cmdErrorEmbed = new Discord.MessageEmbed()
                     .setColor(ERROR_COLOR)
                     .setTitle("Invalid command")
                     .setDescription(
                         `Try \`${PREFIX}\` for instructions on how to use this bot`
                     );
-                msg.channel.send(cmdErrorEmbed);
+                msg.channel.send({ embeds: [cmdErrorEmbed] });
                 return;
             }
             chosenCmd.run(msg);
@@ -105,13 +112,16 @@ client.on("message", async (msg: Discord.Message) => {
         if (kotoListener.hasGameEnded()) {
             const finishInfo = kotoListener.getFinishInfo();
 
-            if (finishInfo.answeredRight >= finishInfo.player.needToGetRight) {
+            if (
+                finishInfo &&
+                finishInfo.answeredRight >= finishInfo.player.needToGetRight
+            ) {
                 const jlptRoleTheyHad = KotobaListener.getJlptRoleTheyHad(
                     finishInfo.player
                 );
 
                 const quizRole = kotoListener.getQuizRole();
-                const japaneseRole = msg.guild.roles.cache.get(JAPANESE_ROLE);
+                const japaneseRole = msg.guild?.roles.cache.get(JAPANESE_ROLE);
                 decideRoles(
                     finishInfo,
                     quizRole,
@@ -125,7 +135,7 @@ client.on("message", async (msg: Discord.Message) => {
 
     if (msg.author.id === DISBOARD_ID && msg.embeds) {
         const [embed] = msg.embeds;
-        if (embed.description.includes("Bump done")) {
+        if (embed?.description?.includes("Bump done")) {
             deleteBump(client);
             bumpReminder(client);
         }

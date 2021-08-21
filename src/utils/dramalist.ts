@@ -21,16 +21,16 @@ const findDramaRecommendations = async (link: string): Promise<string[]> => {
     const related = document.querySelectorAll("b > a");
     const reccLinks: string[] = [];
     related.forEach((el) => {
-        const link = el.getAttribute("href");
-        if (link) {
-            reccLinks.push(link);
+        const href = el.getAttribute("href");
+        if (href) {
+            reccLinks.push(href);
         }
     });
 
     return reccLinks;
 };
 
-const findDramaInfo = async (link: string) => {
+const findDramaInfo = async (link: string): Promise<Show | null> => {
     let title;
     let genres;
     let episodes;
@@ -53,7 +53,7 @@ const findDramaInfo = async (link: string) => {
         }
     });
 
-    const overview = document.querySelector(
+    const description = document.querySelector(
         "#show-detailsxx > div.show-synopsis > p > span"
     )?.textContent;
 
@@ -61,7 +61,7 @@ const findDramaInfo = async (link: string) => {
         "div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li"
     );
 
-    moreDetails.forEach((elm) => {
+    moreDetails?.forEach((elm) => {
         if (elm.textContent?.startsWith("Episodes")) {
             episodes = elm.textContent?.replace(/Episodes: /, "");
         } else if (elm.textContent?.startsWith("Aired:")) {
@@ -85,16 +85,28 @@ const findDramaInfo = async (link: string) => {
         )
         ?.getAttribute("src");
 
-    return {
-        title,
-        description: overview,
-        episodes,
-        rank,
-        score,
-        picture,
-        aired,
-        genres,
-    } as Show;
+    if (
+        title &&
+        description &&
+        episodes &&
+        rank &&
+        score &&
+        picture &&
+        aired &&
+        genres
+    ) {
+        return {
+            title,
+            description,
+            episodes,
+            rank,
+            score,
+            picture,
+            aired,
+            genres,
+        } as Show;
+    }
+    return null;
 };
 
 export const getInfo = async (
@@ -108,10 +120,9 @@ export const getInfo = async (
         if (onlyReccs) {
             const reccs = await findDramaRecommendations(resLink);
             return reccs;
-        } else {
-            const show = findDramaInfo(resLink);
-            return show;
         }
+        const show = findDramaInfo(resLink);
+        return show;
     }
 
     return null;

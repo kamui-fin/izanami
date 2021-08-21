@@ -31,19 +31,24 @@ class EventHelper {
             embed.setTitle("Event Started");
             if (this.eventChannel) {
                 this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-                this.eventChannel.send({ embed });
+                this.eventChannel.send({ embeds: [embed] });
             }
         }, etaMS);
 
         const { id } = msg.author;
-        this.eventData.push({ timeout, embed, title: embed.title, host: id });
+        this.eventData.push({
+            timeout,
+            embed,
+            title: embed.title || "",
+            host: id,
+        });
 
         if (reschedule) {
             embed.setTitle("Event Rescheduled");
         }
         if (this.eventChannel) {
             this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-            this.eventChannel.send({ embed });
+            this.eventChannel.send({ embeds: [embed] });
         }
     }
 
@@ -67,7 +72,7 @@ class EventHelper {
                             .setColor(ERROR_COLOR)
                             .addField("Show", showName)
                             .addField("Host", `<@${event.host}>`);
-                        this.eventChannel.send({ embed: cancelEmbed });
+                        this.eventChannel.send({ embeds: [cancelEmbed] });
                     }
                 }
             }
@@ -85,11 +90,16 @@ class EventHelper {
             embed.setTitle("Event Started");
             if (this.eventChannel) {
                 this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
-                this.eventChannel.send({ embed });
+                this.eventChannel.send({ embeds: [embed] });
             }
         }, etaMS);
         const { id } = msg.author;
-        this.eventData.push({ timeout, embed, title: embed.title, host: id });
+        this.eventData.push({
+            timeout,
+            embed,
+            title: embed.title || "",
+            host: id,
+        });
     }
 
     getEventChannel(): TextChannel | null {

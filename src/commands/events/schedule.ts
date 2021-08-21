@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, AnilistRecommendationAnime, Show } from "../../types";
+import { Command, AnilistRecommendation, Show, MediaType } from "../../types";
 import { fixDesc, getEventEmbed, notValidEmbed } from "../../utils";
 import { EVENT_HOST_ROLE } from "../../config";
 import EventHelper from "../../utils/eventHelper";
@@ -29,12 +29,12 @@ class Schedule implements Command {
 
     async run(msg: Message): Promise<void> {
         if (msg.member?.roles.cache.has(EVENT_HOST_ROLE)) {
-            let res: AnilistRecommendationAnime | Show;
+            let res: AnilistRecommendation | Show;
             if (this.stringParams[1] === "anime") {
                 res = (await anilist.getInfo(
-                    this.stringParams[0],
-                    "ANIME"
-                )) as AnilistRecommendationAnime;
+                    MediaType.ANIME,
+                    this.stringParams[0]
+                )) as AnilistRecommendation;
             } else {
                 res = (await dramalist.getInfo(this.stringParams[0])) as Show;
             }
@@ -49,7 +49,9 @@ class Schedule implements Command {
                 mmddyyyy,
                 time,
                 msg.author.id,
-                this.stringParams[1]
+                this.stringParams[1] === "anime"
+                    ? MediaType.ANIME
+                    : MediaType.DRAMA
             );
             if (this.reschedule) {
                 this.eventHelper.rescheduleEvent(msg, date, embed);

@@ -1,4 +1,18 @@
-import { GuildMember, Role, Message, Client, MessageEmbed } from "discord.js";
+import {
+    GuildMember,
+    Role,
+    Message,
+    MessageEmbed,
+    Collection,
+} from "discord.js";
+
+export enum MediaType {
+    ANIME,
+    MANGA,
+    DRAMA,
+    LIGHT_NOVEL,
+    VISUAL_NOVEL,
+}
 
 export interface TopLevel {
     node: Node;
@@ -17,7 +31,7 @@ export interface Title {
     native: string;
 }
 
-export interface AnilistRecommendationBase {
+export interface AnilistRecommendation {
     id?: number;
     coverImage: CoverImage;
     title: Title;
@@ -29,20 +43,8 @@ export interface AnilistRecommendationBase {
     favourites: number;
     startDate: StartDate;
     eventTime: string;
+    length: string;
 }
-
-export interface AnilistRecommendationAnime extends AnilistRecommendationBase {
-    episodes: string;
-    kind: "anime";
-}
-
-export interface AnilistRecommendationManga extends AnilistRecommendationBase {
-    volumes: string;
-}
-
-export type AnilistRecommendation =
-    | AnilistRecommendationAnime
-    | AnilistRecommendationManga;
 
 export interface CoverImage {
     color: string;
@@ -64,33 +66,32 @@ export interface Command {
 }
 
 export interface Show {
-    kind: "drama";
-    title: string | undefined | null;
-    description: string | undefined | null;
-    episodes: string | undefined | null;
-    rank: string | undefined | null;
-    score: string | undefined | null;
-    picture: string | undefined | null;
-    aired: string | undefined | null;
-    genres: string | undefined | null;
+    title: string;
+    description: string;
+    episodes: string;
+    rank: string;
+    score: string;
+    picture: string;
+    aired: string;
+    genres: string;
 }
 
 export interface UserInfo {
-    user: GuildMember | undefined;
-    roles: Array<Role> | undefined;
+    user: GuildMember;
+    roles: Collection<string, Role>;
     justJoined: boolean;
     needToGetRight: number;
 }
 
 export interface FinishInfo {
-    quizlevel: number | null;
+    quizlevel: number;
     player: UserInfo;
     answeredRight: number;
 }
 
 export interface FinishEmbedMatch {
-    titleMatch: RegExpMatchArray | null;
-    descMatch: RegExpMatchArray | null;
+    titleMatch: RegExpMatchArray;
+    descMatch: RegExpMatchArray;
 }
 export interface SearchResult {
     id: string;
@@ -100,17 +101,17 @@ export interface SearchResult {
 }
 
 export interface LNDetail {
-    id: string | null;
-    title: string | undefined;
-    author: string | undefined;
+    id: string;
+    title: string;
+    author: string;
     link: string;
-    desc: string | undefined;
+    desc: string;
     image: string;
-    pageCount: string | undefined;
+    pageCount: string;
 }
 
 export interface VNDetail {
-    id: string | null;
+    id: string;
     title: string;
     link: string;
     desc: string;
@@ -134,7 +135,7 @@ export interface HowLongToBeatEntry {
 export interface Event {
     timeout: NodeJS.Timeout;
     embed: MessageEmbed;
-    title: string | undefined;
+    title: string;
     host: string;
 }
 

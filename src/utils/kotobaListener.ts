@@ -9,26 +9,29 @@ class KotobaListener {
     private descre =
         /The score limit of 10 was reached by <@(\d*)>. Congratulations!/;
 
-    private finishEmbedMatch: FinishEmbedMatch;
+    private finishEmbedMatch: FinishEmbedMatch | null;
 
     public constructor(msg: Message) {
         this.kMessage = msg;
         this.finishEmbedMatch = this.getFinishEmbedMatch();
     }
 
-    getPlayerInfo(): UserInfo {
+    getPlayerInfo(): UserInfo | null {
         let userWhoPassed: GuildMember | undefined;
-        if (this.finishEmbedMatch.descMatch) {
+        if (this.finishEmbedMatch?.descMatch) {
             userWhoPassed = this.kMessage.guild?.members.cache.get(
                 this.finishEmbedMatch.descMatch[1]
             );
         }
-        const rolesTheyHad = userWhoPassed?.roles.cache.array();
+        const rolesTheyHad = userWhoPassed?.roles.cache;
         const userJustJoined = !!rolesTheyHad?.find(
             (e) => e.name === "Unverified"
         );
         const needToGetRight = userJustJoined ? 7 : 10;
 
+        if (!userWhoPassed || !rolesTheyHad) {
+            return null;
+        }
         return {
             user: userWhoPassed,
             roles: rolesTheyHad,
@@ -39,8 +42,8 @@ class KotobaListener {
 
     hasGameEnded(): boolean {
         return (
-            !!this.finishEmbedMatch.titleMatch &&
-            !!this.finishEmbedMatch.descMatch
+            !!this.finishEmbedMatch?.titleMatch &&
+            !!this.finishEmbedMatch?.descMatch
         );
     }
 
@@ -50,21 +53,26 @@ class KotobaListener {
         if (!!title && !!description) {
             const matchedTitle = title.match(this.titlere);
             const matchedDescription = description.match(this.descre);
-            return {
-                titleMatch: matchedTitle,
-                descMatch: matchedDescription,
-            };
+            if (matchedTitle && matchedDescription) {
+                return {
+                    titleMatch: matchedTitle,
+                    descMatch: matchedDescription,
+                };
+            }
         }
         return null;
     }
 
-    getFinishInfo(): FinishInfo {
+    getFinishInfo(): FinishInfo | null {
         let nLevel: number | null = null;
-        if (this.finishEmbedMatch.titleMatch !== null) {
-            nLevel = Number.Number(this.finishEmbedMatch.titleMatch[1]);
+        if (this.finishEmbedMatch?.titleMatch !== null) {
+            nLevel = Number(this.finishEmbedMatch?.titleMatch[1]);
         }
         const player = this.getPlayerInfo();
         const answeredRight = this.getNumAnsweredRight();
+        if (!nLevel || !player) {
+            return null;
+        }
         return {
             quizlevel: nLevel,
             player,
@@ -83,29 +91,31 @@ class KotobaListener {
     }
 
     getUnverifiedRole(): Role | undefined {
-        return this.kMessage.guild?.roles.cache
-            .array()
-            .find((e) => e.name === "Unverified");
+        return this.kMessage.guild?.roles.cache.find(
+            (e) => e.name === "Unverified"
+        );
     }
 
-    getQuizRole(): Role | undefined {
-        let nrole: Role | undefined;
-        if (this.finishEmbedMatch.titleMatch) {
-            const [, n] = this.finishEmbedMatch.titleMatch[1];
-
-            nrole = this.kMessage.guild?.roles.cache.find(
-                (role) => role.name === n
-            );
+    getQuizRole(): Role | null {
+        let nrole: Role | null = null;
+        if (this.finishEmbedMatch?.titleMatch) {
+            const n = this.finishEmbedMatch.titleMatch[1];
+            nrole =
+                this.kMessage.guild?.roles.cache.find(
+                    (role) => role.name === n
+                ) || null;
         }
         return nrole;
     }
 
-    static getJlptRoleTheyHad(user: UserInfo): Role | undefined {
-        return user.roles?.find(
-            (e) =>
-                e.name.charAt(0) === "N" &&
-                e.name.length === 2 &&
-                !Number.isNaN(Number(e.name.charAt(1)))
+    static getJlptRoleTheyHad(user: UserInfo): Role | null {
+        return (
+            user.roles?.find(
+                (e) =>
+                    e.name.charAt(0) === "N" &&
+                    e.name.length === 2 &&
+                    !Number.isNaN(Number(e.name.charAt(1)))
+            ) || null
         );
     }
 }

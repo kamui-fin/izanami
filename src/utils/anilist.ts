@@ -1,13 +1,13 @@
-import { AnilistRecommendation, TopLevel } from "../types";
+import { AnilistRecommendation, MediaType, TopLevel } from "../types";
 import { sendGraphQL } from ".";
 
 const BASE_URL = "https://graphql.anilist.co";
 
-const getLengthType = (type: string): string => {
-    return type === "MANGA" ? "volumes" : "episodes";
+const getLengthType = (type: MediaType): string => {
+    return type === MediaType.MANGA ? "volumes" : "episodes";
 };
 
-const getSearchQuery = (type: string): string => {
+const getSearchQuery = (type: MediaType): string => {
     const searchQuery = `
     query ($txt: String) {
         Media(search:$txt, type:${type}){
@@ -41,7 +41,7 @@ const getSearchQuery = (type: string): string => {
     return searchQuery;
 };
 
-const getReccQuery = (type: string): string => {
+const getReccQuery = (type: MediaType): string => {
     const reccQuery = `
     query ($id: Int) {
         Media(id: $id, type: ${type}) {
@@ -86,7 +86,7 @@ const getReccQuery = (type: string): string => {
 };
 
 export const getInfo = async (
-    type: string,
+    type: MediaType,
     query: string
 ): Promise<AnilistRecommendation> => {
     const res = await sendGraphQL(BASE_URL, getSearchQuery(type), {
@@ -96,7 +96,7 @@ export const getInfo = async (
 };
 
 export const getReccomendations = async (
-    type: string,
+    type: MediaType,
     query: string,
     limit: number
 ): Promise<TopLevel[]> => {
