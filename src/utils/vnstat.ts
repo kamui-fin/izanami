@@ -31,7 +31,12 @@ export const showDetailsForVN = async (
     if (onlyReccs) {
         const recs = $(".card-title", "#sim-combined > div")
             .toArray()
-            .map((elm) => elm.attribs.href.replace(/\/novel\//, ""));
+            .map((elm) => {
+                return (elm as cheerio.TagElement).attribs.href.replace(
+                    /\/novel\//,
+                    ""
+                );
+            });
 
         return recs;
     }

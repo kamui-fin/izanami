@@ -50,8 +50,9 @@ export const welcome = (
     title: string,
     description: string
 ): void => {
-    const txtChannel: Channel | undefined =
-        member.guild.channels.cache.get(channel);
+    const txtChannel: Channel | undefined = member.guild.channels.cache.get(
+        channel
+    );
     if (member.user) {
         const welcomeEmbed = new MessageEmbed()
             .setTitle(title)
@@ -303,8 +304,9 @@ export const decideRoles = (
         } else {
             if (quizRole) user.roles.add(quizRole);
             if (finishInfo.player.justJoined) {
-                const unverifiedRole: Role | undefined =
-                    kotoListener.getUnverifiedRole();
+                const unverifiedRole:
+                    | Role
+                    | undefined = kotoListener.getUnverifiedRole();
                 if (unverifiedRole && japaneseRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(japaneseRole);
@@ -370,10 +372,12 @@ export const fetchEvents = async (client: Client): Promise<Message[]> => {
     const events = getEventChannel(client);
     const currentEvents: Message[] = [];
     if (events instanceof TextChannel) {
-        const messages: Collection<string, Message> =
-            await events.messages.fetch({
-                limit: 20,
-            });
+        const messages: Collection<
+            string,
+            Message
+        > = await events.messages.fetch({
+            limit: 20,
+        });
         messages.forEach((msg: Message) => {
             if (msg.embeds) {
                 currentEvents.push(msg);
@@ -450,7 +454,7 @@ export const checkEvents = async (
 
     // Finds cancelled events and rescheduled events
     events.forEach((event) => {
-        const [ embed ] = event.embeds;
+        const [embed] = event.embeds;
         const { title } = embed;
         const eventTitle = embed.fields.find((el) =>
             el.name.startsWith("Show")

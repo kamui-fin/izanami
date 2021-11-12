@@ -1,4 +1,4 @@
-export const PREFIX = "!mc";
+export const PREFIX = "!iz";
 export const ERROR_COLOR = "#ed1f1f";
 export const SUCCESS_COLOR = "#42f572";
 export const ORANGE_COLOR = "#e0b04a";

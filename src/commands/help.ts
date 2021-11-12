@@ -5,7 +5,7 @@ import { Command } from "../types";
 class Help implements Command {
     helpEmbed: Discord.MessageEmbed = new Discord.MessageEmbed()
         .setColor(BLUE_COLOR)
-        .setTitle("MaidChan usage instructions")
+        .setTitle("Izanami usage instructions")
         .addFields(
             {
                 name: '`info-anime "{title}"`',
@@ -29,7 +29,8 @@ class Help implements Command {
             },
             {
                 name: '`recommend-anime "{title}" [limit] [star_#]`',
-                value: "Recommends an anime from a title you liked, with an optional limit and star filter.",
+                value:
+                    "Recommends an anime from a title you liked, with an optional limit and star filter.",
             },
             {
                 name: '`recommend-manga "{title}" [limit] [star_#]`',
@@ -48,12 +49,16 @@ class Help implements Command {
                 value: `Recommends drama or movies from a title you liked, with an optional limit`,
             },
             {
-                name: '`create-event "{title}" {drama OR anime} {episodes_streamed} {stream_date} {time}`',
-                value: "Creates event embed for show being hosted. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and CT time for time",
+                name:
+                    '`create-event "{title}" {drama OR anime} {episodes_streamed} {stream_date} {time}`',
+                value:
+                    "Creates event embed for show being hosted. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and CT time for time",
             },
             {
-                name: '`reschedule-event "{title}" {drama OR anime} {episodes_streamed} {stream_date} {time}`',
-                value: "Reschedules event. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and CT time for time",
+                name:
+                    '`reschedule-event "{title}" {drama OR anime} {episodes_streamed} {stream_date} {time}`',
+                value:
+                    "Reschedules event. Provide range of episodes, if its anime or drama, use mm/dd/yyyy for date, and CT time for time",
             },
             {
                 name: "`cancel-event`",
