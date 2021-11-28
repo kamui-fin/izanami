@@ -12,13 +12,10 @@ import {
 } from "discord.js";
 import axios, { AxiosResponse } from "axios";
 import Keyv from "keyv";
-import { HowLongToBeatService, HowLongToBeatEntry } from "howlongtobeat";
 import {
     AnilistRecommendation,
     Command,
     FinishInfo,
-    VNDetail,
-    LNDetail,
     Show,
     EmbedField,
     MediaType,
@@ -28,7 +25,6 @@ import KotobaListener from "./kotobaListener";
 import EventHelper from "./eventHelper";
 import {
     BUMP_INTERVAL,
-    CYAN_COLOR,
     ERROR_COLOR,
     EVENT_CHANNEL,
     EVENT_CLIENT_ROLE,
@@ -108,34 +104,6 @@ export const getDurationAnilist = (
     };
 };
 
-export const getDramaEmbed = (show: Show): MessageEmbed => {
-    const embed = new MessageEmbed()
-        .setTitle(show.title)
-        .setDescription(show.description)
-        .setColor(CYAN_COLOR)
-        .setFooter(show.aired)
-        .setImage(show.picture)
-        .setFields([
-            {
-                name: "Episodes",
-                value: show.episodes || "Movie",
-            },
-            {
-                name: "Genres",
-                value: show.genres,
-            },
-            {
-                name: "Average Score",
-                value: show.score,
-            },
-            {
-                name: "Rank",
-                value: show.rank,
-            },
-        ]);
-    return embed;
-};
-
 export const getAnilistEmbed = (
     media: AnilistRecommendation,
     mediaType: MediaType
@@ -179,22 +147,15 @@ export const getEventEmbed = (
     eventEpisodes: string,
     date: string,
     timeOfEvent: string,
-    userID: string,
-    kind: MediaType.ANIME | MediaType.DRAMA
+    userID: string
 ): MessageEmbed => {
     let image;
     let color;
     let title;
 
-    if (kind === MediaType.DRAMA) {
-        image = (media as Show).picture;
-        title = (media as Show).title;
-        color = CYAN_COLOR;
-    } else {
-        image = (media as AnilistRecommendation).coverImage.large;
-        title = (media as AnilistRecommendation).title.native;
-        color = (media as AnilistRecommendation).coverImage.color;
-    }
+    image = (media as AnilistRecommendation).coverImage.large;
+    title = (media as AnilistRecommendation).title.native;
+    color = (media as AnilistRecommendation).coverImage.color;
 
     const embed = new MessageEmbed()
         .setTitle("Event Scheduled")
@@ -211,7 +172,7 @@ export const getEventEmbed = (
             },
             {
                 name: "Episodes",
-                value: eventEpisodes.slice(1, -1),
+                value: eventEpisodes,
                 inline: true,
             },
             {
@@ -221,44 +182,6 @@ export const getEventEmbed = (
             },
         ]);
     return embed;
-};
-
-export const getVNEmbed = (
-    details: VNDetail,
-    playTime: HowLongToBeatEntry
-): MessageEmbed => {
-    const msgEmbed = new MessageEmbed()
-        .setTitle(details.title)
-        .setURL(details.link)
-        .setDescription(fixDesc(details.desc, 300))
-        .setImage(details.image)
-        .setColor(ORANGE_COLOR)
-        .setFooter(details.year);
-
-    if (playTime) {
-        playTime.timeLabels.forEach((x: Array<string>) => {
-            msgEmbed.addField(x[1], playTime[x[0]], true);
-        });
-    }
-
-    msgEmbed
-        .addField("Average Rating", details.avgRating)
-        .addField("Total Votes", details.totalVotes);
-    return msgEmbed;
-};
-
-export const getLNEmbed = (details: LNDetail): MessageEmbed => {
-    const msgEmbed = new MessageEmbed()
-        .setTitle(details.title)
-        .setURL(details.link)
-        .setDescription(details.desc ? fixDesc(details.desc, 300) : "")
-        .setImage(details.image)
-        .setColor(ORANGE_COLOR);
-
-    msgEmbed
-        .addField("Page Count", details.pageCount)
-        .addField("Author", details.author);
-    return msgEmbed;
 };
 
 export const splitCommand = (text: string): string[] | null => {
@@ -278,6 +201,8 @@ export const checkValidCommand = (
         if (commandType.correctParams) {
             const validParams = commandType.correctParams();
             return validParams;
+        } else {
+            return true;
         }
     }
     return false;
@@ -291,6 +216,7 @@ export const decideRoles = (
     japaneseRole: Role | undefined
 ): void => {
     const { user } = finishInfo.player;
+    console.log(user);
     if (user) {
         if (jlptRoleTheyHad) {
             if (
@@ -455,6 +381,9 @@ export const checkEvents = async (
     // Finds cancelled events and rescheduled events
     events.forEach((event) => {
         const [embed] = event.embeds;
+        if (embed === undefined) {
+            return;
+        }
         const { title } = embed;
         const eventTitle = embed.fields.find((el) =>
             el.name.startsWith("Show")
@@ -469,6 +398,9 @@ export const checkEvents = async (
     // Sets up events again (if not cancelled)
     events.forEach((event) => {
         const [embed] = event.embeds;
+        if (embed === undefined) {
+            return;
+        }
         const { title } = embed;
         const [isSchedule, isReschedule] = [
             title?.includes("Scheduled"),
@@ -504,15 +436,8 @@ export const checkEvents = async (
     });
 };
 
-export const findGameDurationInfo = async (
-    query: string
-): Promise<HowLongToBeatEntry> => {
-    const hltbService = new HowLongToBeatService();
-    const data: Array<HowLongToBeatEntry> = await hltbService.search(query);
-    return data[0];
-};
-
 export const removeQuotes = (input: string): string => {
+    if (!input) return input;
     const first = input[0];
     const last = input[input.length - 1];
     if (first === '"' && last === '"') {

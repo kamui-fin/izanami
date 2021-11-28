@@ -10,7 +10,7 @@ const getLengthType = (type: MediaType): string => {
 const getSearchQuery = (type: MediaType): string => {
     const searchQuery = `
     query ($txt: String) {
-        Media(search:$txt, type:${type}){
+        Media(search:$txt, type:${type.toString()}){
             id,
             title{
                 native
@@ -44,7 +44,7 @@ const getSearchQuery = (type: MediaType): string => {
 const getReccQuery = (type: MediaType): string => {
     const reccQuery = `
     query ($id: Int) {
-        Media(id: $id, type: ${type}) {
+        Media(id: $id, type: ${type.toString()}) {
         recommendations {
             edges {
             node {
@@ -89,8 +89,9 @@ export const getInfo = async (
     type: MediaType,
     query: string
 ): Promise<AnilistRecommendation> => {
-    const res = await sendGraphQL(BASE_URL, getSearchQuery(type), {
-        txt: query
+    const searchQuery = getSearchQuery(type);
+    const res = await sendGraphQL(BASE_URL, searchQuery, {
+        txt: query,
     });
     return res.data.data.Media;
 };
@@ -106,9 +107,7 @@ export const getReccomendations = async (
         id,
     });
 
-    const reccs: TopLevel[] = [
-        recommendations.data.data.Media.recommendations.edges
-    ];
-
+    const reccs: TopLevel[] =
+        recommendations.data.data.Media.recommendations.edges;
     return limit > reccs.length ? reccs : reccs.slice(0, limit);
 };

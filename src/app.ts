@@ -30,8 +30,13 @@ import MediaRecommender from "./commands/media/recommend";
 import MediaInfo from "./commands/media/info";
 
 const client = new Discord.Client({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+    intents: [
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+    ],
 });
+
 let eventHelper: EventHelper;
 
 client.on("ready", () => {
@@ -47,7 +52,7 @@ client.on("message", async (msg: Discord.Message) => {
         const params = splitCommand(msgText);
 
         if (params) {
-            const [cmdName] = params;
+            const cmdName = params[1];
             const slicedParams = params.slice(2);
 
             const cmds: { [key: string]: Command } = {
@@ -59,23 +64,8 @@ client.on("message", async (msg: Discord.Message) => {
                     slicedParams,
                     MediaType.MANGA
                 ),
-                "recommend-vn": new MediaRecommender(
-                    slicedParams,
-                    MediaType.VISUAL_NOVEL
-                ),
-                "recommend-ln": new MediaRecommender(
-                    slicedParams,
-                    MediaType.LIGHT_NOVEL
-                ),
-                "recommend-drama": new MediaRecommender(
-                    slicedParams,
-                    MediaType.DRAMA
-                ),
                 "info-anime": new MediaInfo(slicedParams, MediaType.ANIME),
                 "info-manga": new MediaInfo(slicedParams, MediaType.MANGA),
-                "info-vn": new MediaInfo(slicedParams, MediaType.VISUAL_NOVEL),
-                "info-ln": new MediaInfo(slicedParams, MediaType.LIGHT_NOVEL),
-                "info-drama": new MediaInfo(slicedParams, MediaType.DRAMA),
                 "create-event": new Schedule(slicedParams, eventHelper),
                 "reschedule-event": new Schedule(
                     slicedParams,
@@ -111,6 +101,7 @@ client.on("message", async (msg: Discord.Message) => {
         const kotoListener = new KotobaListener(msg);
         if (kotoListener.hasGameEnded()) {
             const finishInfo = kotoListener.getFinishInfo();
+            console.log(finishInfo);
 
             if (
                 finishInfo &&

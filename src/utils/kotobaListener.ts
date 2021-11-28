@@ -6,8 +6,7 @@ class KotobaListener {
 
     private titlere = /JLPT (N[1-5]) Reading Quiz Ended/;
 
-    private descre =
-        /The score limit of 10 was reached by <@(\d*)>. Congratulations!/;
+    private descre = /The score limit of 10 was reached by <@(\d*)>. Congratulations!/;
 
     private finishEmbedMatch: FinishEmbedMatch | null;
 
@@ -18,7 +17,7 @@ class KotobaListener {
 
     getPlayerInfo(): UserInfo | null {
         let userWhoPassed: GuildMember | undefined;
-        if (this.finishEmbedMatch?.descMatch) {
+        if (this.finishEmbedMatch) {
             userWhoPassed = this.kMessage.guild?.members.cache.get(
                 this.finishEmbedMatch.descMatch[1]
             );
@@ -41,10 +40,10 @@ class KotobaListener {
     }
 
     hasGameEnded(): boolean {
-        return (
-            !!this.finishEmbedMatch?.titleMatch &&
-            !!this.finishEmbedMatch?.descMatch
-        );
+        if (this.finishEmbedMatch) {
+            return true;
+        }
+        return false;
     }
 
     getFinishEmbedMatch(): FinishEmbedMatch | null {
@@ -64,12 +63,14 @@ class KotobaListener {
     }
 
     getFinishInfo(): FinishInfo | null {
-        let nLevel: number | null = null;
-        if (this.finishEmbedMatch?.titleMatch !== null) {
-            nLevel = Number(this.finishEmbedMatch?.titleMatch[1]);
+        let nLevel: string | null = null;
+        if (this.finishEmbedMatch) {
+            nLevel = this.finishEmbedMatch.titleMatch[1].charAt(1);
         }
+        console.log(nLevel);
         const player = this.getPlayerInfo();
         const answeredRight = this.getNumAnsweredRight();
+        console.log(player, answeredRight);
         if (!nLevel || !player) {
             return null;
         }

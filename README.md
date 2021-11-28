@@ -5,12 +5,7 @@ A general-purpose utility bot for the [Japan Zone](https://disboard.org/server/7
 Features include:
 
 -   JLPT quiz barrier
--   Retrive information and suggest recommendations for:
-    -   Anime
-    -   Manga
-    -   Drama
-    -   Light Novels
-    -   Visual Novels
+-   Retrive information and suggest recommendations for Anime and Manga
 -   Event scheduling
 -   Welcome messages
 -   Daily news

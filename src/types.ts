@@ -7,11 +7,8 @@ import {
 } from "discord.js";
 
 export enum MediaType {
-    ANIME,
-    MANGA,
-    DRAMA,
-    LIGHT_NOVEL,
-    VISUAL_NOVEL,
+    ANIME = "ANIME",
+    MANGA = "MANGA",
 }
 
 export interface TopLevel {
@@ -84,7 +81,7 @@ export interface UserInfo {
 }
 
 export interface FinishInfo {
-    quizlevel: number;
+    quizlevel: string;
     player: UserInfo;
     answeredRight: number;
 }
@@ -92,44 +89,6 @@ export interface FinishInfo {
 export interface FinishEmbedMatch {
     titleMatch: RegExpMatchArray;
     descMatch: RegExpMatchArray;
-}
-export interface SearchResult {
-    id: string;
-    title: string;
-    page: string;
-    path?: string;
-}
-
-export interface LNDetail {
-    id: string;
-    title: string;
-    author: string;
-    link: string;
-    desc: string;
-    image: string;
-    pageCount: string;
-}
-
-export interface VNDetail {
-    id: string;
-    title: string;
-    link: string;
-    desc: string;
-    image: string;
-    year: string;
-    avgRating: string;
-    totalVotes: string;
-}
-
-export interface HowLongToBeatEntry {
-    id: string;
-    name: string;
-    imageUrl: string;
-    timeLabels: Array<string[]>;
-    gameplayMain: number;
-    gameplayMainExtra: number;
-    gameplayCompletionist: number;
-    similarity: number;
 }
 
 export interface Event {

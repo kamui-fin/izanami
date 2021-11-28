@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { Command, AnilistRecommendation, Show, MediaType } from "../../types";
+import { Command, AnilistRecommendation, MediaType } from "../../types";
 import {
     fixDesc,
     getEventEmbed,
@@ -9,7 +9,6 @@ import {
 import { EVENT_HOST_ROLE } from "../../config";
 import EventHelper from "../../utils/eventHelper";
 import * as anilist from "../../utils/anilist";
-import * as dramalist from "../../utils/dramalist";
 
 class Schedule implements Command {
     stringParams: string[];
@@ -27,38 +26,23 @@ class Schedule implements Command {
         this.query = removeQuotes(prms[0]);
     }
 
-    correctParams(): boolean {
-        const type = this.stringParams[1];
-        return (
-            typeof this.query !== undefined && ["drama", "anime"].includes(type)
-        );
-    }
-
     async run(msg: Message): Promise<void> {
         if (msg.member?.roles.cache.has(EVENT_HOST_ROLE)) {
-            let res: AnilistRecommendation | Show;
-            if (this.stringParams[1] === "anime") {
-                res = (await anilist.getInfo(
-                    MediaType.ANIME,
-                    this.query
-                )) as AnilistRecommendation;
-            } else {
-                res = (await dramalist.getInfo(this.query)) as Show;
-            }
+            const res = (await anilist.getInfo(
+                MediaType.ANIME,
+                this.query
+            )) as AnilistRecommendation;
             res.description = fixDesc(res.description || "", 300);
-            const episodesToStream = this.stringParams[2];
-            const mmddyyyy = this.stringParams[3];
-            const time = this.stringParams[4];
+            const episodesToStream = this.stringParams[1];
+            const mmddyyyy = this.stringParams[2];
+            const time = this.stringParams[3];
             const date = new Date(`${`${mmddyyyy} ${time}`}`);
             const embed = getEventEmbed(
                 res,
                 episodesToStream,
                 mmddyyyy,
                 time,
-                msg.author.id,
-                this.stringParams[1] === "anime"
-                    ? MediaType.ANIME
-                    : MediaType.DRAMA
+                msg.author.id
             );
             if (this.reschedule) {
                 this.eventHelper.rescheduleEvent(msg, date, embed);

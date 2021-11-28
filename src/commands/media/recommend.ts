@@ -4,25 +4,15 @@ import {
     AnilistRecommendation,
     TopLevel,
     MediaType,
-    Show,
-    LNDetail,
-    VNDetail,
 } from "../../types";
 import {
     getAnilistEmbed,
     fixDesc,
     shuffleArray,
     notFoundEmbed,
-    getDramaEmbed,
     removeQuotes,
-    getLNEmbed,
-    getVNEmbed,
-    findGameDurationInfo,
 } from "../../utils";
-import * as bookmeter from "../../utils/bookmeter";
-import * as vnstat from "../../utils/vnstat";
 import * as anilist from "../../utils/anilist";
-import * as dramalist from "../../utils/dramalist";
 
 class MediaRecommender implements Command {
     stringParams: string[];
@@ -91,61 +81,6 @@ class MediaRecommender implements Command {
         return embeds;
     }
 
-    async getDramaRecommendations(): Promise<MessageEmbed[]> {
-        const embeds: MessageEmbed[] = [];
-        const reccIds = (await dramalist.getInfo(
-            this.query,
-            null,
-            true
-        )) as string[];
-
-        reccIds.slice(0, this.limit).forEach(async (recc: string) => {
-            const dramaInfo = await dramalist.getInfo(recc);
-            const embed = getDramaEmbed(dramaInfo as Show);
-            embeds.push(embed);
-        });
-
-        return embeds;
-    }
-
-    async getLNRecommendations(): Promise<MessageEmbed[]> {
-        const embeds: MessageEmbed[] = [];
-        const reccIds = (await bookmeter.showDetailsForLN(
-            null,
-            this.query,
-            true
-        )) as string[];
-
-        reccIds.slice(0, this.limit).forEach(async (recc: string) => {
-            const lnInfo = await bookmeter.showDetailsForLN(recc);
-            const embed = getLNEmbed(lnInfo as LNDetail);
-            embeds.push(embed);
-        });
-        return embeds;
-    }
-
-    async getVNRecommendations(): Promise<MessageEmbed[]> {
-        const embeds: MessageEmbed[] = [];
-        const reccIds = (await vnstat.showDetailsForVN(
-            null,
-            this.query,
-            true
-        )) as string[];
-
-        shuffleArray(reccIds)
-            .slice(0, this.limit)
-            .forEach(async (recc: string) => {
-                const vnInfo = await vnstat.showDetailsForVN(recc);
-                const playTime = await findGameDurationInfo(
-                    (vnInfo as VNDetail).title
-                );
-                const embed = getVNEmbed(vnInfo as VNDetail, playTime);
-                embeds.push(embed);
-            });
-
-        return embeds;
-    }
-
     async run(msg: Message): Promise<void> {
         try {
             let embeds: MessageEmbed[];
@@ -153,15 +88,6 @@ class MediaRecommender implements Command {
                 case MediaType.ANIME:
                 case MediaType.MANGA:
                     embeds = await this.getAnilistRecommendations();
-                    break;
-                case MediaType.DRAMA:
-                    embeds = await this.getDramaRecommendations();
-                    break;
-                case MediaType.LIGHT_NOVEL:
-                    embeds = await this.getLNRecommendations();
-                    break;
-                case MediaType.VISUAL_NOVEL:
-                    embeds = await this.getVNRecommendations();
                     break;
                 default:
                     embeds = [];
