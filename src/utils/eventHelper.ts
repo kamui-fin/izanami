@@ -3,7 +3,7 @@ import { Event } from "../types";
 import {
     ERROR_COLOR,
     EVENT_CHANNEL,
-    // EVENT_CLIENT_ROLE,
+    EVENT_CLIENT_ROLE,
     SERVER,
 } from "../config";
 
@@ -22,7 +22,7 @@ class EventHelper {
 
     sendEventEmbed(embed: MessageEmbed): void {
         if (this.eventChannel) {
-            // this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
+            this.eventChannel.send(`<@&${EVENT_CLIENT_ROLE}>`);
             this.eventChannel.send({ embeds: [embed] });
         }
     }

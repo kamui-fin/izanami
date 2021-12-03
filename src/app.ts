@@ -17,6 +17,7 @@ import EventHelper from "./utils/eventHelper";
 import CancelEvent from "./commands/events/cancel";
 import {
     DISBOARD_ID,
+    ENABLE_BUMP_REMINDER,
     ERROR_COLOR,
     JAPANESE_ROLE,
     JOIN_CHANNELS,
@@ -124,11 +125,13 @@ client.on("message", async (msg: Discord.Message) => {
         }
     }
 
-    if (msg.author.id === DISBOARD_ID && msg.embeds) {
-        const [embed] = msg.embeds;
-        if (embed?.description?.includes("Bump done")) {
-            deleteBump(client);
-            bumpReminder(client);
+    if (ENABLE_BUMP_REMINDER) {
+        if (msg.author.id === DISBOARD_ID && msg.embeds) {
+            const [embed] = msg.embeds;
+            if (embed?.description?.includes("Bump done")) {
+                deleteBump(client);
+                bumpReminder(client);
+            }
         }
     }
 });

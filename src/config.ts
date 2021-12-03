@@ -29,3 +29,5 @@ export const RULES_CHANNEL = "732633420236062870";
 
 export const NEWS_INTERVAL = 86400000;
 export const BUMP_INTERVAL = 7200000;
+
+export const ENABLE_BUMP_REMINDER = false;
