@@ -15,7 +15,7 @@ import Keyv from "keyv";
 import {
     AnilistRecommendation,
     Command,
-    // FinishInfo,
+    FinishInfo,
     Show,
     EmbedField,
     MediaType,
