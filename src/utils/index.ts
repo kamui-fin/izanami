@@ -211,12 +211,12 @@ export const checkValidCommand = (
 export const decideRoles = (
     finishInfo: FinishInfo,
     testType: String | null = null,
-    quizRole: Role | null,
-    roleTheyHad: Role | null,
+    quizRole: Role | undefined | null,
+    roleTheyHad: Role | undefined | null,
     kotoListener: KotobaListener,
-    japaneseRole: Role | null,
-    chineseRole: Role | null,
-    memberRole: Role | null
+    japaneseRole: Role | undefined | null,
+    chineseRole: Role | undefined | null,
+    memberRole: Role | undefined | null
 ): void => {
     const { user } = finishInfo.player;
     console.log(user);
