@@ -32,8 +32,8 @@ import {
     MEDIA_CHANNEL,
     NEWS_INTERVAL,
     ORANGE_COLOR,
-    // ROLES_CHANNEL,
-    // RULES_CHANNEL,
+    ROLES_CHANNEL,
+    RULES_CHANNEL,
     SERVER,
     SUCCESS_COLOR,
 } from "../config";
@@ -208,45 +208,48 @@ export const checkValidCommand = (
     return false;
 };
 
-// export const decideRoles = (
-//     finishInfo: FinishInfo,
-//     quizRole: Role | undefined | null,
-//     jlptRoleTheyHad: Role | undefined | null,
-//     kotoListener: KotobaListener,
-//     japaneseRole: Role | undefined
-// ): void => {
-//     const { user } = finishInfo.player;
-//     console.log(user);
-//     if (user) {
-//         if (jlptRoleTheyHad) {
-//             if (
-//                 quizRole &&
-//                 Number(quizRole.name.charAt(1)) <
-//                     Number(jlptRoleTheyHad.name.charAt(1))
-//             ) {
-//                 user.roles.remove(jlptRoleTheyHad);
-//                 user.roles.add(quizRole);
-//             }
-//         } else {
-//             if (quizRole) user.roles.add(quizRole);
-//             if (finishInfo.player.justJoined) {
-//                 const unverifiedRole:
-//                     | Role
-//                     | undefined = kotoListener.getUnverifiedRole();
-//                 if (unverifiedRole && japaneseRole) {
-//                     user.roles.remove(unverifiedRole);
-//                     user.roles.add(japaneseRole);
-//                     welcome(
-//                         user,
-//                         GENERAL_CHANNEL,
-//                         "Welcome to The Japan Zone!",
-//                         `We're glad to have you, <@${user.user.id}>! Make sure to read <#${RULES_CHANNEL}> and assign your role in <#${ROLES_CHANNEL}>`
-//                     );
-//                 }
-//             }
-//         }
-//     }
-// };
+export const decideRoles = (
+    finishInfo: FinishInfo,
+    testType: String | null = null,
+    quizRole: Role | undefined | null,
+    roleTheyHad: Role | undefined | null,
+    kotoListener: KotobaListener,
+    japaneseRole: Role | undefined,
+    chineseRole: Role | undefined
+): void => {
+    const { user } = finishInfo.player;
+    console.log(user);
+    if (user) {
+        if (roleTheyHad) {
+            if (quizRole && testType === "JLPT" && Number(quizRole.name.charAt(1)) < Number(roleTheyHad.name.charAt(1))
+            ) {
+                user.roles.remove(roleTheyHad);
+                user.roles.add(quizRole);
+            } else if (quizRole && testType === "HSK" && Number(quizRole.name.charAt(3)) < Number(roleTheyHad.name.charAt(3))
+            ) {
+                user.roles.remove(roleTheyHad);
+                user.roles.add(quizRole);
+            }
+        } else {
+            if (quizRole) user.roles.add(quizRole);
+            if (finishInfo.player.justJoined) {
+                const unverifiedRole:
+                    | Role
+                    | undefined = kotoListener.getUnverifiedRole();
+                if ((unverifiedRole && japaneseRole) || (unverifiedRole && chineseRole)) {
+                    user.roles.remove(unverifiedRole);
+                    user.roles.add(japaneseRole);
+                    welcome(
+                        user,
+                        GENERAL_CHANNEL,
+                        "Welcome to The Japan Zone!",
+                        `We're glad to have you, <@${user.user.id}>! Make sure to read <#${RULES_CHANNEL}> and assign your role in <#${ROLES_CHANNEL}>`
+                    );
+                }
+            }
+        }
+    }
+};
 
 const getChannel = (client: Client, id: string): Channel | null => {
     const ourServer = client.guilds.cache.get(SERVER);
