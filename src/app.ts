@@ -21,6 +21,7 @@ import {
     ERROR_COLOR,
     JAPANESE_ROLE,
     CHINESE_ROLE,
+    MEMBER_ROLE,
     JOIN_CHANNELS,
     KOTOBA_DISCRIMINATOR,
     KOTOBA_USERNAME,
@@ -113,6 +114,7 @@ client.on("message", async (msg: Discord.Message) => {
                 const quizRole = kotoListener.getQuizRole();
                 const japaneseRole = msg.guild?.roles.cache.get(JAPANESE_ROLE);
                 const chineseRole = msg.guild?.roles.cache.get(CHINESE_ROLE);
+                const memberRole = msg.guild?.roles.cache.get(MEMBER_ROLE);
                 const testType = finishInfo.testType;
                 decideRoles(
                     finishInfo,
@@ -121,7 +123,8 @@ client.on("message", async (msg: Discord.Message) => {
                     roleTheyHad,
                     kotoListener,
                     japaneseRole,
-                    chineseRole
+                    chineseRole,
+                    memberRole
                 );
             }
         }

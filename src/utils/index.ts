@@ -214,8 +214,9 @@ export const decideRoles = (
     quizRole: Role | undefined | null,
     roleTheyHad: Role | undefined | null,
     kotoListener: KotobaListener,
-    japaneseRole: Role | undefined,
-    chineseRole: Role | undefined
+    japaneseRole: Role | undefined | null,
+    chineseRole: Role | undefined | null,
+    memberRole: Role | undefined | null
 ): void => {
     const { user } = finishInfo.player;
     console.log(user);
@@ -236,9 +237,14 @@ export const decideRoles = (
                 const unverifiedRole:
                     | Role
                     | undefined = kotoListener.getUnverifiedRole();
-                if ((unverifiedRole && japaneseRole) || (unverifiedRole && chineseRole)) {
+                if (unverifiedRole && memberRole) {
                     user.roles.remove(unverifiedRole);
-                    user.roles.add(japaneseRole);
+                    user.roles.add(memberRole);
+                    if(testType === "JLPT") {
+                       user.roles.add(japaneseRole);
+                    } else {
+                       user.roles.add(chineseRole);
+                    }
                     welcome(
                         user,
                         GENERAL_CHANNEL,

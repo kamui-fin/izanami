@@ -103,7 +103,7 @@ class KotobaListener {
         return 10 - numofunansweredQuestions;
     }
 
-    getUnverifiedRole(): Role | undefined {
+    getUnverifiedRole(): Role | null {
         return this.kMessage.guild?.roles.cache.find(
             (e) => e.name === "Unverified"
         );
