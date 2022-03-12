@@ -1,5 +1,5 @@
 import {
-    // Role,
+    Role,
     Channel,
     Client,
     MessageEmbed,
@@ -21,7 +21,7 @@ import {
     MediaType,
     Article,
 } from "../types";
-// import KotobaListener from "./kotobaListener";
+import KotobaListener from "./kotobaListener";
 import EventHelper from "./eventHelper";
 import {
     BUMP_INTERVAL,
