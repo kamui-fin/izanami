@@ -104,9 +104,11 @@ class KotobaListener {
     }
 
     getUnverifiedRole(): Role | null {
-        return this.kMessage.guild?.roles.cache.find(
+        let vrole: Role | null = null;
+        vrole = this.kMessage.guild?.roles.cache.find(
             (e) => e.name === "Unverified"
         );
+        return vrole;
     }
 
     getQuizRole(): Role | null {

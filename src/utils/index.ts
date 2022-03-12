@@ -236,7 +236,7 @@ export const decideRoles = (
             if (finishInfo.player.justJoined) {
                 const unverifiedRole:
                     | Role
-                    | undefined = kotoListener.getUnverifiedRole();
+                    | null = kotoListener.getUnverifiedRole();
                 if (unverifiedRole && memberRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(memberRole);
