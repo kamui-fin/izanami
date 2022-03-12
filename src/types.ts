@@ -81,6 +81,7 @@ export interface UserInfo {
 }
 
 export interface FinishInfo {
+    testType: string;
     quizlevel: string;
     player: UserInfo;
     answeredRight: number;
