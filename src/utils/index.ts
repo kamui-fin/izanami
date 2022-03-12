@@ -214,9 +214,9 @@ export const decideRoles = (
     quizRole: Role | undefined | null,
     roleTheyHad: Role | undefined | null,
     kotoListener: KotobaListener,
-    japaneseRole: Role | undefined | null,
-    chineseRole: Role | undefined | null,
-    memberRole: Role | undefined | null
+    japaneseRole: Role | undefined,
+    chineseRole: Role | undefined,
+    memberRole: Role | undefined
 ): void => {
     const { user } = finishInfo.player;
     console.log(user);

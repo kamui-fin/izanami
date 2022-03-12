@@ -103,7 +103,7 @@ class KotobaListener {
         return 10 - numofunansweredQuestions;
     }
 
-    getUnverifiedRole(): Role | undefined | null {
+    getUnverifiedRole(): Role | undefined {
         let vrole: Role | undefined | null = null;
         vrole = this.kMessage.guild?.roles.cache.find(
             (e) => e.name === "Unverified"
@@ -111,8 +111,8 @@ class KotobaListener {
         return vrole;
     }
 
-    getQuizRole(): Role | undefined | null {
-        let nrole: Role | undefined | null = null;
+    getQuizRole(): Role | null {
+        let nrole: Role | null = null;
         if (this.finishEmbedMatch?.titleMatch) {
             const n = this.finishEmbedMatch.titleMatch[1];
             nrole =
@@ -123,7 +123,7 @@ class KotobaListener {
         return nrole;
     }
 
-    static getJlptRoleTheyHad(user: UserInfo): Role | undefined | null {
+    static getJlptRoleTheyHad(user: UserInfo): Role | null {
         return (
             user.roles?.find(
                 (e) =>
@@ -134,7 +134,7 @@ class KotobaListener {
         );
     }
 
-    static getHskRoleTheyHad(user: UserInfo): Role | undefined | null {
+    static getHskRoleTheyHad(user: UserInfo): Role | null {
         return (
             user.roles?.find(
                 (e) =>
@@ -145,7 +145,7 @@ class KotobaListener {
         );
     }
 
-    static getRoleTheyHad(user: UserInfo, type: String): Role | undefined | null {
+    static getRoleTheyHad(user: UserInfo, type: String): Role | null {
         if(type === "JLPT") {
             return this.getJlptRoleTheyHad(user);
         }
