@@ -1,11 +1,11 @@
 import "dotenv/config";
 import Discord, { Intents } from "discord.js";
 import Help from "./commands/help";
-import KotobaListener from "./utils/kotobaListener";
+// import KotobaListener from "./utils/kotobaListener";
 import {
     checkValidCommand,
     splitCommand,
-    decideRoles,
+    // decideRoles,
     bumpReminder,
     deleteBump,
     setupRandomNewsFeed,
@@ -19,10 +19,10 @@ import {
     DISBOARD_ID,
     ENABLE_BUMP_REMINDER,
     ERROR_COLOR,
-    JAPANESE_ROLE,
+    // JAPANESE_ROLE,
     JOIN_CHANNELS,
-    KOTOBA_DISCRIMINATOR,
-    KOTOBA_USERNAME,
+    // KOTOBA_DISCRIMINATOR,
+    // KOTOBA_USERNAME,
     PREFIX,
     RESOURCE_CHANNEL,
 } from "./config";
@@ -93,37 +93,37 @@ client.on("message", async (msg: Discord.Message) => {
         }
     }
 
-    // JLPT quiz barrier logic
-    if (
-        msg.author.username === KOTOBA_USERNAME &&
-        msg.author.discriminator === KOTOBA_DISCRIMINATOR &&
-        msg.author.bot
-    ) {
-        const kotoListener = new KotobaListener(msg);
-        if (kotoListener.hasGameEnded()) {
-            const finishInfo = kotoListener.getFinishInfo();
-            console.log(finishInfo);
+    // // JLPT quiz barrier logic
+    // if (
+    //     msg.author.username === KOTOBA_USERNAME &&
+    //     msg.author.discriminator === KOTOBA_DISCRIMINATOR &&
+    //     msg.author.bot
+    // ) {
+    //     const kotoListener = new KotobaListener(msg);
+    //     if (kotoListener.hasGameEnded()) {
+    //         const finishInfo = kotoListener.getFinishInfo();
+    //         console.log(finishInfo);
 
-            if (
-                finishInfo &&
-                finishInfo.answeredRight >= finishInfo.player.needToGetRight
-            ) {
-                const jlptRoleTheyHad = KotobaListener.getJlptRoleTheyHad(
-                    finishInfo.player
-                );
+    //         if (
+    //             finishInfo &&
+    //             finishInfo.answeredRight >= finishInfo.player.needToGetRight
+    //         ) {
+    //             const jlptRoleTheyHad = KotobaListener.getJlptRoleTheyHad(
+    //                 finishInfo.player
+    //             );
 
-                const quizRole = kotoListener.getQuizRole();
-                const japaneseRole = msg.guild?.roles.cache.get(JAPANESE_ROLE);
-                decideRoles(
-                    finishInfo,
-                    quizRole,
-                    jlptRoleTheyHad,
-                    kotoListener,
-                    japaneseRole
-                );
-            }
-        }
-    }
+    //             const quizRole = kotoListener.getQuizRole();
+    //             const japaneseRole = msg.guild?.roles.cache.get(JAPANESE_ROLE);
+    //             decideRoles(
+    //                 finishInfo,
+    //                 quizRole,
+    //                 jlptRoleTheyHad,
+    //                 kotoListener,
+    //                 japaneseRole
+    //             );
+    //         }
+    //     }
+    // }
 
     if (ENABLE_BUMP_REMINDER) {
         if (msg.author.id === DISBOARD_ID && msg.embeds) {
@@ -142,9 +142,8 @@ client.on("guildMemberAdd", (member) => {
         welcome(
             member,
             id,
-            `Welcome to The Japan Zone, ${member.user?.username}!`,
-            `To gain access to the server, type \`k!quiz n5\` and miss 3 or less on the N5 quiz. Good luck! 
-       If you are new to Japanese, we suggest reading a guide in <#${RESOURCE_CHANNEL}>`
+            `Welcome to The Japan-Chino Zone, ${member.user?.username}!`,
+            `If you are new to Japanese or Chinese, we suggest reading a guide in <#${RESOURCE_CHANNEL}>`,
         );
     });
 });
