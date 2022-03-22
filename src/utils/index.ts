@@ -225,10 +225,12 @@ export const decideRoles = (
             if (quizRole && testType === "JLPT" && Number(quizRole.name.charAt(1)) < Number(roleTheyHad.name.charAt(1))
             ) {
                 user.roles.remove(roleTheyHad);
+                user.roles.add(japaneseRole);
                 user.roles.add(quizRole);
             } else if (quizRole && testType === "HSK" && Number(quizRole.name.charAt(3)) > Number(roleTheyHad.name.charAt(3))
             ) {
                 user.roles.remove(roleTheyHad);
+                user.roles.add(chineseRole);
                 user.roles.add(quizRole);
             }
         } else {
@@ -237,14 +239,9 @@ export const decideRoles = (
                 const unverifiedRole:
                     | Role
                     | undefined = kotoListener.getUnverifiedRole();
-                if (unverifiedRole && memberRole && japaneseRole && chineseRole) {
+                if (unverifiedRole && memberRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(memberRole);
-                    if(testType === "JLPT") {
-                       user.roles.add(japaneseRole);
-                    } else {
-                       user.roles.add(chineseRole);
-                    }
                     welcome(
                         user,
                         GENERAL_CHANNEL,
