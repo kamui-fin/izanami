@@ -52,11 +52,18 @@ class KotobaListener {
         const { title, description } = this.kMessage.embeds[0];
 
         if (!!title && !!description) {
-            const matchedTitle = title.match(this.titlere || this.titlere2);
+            const matchedTitle = title.match(this.titlere);
+            const matchedTitle2 = title.match(this.titlere2);
             const matchedDescription = description.match(this.descre);
-            if (matchedTitle && matchedDescription) {
+            if ((matchedTitle || matchedTitle2) && matchedDescription) {
+                if(matchedTitle) {
+                    return {
+                        titleMatch: matchedTitle,
+                        descMatch: matchedDescription,
+                    };
+                }
                 return {
-                    titleMatch: matchedTitle,
+                    titleMatch: matchedTitle2,
                     descMatch: matchedDescription,
                 };
             }

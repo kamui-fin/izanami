@@ -210,7 +210,7 @@ export const checkValidCommand = (
 
 export const decideRoles = (
     finishInfo: FinishInfo,
-    testType: String | null = null,
+    testType: String | null,
     quizRole: Role | undefined | null,
     roleTheyHad: Role | undefined | null,
     kotoListener: KotobaListener,
@@ -226,7 +226,7 @@ export const decideRoles = (
             ) {
                 user.roles.remove(roleTheyHad);
                 user.roles.add(quizRole);
-            } else if (quizRole && testType === "HSK" && Number(quizRole.name.charAt(3)) < Number(roleTheyHad.name.charAt(3))
+            } else if (quizRole && testType === "HSK" && Number(quizRole.name.charAt(3)) > Number(roleTheyHad.name.charAt(3))
             ) {
                 user.roles.remove(roleTheyHad);
                 user.roles.add(quizRole);
