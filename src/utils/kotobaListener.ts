@@ -112,7 +112,7 @@ class KotobaListener {
     }
 
     getUnverifiedRole(): Role | null {
-        let roleFound: Role | null = null;
+        let roleFound: Role | null;
         roleFound = this.kMessage.guild?.roles.cache.find(
             (role) => role.name === "Unverified"
         ) || null;
@@ -120,7 +120,7 @@ class KotobaListener {
     }
 
     getMemberRole(): Role | null {
-        let roleFound: Role | null = null;
+        let roleFound: Role | null;
         roleFound = this.kMessage.guild?.roles.cache.find(
             (role) => role.name === "Member"
         ) || null;
@@ -136,7 +136,7 @@ class KotobaListener {
     }
 
     getChineseRole(): Role | null {
-        let roleFound: Role | null = null;
+        let roleFound: Role | null;
         roleFound = this.kMessage.guild?.roles.cache.find(
             (role) => role.name === "Chinese Learner"
         ) || null;
@@ -144,7 +144,7 @@ class KotobaListener {
     }
 
     getQuizRole(): Role | null {
-        let nrole: Role | null = null;
+        let nrole: Role | null;
         if (this.finishEmbedMatch?.titleMatch) {
             const n = this.finishEmbedMatch.titleMatch[1];
             nrole =
