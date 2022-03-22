@@ -236,10 +236,10 @@ export const decideRoles = (
                 user.roles.add(quizRole);
             }
         } else {
-            if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
+            if (quizRole && japaneseRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
                 user.roles.add(quizRole);
                 user.roles.add(japaneseRole);
-            } else if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(3)))) {
+            } else if (quizRole && chineseRole && !Number.isNaN(Number(quizRole.name.charAt(3)))) {
                 user.roles.add(quizRole);
                 user.roles.add(chineseRole);
             }

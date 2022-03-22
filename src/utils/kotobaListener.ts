@@ -171,6 +171,7 @@ class KotobaListener {
                     !Number.isNaN(Number(f.name.charAt(1)))
             ) || null
         }
+        return null;
     }
 }
 
