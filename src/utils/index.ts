@@ -218,19 +218,19 @@ export const decideRoles = (
 
     const unverifiedRole:
     | Role
-    | undefined = kotoListener.getUnverifiedRole();
+    | null = kotoListener.getUnverifiedRole();
 
     const japaneseRole:
     | Role
-    | undefined = kotoListener.getJapaneseRole();
+    | null = kotoListener.getJapaneseRole();
 
     const chineseRole:
     | Role
-    | undefined = kotoListener.getChineseRole();
+    | null = kotoListener.getChineseRole();
 
     const memberRole:
     | Role
-    | undefined = kotoListener.getMemberRole();
+    | null = kotoListener.getMemberRole();
 
     console.log(user);
     if (user) {
