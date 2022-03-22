@@ -236,8 +236,8 @@ export const decideRoles = (
             if (finishInfo.player.justJoined) {
                 const unverifiedRole:
                     | Role
-                    | null = kotoListener.getUnverifiedRole();
-                if (unverifiedRole && memberRole) {
+                    | undefined = kotoListener.getUnverifiedRole();
+                if (unverifiedRole && memberRole && japaneseRole && chineseRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(memberRole);
                     if(testType === "JLPT") {
