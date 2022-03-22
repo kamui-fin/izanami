@@ -148,7 +148,7 @@ class KotobaListener {
     }
 
     static getRoleTheyHad(user: UserInfo): Role | null {
-        user.roles?.find(
+        return (user.roles?.find(
             (e) =>
                 e.name.charAt(0) === "H" &&
                 e.name.length === 4 &&
@@ -159,7 +159,7 @@ class KotobaListener {
                 f.name.charAt(0) === "N" &&
                 f.name.length === 2 &&
                 !Number.isNaN(Number(f.name.charAt(1)))
-        ) || null
+        ) || null)
     }
 }
 
