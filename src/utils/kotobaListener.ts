@@ -128,7 +128,7 @@ class KotobaListener {
     }
 
     getJapaneseRole(): Role | null {
-        let roleFound: Role | null = null;
+        let roleFound: Role | null;
         roleFound = this.kMessage.guild?.roles.cache.find(
             (role) => role.name === "Japanese Learner"
         ) || null;
