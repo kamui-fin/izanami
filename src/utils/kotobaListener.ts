@@ -117,6 +117,24 @@ class KotobaListener {
         );
     }
 
+    getMemberRole(): Role | undefined {
+        return this.kMessage.guild?.roles.cache.find(
+            (e) => e.name === "Member"
+        );
+    }
+
+    getJapaneseRole(): Role | undefined {
+        return this.kMessage.guild?.roles.cache.find(
+            (e) => e.name === "Japanese Learner"
+        );
+    }
+
+    getChineseRole(): Role | undefined {
+        return this.kMessage.guild?.roles.cache.find(
+            (e) => e.name === "Chinese Learner"
+        );
+    }
+
     getQuizRole(): Role | null {
         let nrole: Role | null = null;
         if (this.finishEmbedMatch?.titleMatch) {

@@ -112,19 +112,11 @@ client.on("message", async (msg: Discord.Message) => {
             ) {
                 const roleTheyHad = KotobaListener.getRoleTheyHad(finishInfo.player, finishInfo.testType);
                 const quizRole = kotoListener.getQuizRole();
-                const japaneseRole = msg.guild?.roles.cache.get(JAPANESE_ROLE);
-                const chineseRole = msg.guild?.roles.cache.get(CHINESE_ROLE);
-                const memberRole = msg.guild?.roles.cache.get(MEMBER_ROLE);
-                const testType = finishInfo.testType;
                 decideRoles(
                     finishInfo,
-                    testType,
                     quizRole,
                     roleTheyHad,
-                    kotoListener,
-                    japaneseRole,
-                    chineseRole,
-                    memberRole
+                    kotoListener
                 );
             }
         }

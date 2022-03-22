@@ -210,38 +210,50 @@ export const checkValidCommand = (
 
 export const decideRoles = (
     finishInfo: FinishInfo,
-    testType: String | null,
     quizRole: Role | undefined | null,
     roleTheyHad: Role | undefined | null,
     kotoListener: KotobaListener,
-    japaneseRole: Role | undefined,
-    chineseRole: Role | undefined,
-    memberRole: Role | undefined
 ): void => {
     const { user } = finishInfo.player;
     console.log(user);
     if (user) {
         if (roleTheyHad) {
-            if (quizRole && japaneseRole && testType === "JLPT" && Number(quizRole.name.charAt(1)) < Number(roleTheyHad.name.charAt(1))
+            if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(1))) && Number(quizRole.name.charAt(1)) < Number(roleTheyHad.name.charAt(1))
             ) {
                 user.roles.remove(roleTheyHad);
-                user.roles.add(japaneseRole);
                 user.roles.add(quizRole);
-            } else if (quizRole && chineseRole &&  testType === "HSK" && Number(quizRole.name.charAt(3)) > Number(roleTheyHad.name.charAt(3))
+            } else if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(3))) && Number(quizRole.name.charAt(3)) > Number(roleTheyHad.name.charAt(3))
             ) {
                 user.roles.remove(roleTheyHad);
-                user.roles.add(chineseRole);
                 user.roles.add(quizRole);
             }
         } else {
             if (quizRole) user.roles.add(quizRole);
             if (finishInfo.player.justJoined) {
                 const unverifiedRole:
-                    | Role
-                    | undefined = kotoListener.getUnverifiedRole();
-                if (unverifiedRole && memberRole) {
+                | Role
+                | undefined = kotoListener.getUnverifiedRole();
+
+                const japaneseRole:
+                | Role
+                | undefined = kotoListener.getJapaneseRole();
+
+                const chineseRole:
+                | Role
+                | undefined = kotoListener.getChineseRole();
+
+                const memberRole:
+                | Role
+                | undefined = kotoListener.getMemberRole();
+
+                if (unverifiedRole && memberRole && japaneseRole && chineseRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(memberRole);
+                    if(!Number.isNaN(Number(quizRole.name.charAt(1)))){
+                        user.roles.add(japaneseRole);
+                    } else {
+                        user.roles.add(chineseRole);
+                    }
                     welcome(
                         user,
                         GENERAL_CHANNEL,
