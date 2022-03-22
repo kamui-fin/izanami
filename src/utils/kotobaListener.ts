@@ -62,10 +62,11 @@ class KotobaListener {
                         descMatch: matchedDescription,
                     };
                 }
+                else if(matchedTitle2){
                 return {
                     titleMatch: matchedTitle2,
                     descMatch: matchedDescription,
-                };
+                }};
             }
         }
         return null;
