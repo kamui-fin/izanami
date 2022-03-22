@@ -144,7 +144,7 @@ class KotobaListener {
     }
 
     getQuizRole(): Role | null {
-        let nrole: Role | null;
+        let nrole: Role | null = null;
         if (this.finishEmbedMatch?.titleMatch) {
             const n = this.finishEmbedMatch.titleMatch[1];
             nrole =
