@@ -222,7 +222,7 @@ export const decideRoles = (
     const unverifiedRole:
     | Role
     | null = kotoListener.getUnverifiedRole();
-    
+
     console.log(user);
     if (user) {
         if (roleTheyHad) {
@@ -243,13 +243,13 @@ export const decideRoles = (
                     user.roles.add(memberRole);
                     if(quizRole && japaneseRole && !Number.isNaN(Number(quizRole.name.charAt(1)))){
                         user.roles.add(japaneseRole);
-                    } else if (quizRole && chineseRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
+                    } else if (quizRole && chineseRole && !Number.isNaN(Number(quizRole.name.charAt(3)))) {
                         user.roles.add(chineseRole);
                     }
                     welcome(
                         user,
                         GENERAL_CHANNEL,
-                        "Welcome to The Japan Zone!",
+                        "Welcome to The Japa-Chino Zone!",
                         `We're glad to have you, <@${user.user.id}>! Make sure to read <#${RULES_CHANNEL}> and assign your role in <#${ROLES_CHANNEL}>`
                     );
                 }
