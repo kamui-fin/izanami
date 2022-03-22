@@ -137,7 +137,7 @@ client.on("guildMemberAdd", (member) => {
             member,
             id,
             `Welcome to The Japan-Chino Zone, ${member.user?.username}!`,
-            `To gain access to the server, type \`k!quiz n5\` for Japanese or \'k!quiz hsk1\' for Chinese and miss 3 or less on the quiz. Good luck! 
+            `To gain access to the server, type \`k!quiz n5\` for Japanese or \`k!quiz hsk1\` for Chinese and miss 3 or less on the quiz. Good luck! 
         If you are new to Japanese/Chinese, we suggest reading a guide in <#${RESOURCE_CHANNEL}>`
         );
     });
