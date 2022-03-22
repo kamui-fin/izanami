@@ -211,6 +211,9 @@ export const checkValidCommand = (
 export const decideRoles = (
     finishInfo: FinishInfo,
     quizRole: Role | undefined | null,
+    japaneseRole: Role | undefined | null,
+    chineseRole: Role | undefined | null,
+    memberRole: Role | undefined | null,
     roleTheyHad: Role | undefined | null,
     kotoListener: KotobaListener,
 ): void => {
@@ -219,19 +222,7 @@ export const decideRoles = (
     const unverifiedRole:
     | Role
     | null = kotoListener.getUnverifiedRole();
-
-    const japaneseRole:
-    | Role
-    | null = kotoListener.getJapaneseRole();
-
-    const chineseRole:
-    | Role
-    | null = kotoListener.getChineseRole();
-
-    const memberRole:
-    | Role
-    | null = kotoListener.getMemberRole();
-
+    
     console.log(user);
     if (user) {
         if (roleTheyHad) {

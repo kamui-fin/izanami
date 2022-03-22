@@ -109,9 +109,15 @@ client.on("message", async (msg: Discord.Message) => {
             ) {
                 const roleTheyHad = KotobaListener.getRoleTheyHad(finishInfo.player);
                 const quizRole = kotoListener.getQuizRole();
+                const japaneseRole = kotoListener.getJapaneseRole();
+                const chineseRole = kotoListener.getChineseRole();
+                const memberRole = kotoListener.getMemberRole();
                 decideRoles(
                     finishInfo,
                     quizRole,
+                    japaneseRole,
+                    chineseRole,
+                    memberRole,
                     roleTheyHad,
                     kotoListener
                 );
