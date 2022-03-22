@@ -220,13 +220,13 @@ export const decideRoles = (
     | Role
     | undefined = kotoListener.getUnverifiedRole();
 
-    // const japaneseRole:
-    // | Role
-    // | undefined = kotoListener.getJapaneseRole();
+    const japaneseRole:
+    | Role
+    | undefined = kotoListener.getJapaneseRole();
 
-    // const chineseRole:
-    // | Role
-    // | undefined = kotoListener.getChineseRole();
+    const chineseRole:
+    | Role
+    | undefined = kotoListener.getChineseRole();
 
     const memberRole:
     | Role
@@ -250,11 +250,11 @@ export const decideRoles = (
                 if (unverifiedRole && memberRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(memberRole);
-                    // if(quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))){
-                    //     user.roles.add(japaneseRole);
-                    // } else if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
-                    //     user.roles.add(chineseRole);
-                    // }
+                    if(quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))){
+                        user.roles.add(japaneseRole);
+                    } else if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
+                        user.roles.add(chineseRole);
+                    }
                     welcome(
                         user,
                         GENERAL_CHANNEL,
