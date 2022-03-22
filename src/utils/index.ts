@@ -249,9 +249,9 @@ export const decideRoles = (
                 if (unverifiedRole && memberRole && japaneseRole && chineseRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(memberRole);
-                    if(!Number.isNaN(Number(quizRole.name.charAt(1)))){
+                    if(quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))){
                         user.roles.add(japaneseRole);
-                    } else {
+                    } else if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
                         user.roles.add(chineseRole);
                     }
                     welcome(
