@@ -107,7 +107,7 @@ client.on("message", async (msg: Discord.Message) => {
                 finishInfo &&
                 finishInfo.answeredRight >= finishInfo.player.needToGetRight
             ) {
-                const roleTheyHad = KotobaListener.getRoleTheyHad(finishInfo.player, finishInfo.testType);
+                const roleTheyHad = KotobaListener.getRoleTheyHad(finishInfo.player);
                 const quizRole = kotoListener.getQuizRole();
                 decideRoles(
                     finishInfo,

@@ -147,33 +147,19 @@ class KotobaListener {
         return nrole;
     }
 
-    static getJlptRoleTheyHad(user: UserInfo): Role | null {
-        return (
-            user.roles?.find(
-                (e) =>
-                    e.name.charAt(0) === "N" &&
-                    e.name.length === 2 &&
-                    !Number.isNaN(Number(e.name.charAt(1)))
-            ) || null
-        );
-    }
-
-    static getHskRoleTheyHad(user: UserInfo): Role | null {
-        return (
-            user.roles?.find(
-                (e) =>
-                    e.name.charAt(0) === "H" &&
-                    e.name.length === 4 &&
-                    !Number.isNaN(Number(e.name.charAt(3)))
-            ) || null
-        );
-    }
-
-    static getRoleTheyHad(user: UserInfo, type: String): Role | null {
-        if(type === "JLPT") {
-            return this.getJlptRoleTheyHad(user);
-        }
-        return this.getHskRoleTheyHad(user);
+    static getRoleTheyHad(user: UserInfo): Role | null {
+        user.roles?.find(
+            (e) =>
+                e.name.charAt(0) === "H" &&
+                e.name.length === 4 &&
+                !Number.isNaN(Number(e.name.charAt(3)))
+        ) ||
+        user.roles?.find(
+            (f) =>
+                f.name.charAt(0) === "N" &&
+                f.name.length === 2 &&
+                !Number.isNaN(Number(f.name.charAt(1)))
+        ) || null
     }
 }
 

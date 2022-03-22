@@ -215,6 +215,23 @@ export const decideRoles = (
     kotoListener: KotobaListener,
 ): void => {
     const { user } = finishInfo.player;
+
+    const unverifiedRole:
+    | Role
+    | undefined = kotoListener.getUnverifiedRole();
+
+    // const japaneseRole:
+    // | Role
+    // | undefined = kotoListener.getJapaneseRole();
+
+    // const chineseRole:
+    // | Role
+    // | undefined = kotoListener.getChineseRole();
+
+    const memberRole:
+    | Role
+    | undefined = kotoListener.getMemberRole();
+
     console.log(user);
     if (user) {
         if (roleTheyHad) {
@@ -230,30 +247,14 @@ export const decideRoles = (
         } else {
             if (quizRole) user.roles.add(quizRole);
             if (finishInfo.player.justJoined) {
-                const unverifiedRole:
-                | Role
-                | undefined = kotoListener.getUnverifiedRole();
-
-                const japaneseRole:
-                | Role
-                | undefined = kotoListener.getJapaneseRole();
-
-                const chineseRole:
-                | Role
-                | undefined = kotoListener.getChineseRole();
-
-                const memberRole:
-                | Role
-                | undefined = kotoListener.getMemberRole();
-
-                if (unverifiedRole && memberRole && japaneseRole && chineseRole) {
+                if (unverifiedRole && memberRole) {
                     user.roles.remove(unverifiedRole);
                     user.roles.add(memberRole);
-                    if(quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))){
-                        user.roles.add(japaneseRole);
-                    } else if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
-                        user.roles.add(chineseRole);
-                    }
+                    // if(quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))){
+                    //     user.roles.add(japaneseRole);
+                    // } else if (quizRole && !Number.isNaN(Number(quizRole.name.charAt(1)))) {
+                    //     user.roles.add(chineseRole);
+                    // }
                     welcome(
                         user,
                         GENERAL_CHANNEL,
