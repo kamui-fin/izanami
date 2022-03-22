@@ -111,28 +111,36 @@ class KotobaListener {
         return 10 - numofunansweredQuestions;
     }
 
-    getUnverifiedRole(): Role | undefined {
-        return this.kMessage.guild?.roles.cache.find(
-            (e) => e.name === "Unverified"
-        );
+    getUnverifiedRole(): Role | null {
+        let roleFound: Role | null = null;
+        roleFound = this.kMessage.guild?.roles.cache.find(
+            (role) => role.name === "Unverified"
+        ) || null;
+        return roleFound;
     }
 
-    getMemberRole(): Role | undefined {
-        return this.kMessage.guild?.roles.cache.find(
-            (e) => e.name === "Member"
-        );
+    getMemberRole(): Role | null {
+        let roleFound: Role | null = null;
+        roleFound = this.kMessage.guild?.roles.cache.find(
+            (role) => role.name === "Member"
+        ) || null;
+        return roleFound;
     }
 
-    getJapaneseRole(): Role | undefined {
-        return this.kMessage.guild?.roles.cache.find(
-            (e) => e.name === "Japanese Learner"
-        );
+    getJapaneseRole(): Role | null {
+        let roleFound: Role | null = null;
+        roleFound = this.kMessage.guild?.roles.cache.find(
+            (role) => role.name === "Japanese Learner"
+        ) || null;
+        return roleFound;
     }
 
-    getChineseRole(): Role | undefined {
-        return this.kMessage.guild?.roles.cache.find(
-            (e) => e.name === "Chinese Learner"
-        );
+    getChineseRole(): Role | null {
+        let roleFound: Role | null = null;
+        roleFound = this.kMessage.guild?.roles.cache.find(
+            (role) => role.name === "Chinese Learner"
+        ) || null;
+        return roleFound;
     }
 
     getQuizRole(): Role | null {
